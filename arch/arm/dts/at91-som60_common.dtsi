@@ -75,6 +75,16 @@
 				bootph-all;
 				status = "okay";
 			};
+
+			at91_fuse: misc@ffffe400 {
+				status = "okay";
+				compatible = "atmel,sama5d3-fuse", "simple-bus";
+				reg = <0xffffe400 0x200>;
+				clocks = <&main_rc_osc>, <&fuse_clk>;
+				/* For nvmem subnodes */
+				#address-cells = <1>;
+				#size-cells = <1>;
+			};
 		};
 	};
 };
