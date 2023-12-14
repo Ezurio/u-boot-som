@@ -794,3 +794,23 @@ int ele_generate_dek_blob(u32 key_id, u32 src_paddr, u32 dst_paddr, u32 max_outp
 
 	return ret;
 }
+
+int ele_message_call(struct ele_msg *msg)
+{
+	struct udevice *dev = gd->arch.ele_dev;
+	int size = sizeof(struct ele_msg);
+	int ret = -EINVAL;
+
+	if (!dev) {
+		printf("ele dev is not initialized\n");
+		return -ENODEV;
+	}
+
+	/* Call pre-prepared ELE message. */
+	ret = misc_call(dev, false, msg, size, msg, size);
+	if (ret)
+		printf("Error: %s: ret 0x%x, response 0x%x\n",
+		       __func__, ret, msg->data[0]);
+
+	return ret;
+}
