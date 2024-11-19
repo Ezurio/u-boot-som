@@ -8,7 +8,7 @@ Board-specific doc
 
    actions/index
    advantech/index
-   AndesTech/index
+   andestech/index
    allwinner/index
    amlogic/index
    anbernic/index
@@ -31,9 +31,11 @@ Board-specific doc
    htc/index
    intel/index
    kontron/index
+   lenovo/index
    lg/index
    mediatek/index
    microchip/index
+   microsoft/index
    nxp/index
    openpiton/index
    phytec/index
@@ -42,6 +44,7 @@ Board-specific doc
    renesas/index
    rockchip/index
    samsung/index
+   schneider/index
    sielaff/index
    siemens/index
    sifive/index
@@ -53,8 +56,10 @@ Board-specific doc
    ste/index
    tbs/index
    thead/index
+   theobroma-systems/index
    ti/index
    toradex/index
    variscite/index
+   wexler/index
    xen/index
    xilinx/index

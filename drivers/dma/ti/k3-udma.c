@@ -5,13 +5,13 @@
  */
 #define pr_fmt(fmt) "udma: " fmt
 
-#include <common.h>
 #include <cpu_func.h>
 #include <log.h>
 #include <asm/cache.h>
 #include <asm/io.h>
 #include <asm/bitops.h>
 #include <malloc.h>
+#include <net.h>
 #include <linux/bitops.h>
 #include <linux/dma-mapping.h>
 #include <linux/sizes.h>
@@ -884,10 +884,10 @@ static int udma_alloc_tx_resources(struct udma_chan *uc)
 		return ret;
 
 	tchan = uc->tchan;
-	if (tchan->tflow_id >= 0)
+	if (tchan->tflow_id > 0)
 		ring_idx = tchan->tflow_id;
 	else
-		ring_idx = ud->bchan_cnt + tchan->id;
+		ring_idx = tchan->id;
 
 	ret = k3_nav_ringacc_request_rings_pair(ud->ringacc, ring_idx, -1,
 						&uc->tchan->t_ring,
@@ -1710,7 +1710,6 @@ static int udma_probe(struct udevice *dev)
 	struct udma_tisci_rm *tisci_rm = &ud->tisci_rm;
 	ofnode navss_ofnode = ofnode_get_parent(dev_ofnode(dev));
 
-
 	ud->match_data = (void *)dev_get_driver_data(dev);
 	ret = udma_get_mmrs(dev);
 	if (ret)
@@ -1770,9 +1769,11 @@ static int udma_probe(struct udevice *dev)
 		return PTR_ERR(ud->ringacc);
 
 	ud->dev = dev;
-	ud->ch_count = setup_resources(ud);
-	if (ud->ch_count <= 0)
-		return ud->ch_count;
+	ret = setup_resources(ud);
+	if (ret < 0)
+		return ret;
+
+	ud->ch_count = ret;
 
 	for (i = 0; i < ud->bchan_cnt; i++) {
 		struct udma_bchan *bchan = &ud->bchans[i];
@@ -1831,7 +1832,7 @@ static int udma_probe(struct udevice *dev)
 
 	uc_priv->supported = DMA_SUPPORTS_MEM_TO_MEM | DMA_SUPPORTS_MEM_TO_DEV;
 
-	return ret;
+	return 0;
 }
 
 static int udma_push_to_ring(struct k3_nav_ring *ring, void *elem)
@@ -2674,6 +2675,9 @@ int udma_prepare_rcv_buf(struct dma *dma, void *dst, size_t size)
 			 uc->config.psd_size);
 	cppi5_hdesc_set_pktlen(desc_rx, size);
 	cppi5_hdesc_attach_buf(desc_rx, dma_dst, size, dma_dst, size);
+
+	invalidate_dcache_range((unsigned long)dma_dst,
+				(unsigned long)(dma_dst + size));
 
 	flush_dcache_range((unsigned long)desc_rx,
 			   ALIGN((unsigned long)desc_rx + uc->config.hdesc_size,

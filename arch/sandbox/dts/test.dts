@@ -43,6 +43,7 @@
 		mmc4 = "/mmc4";
 		mmc5 = "/mmc5";
 		mmc6 = "/mmc6";
+		mmc7 = "/mmc7";
 		pci0 = &pci0;
 		pci1 = &pci1;
 		pci2 = &pci2;
@@ -1129,6 +1130,13 @@
 		filename = "mmc6.img";
 	};
 
+	/* This is used for Android tests */
+	mmc7 {
+		status = "disabled";
+		compatible = "sandbox,mmc";
+		filename = "mmc7.img";
+	};
+
 	pch {
 		compatible = "sandbox,pch";
 	};
@@ -1988,6 +1996,10 @@
 
 #ifdef CONFIG_SANDBOX_VPL
 #include "sandbox_vpl.dtsi"
+#endif
+
+#if IS_ENABLED(CONFIG_EFI_HAVE_CAPSULE_SUPPORT)
+#include "sandbox_capsule.dtsi"
 #endif
 
 #include "cedit.dtsi"

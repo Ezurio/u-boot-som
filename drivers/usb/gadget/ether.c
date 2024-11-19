@@ -7,7 +7,6 @@
  * Copyright (C) 2008 Nokia Corporation
  */
 
-#include <common.h>
 #include <console.h>
 #include <env.h>
 #include <log.h>
@@ -23,9 +22,9 @@
 #include <malloc.h>
 #include <memalign.h>
 #include <linux/ctype.h>
+#include <version.h>
 #include <watchdog.h>
 
-#include "gadget_chips.h"
 #include "rndis.h"
 
 #include <dm.h>
@@ -36,7 +35,6 @@
 #define USB_NET_NAME "usb_ether"
 
 extern struct platform_data brd;
-
 
 unsigned packet_received, packet_sent;
 
@@ -274,7 +272,6 @@ static char *iSerialNumber;
 static char dev_addr[18];
 
 static char host_addr[18];
-
 
 /*-------------------------------------------------------------------------*/
 
@@ -807,7 +804,6 @@ static const struct usb_descriptor_header *hs_rndis_function[] = {
 	NULL,
 };
 #endif
-
 
 /* maxpacket and other transfer characteristics vary by speed. */
 static inline struct usb_endpoint_descriptor *
@@ -1995,28 +1991,15 @@ static int eth_bind(struct usb_gadget *gadget)
 	 * standard protocol is _strongly_ preferred for interop purposes.
 	 * (By everyone except Microsoft.)
 	 */
-	if (gadget_is_musbhdrc(gadget)) {
+
+	if (IS_ENABLED(CONFIG_USB_MUSB_GADGET) &&
+	    !strcmp("musb-hdrc", gadget->name)) {
 		/* reduce tx dma overhead by avoiding special cases */
 		zlp = 0;
-	} else if (gadget_is_sh(gadget)) {
-		/* sh doesn't support multiple interfaces or configs */
-		cdc = 0;
-		rndis = 0;
 	}
 
-	gcnum = usb_gadget_controller_number(gadget);
-	if (gcnum >= 0)
-		device_desc.bcdDevice = cpu_to_le16(0x0300 + gcnum);
-	else {
-		/*
-		 * can't assume CDC works.  don't want to default to
-		 * anything less functional on CDC-capable hardware,
-		 * so we fail in this case.
-		 */
-		pr_err("controller '%s' not recognized",
-			gadget->name);
-		return -ENODEV;
-	}
+	gcnum = (U_BOOT_VERSION_NUM << 4) | U_BOOT_VERSION_NUM_PATCH;
+	device_desc.bcdDevice = cpu_to_le16(gcnum);
 
 	/*
 	 * If there's an RNDIS configuration, that's what Windows wants to
@@ -2155,7 +2138,6 @@ autoconf_fail:
 		rndis_config.bMaxPower = 4;
 #endif
 	}
-
 
 	/* network device setup */
 	dev->net = l_priv->netdev;

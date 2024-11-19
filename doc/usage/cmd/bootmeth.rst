@@ -21,7 +21,7 @@ Description
 The `bootmeth` command is used to manage bootmeths. It can list them and change
 the order in which they are used.
 
-See :doc:`../../develop/bootstd` for more information.
+See :doc:`/develop/bootstd/index` for more information.
 
 
 .. _bootmeth_order:
@@ -48,7 +48,7 @@ The format looks like this:
 =====  ===  ==================  =================================
 Order  Seq  Name                Description
 =====  ===  ==================  =================================
-    0    0  extlinunx           Extlinux boot from a block device
+    0    0  extlinux            Extlinux boot from a block device
     1    1  efi                 EFI boot from an .efi file
     2    2  pxe                 PXE boot from a network device
     3    3  sandbox             Sandbox boot for testing

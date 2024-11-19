@@ -6,7 +6,6 @@
 
 #define LOG_CATEGORY UCLASS_BOOTSTD
 
-#include <common.h>
 #include <bootdev.h>
 #include <bootflow.h>
 #include <bootmeth.h>
@@ -216,6 +215,9 @@ static int iter_incr(struct bootflow_iter *iter)
 			inc_dev = false;
 		}
 	}
+
+	if (iter->flags & BOOTFLOWIF_SINGLE_PARTITION)
+		return BF_NO_MORE_DEVICES;
 
 	/* No more bootmeths; start at the first one, and... */
 	iter->cur_method = 0;
@@ -568,6 +570,18 @@ int bootflow_iter_check_blk(const struct bootflow_iter *iter)
 
 	log_debug("uclass %d: %s\n", id, uclass_get_name(id));
 	if (id != UCLASS_ETH && id != UCLASS_BOOTSTD && id != UCLASS_QFW)
+		return 0;
+
+	return -ENOTSUPP;
+}
+
+int bootflow_iter_check_mmc(const struct bootflow_iter *iter)
+{
+	const struct udevice *media = dev_get_parent(iter->dev);
+	enum uclass_id id = device_get_uclass_id(media);
+
+	log_debug("uclass %d: %s\n", id, uclass_get_name(id));
+	if (id == UCLASS_MMC)
 		return 0;
 
 	return -ENOTSUPP;

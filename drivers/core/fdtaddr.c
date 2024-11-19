@@ -8,7 +8,6 @@
  * Pavel Herrmann <morpheus.ibis@gmail.com>
  */
 
-#include <common.h>
 #include <dm.h>
 #include <fdt_support.h>
 #include <log.h>
@@ -16,6 +15,7 @@
 #include <asm/global_data.h>
 #include <asm/io.h>
 #include <dm/device-internal.h>
+#include <dm/util.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -23,7 +23,7 @@ fdt_addr_t devfdt_get_addr_index(const struct udevice *dev, int index)
 {
 #if CONFIG_IS_ENABLED(OF_REAL)
 	int offset = dev_of_offset(dev);
-	int parent = dev_of_offset(dev->parent);
+	int parent = fdt_parent_offset(gd->fdt_blob, offset);
 	fdt_addr_t addr;
 
 	if (CONFIG_IS_ENABLED(OF_TRANSLATE)) {
@@ -33,19 +33,19 @@ fdt_addr_t devfdt_get_addr_index(const struct udevice *dev, int index)
 
 		na = fdt_address_cells(gd->fdt_blob, parent);
 		if (na < 1) {
-			debug("bad #address-cells\n");
+			dm_warn("bad #address-cells\n");
 			return FDT_ADDR_T_NONE;
 		}
 
 		ns = fdt_size_cells(gd->fdt_blob, parent);
 		if (ns < 0) {
-			debug("bad #size-cells\n");
+			dm_warn("bad #size-cells\n");
 			return FDT_ADDR_T_NONE;
 		}
 
 		reg = fdt_getprop(gd->fdt_blob, offset, "reg", &len);
 		if (!reg || (len <= (index * sizeof(fdt32_t) * (na + ns)))) {
-			debug("Req index out of range\n");
+			dm_warn("Req index out of range\n");
 			return FDT_ADDR_T_NONE;
 		}
 

@@ -1,5 +1,6 @@
 # SPDX-License-Identifier: GPL-2.0+
 
+obj-$(CONFIG_$(SPL_TPL_)ADC) += adc/
 obj-$(CONFIG_$(SPL_TPL_)BIOSEMU) += bios_emulator/
 obj-$(CONFIG_$(SPL_TPL_)BLK) += block/
 obj-$(CONFIG_$(SPL_TPL_)BOOTCOUNT_LIMIT) += bootcount/
@@ -81,7 +82,6 @@ endif
 
 ifeq ($(CONFIG_SPL_BUILD)$(CONFIG_TPL_BUILD),)
 
-obj-y += adc/
 obj-y += ata/
 obj-$(CONFIG_DM_DEMO) += demo/
 obj-y += block/
@@ -126,7 +126,7 @@ obj-$(CONFIG_W1_EEPROM) += w1-eeprom/
 obj-$(CONFIG_MACH_PIC32) += ddr/microchip/
 obj-$(CONFIG_FUZZ) += fuzz/
 obj-$(CONFIG_DM_HWSPINLOCK) += hwspinlock/
-obj-$(CONFIG_DM_RNG) += rng/
+obj-$(CONFIG_$(SPL_TPL_)DM_RNG) += rng/
 endif
 
 obj-y += soc/

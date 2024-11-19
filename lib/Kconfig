@@ -348,7 +348,7 @@ config TRACE
 	  Enables function tracing within U-Boot. This allows recording of call
 	  traces including timing information. The command can write data to
 	  memory for exporting for analysis (e.g. using bootchart).
-	  See doc/README.trace for full details.
+	  See doc/develop/trace.rst for full details.
 
 config TRACE_BUFFER_SIZE
 	hex "Size of trace buffer in U-Boot"
@@ -416,7 +416,7 @@ config TRACE_EARLY_ADDR
 config CIRCBUF
 	bool "Enable circular buffer support"
 
-source lib/dhry/Kconfig
+source "lib/dhry/Kconfig"
 
 menu "Security support"
 
@@ -429,19 +429,16 @@ config AES
 	  supported by the algorithm but only a 128-bit key is supported at
 	  present.
 
-source lib/ecdsa/Kconfig
-source lib/rsa/Kconfig
-source lib/crypto/Kconfig
-source lib/crypt/Kconfig
+source "lib/ecdsa/Kconfig"
+source "lib/rsa/Kconfig"
+source "lib/crypto/Kconfig"
+source "lib/crypt/Kconfig"
 
 config TPM
 	bool "Trusted Platform Module (TPM) Support"
 	depends on DM
 	imply DM_RNG
 	select SHA1
-	select SHA256
-	select SHA384
-	select SHA512
 	help
 	  This enables support for TPMs which can be used to provide security
 	  features for your board. The TPM can be connected via LPC or I2C
@@ -449,6 +446,9 @@ config TPM
 	  command to interactive the TPM. Driver model support is provided
 	  for the low-level TPM interface, but only one TPM is supported at
 	  a time by the TPM library.
+	  For size reasons only SHA1 is selected which is supported on TPM1.2.
+	  If you want a fully functional TPM enable all hashing algorithms.
+	  If you enabled measured boot all hashing algorithms are selected.
 
 config SPL_TPM
 	bool "Trusted Platform Module (TPM) Support in SPL"
@@ -1092,9 +1092,9 @@ config SMBIOS_PARSER
 	help
 	  A simple parser for SMBIOS data.
 
-source lib/efi/Kconfig
-source lib/efi_loader/Kconfig
-source lib/optee/Kconfig
+source "lib/efi/Kconfig"
+source "lib/efi_loader/Kconfig"
+source "lib/optee/Kconfig"
 
 config TEST_FDTDEC
 	bool "enable fdtdec test"
@@ -1154,9 +1154,9 @@ config PHANDLE_CHECK_SEQ
 	bool "Enable phandle check while getting sequence number"
 	help
 	  When there are multiple device tree nodes with same name,
-          enable this config option to distinguish them using
+	  enable this config option to distinguish them using
 	  phandles in fdtdec_get_alias_seq() function.
 
 endmenu
 
-source lib/fwu_updates/Kconfig
+source "lib/fwu_updates/Kconfig"

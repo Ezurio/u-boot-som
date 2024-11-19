@@ -4,7 +4,6 @@
  * Written by Simon Glass <sjg@chromium.org>
  */
 
-#include <common.h>
 #include <errno.h>
 #include <fpga.h>
 #include <gzip.h>
@@ -559,7 +558,12 @@ static void *spl_get_fit_load_buffer(size_t size)
 	buf = malloc_cache_aligned(size);
 	if (!buf) {
 		pr_err("Could not get FIT buffer of %lu bytes\n", (ulong)size);
-		pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_SIZE\n");
+
+		if (IS_ENABLED(CONFIG_SPL_SYS_MALLOC))
+			pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_SIZE\n");
+		else
+			pr_err("\tcheck CONFIG_SPL_SYS_MALLOC_F_LEN\n");
+
 		buf = spl_get_load_buffer(0, size);
 	}
 	return buf;
@@ -592,7 +596,7 @@ __weak void *spl_load_simple_fit_fix_load(const void *fit)
 static void warn_deprecated(const char *msg)
 {
 	printf("DEPRECATED: %s\n", msg);
-	printf("\tSee doc/uImage.FIT/source_file_format.txt\n");
+	printf("\tSee https://fitspec.osfw.foundation/\n");
 }
 
 static int spl_fit_upload_fpga(struct spl_fit_info *ctx, int node,

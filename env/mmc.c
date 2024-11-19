@@ -5,7 +5,6 @@
 
 /* #define DEBUG */
 
-#include <common.h>
 #include <asm/global_data.h>
 
 #include <command.h>
@@ -111,8 +110,9 @@ static inline s64 mmc_offset(struct mmc *mmc, int copy)
 	int hwpart = 0;
 	int err;
 
-	if (IS_ENABLED(CONFIG_SYS_MMC_ENV_PART))
-		hwpart = mmc_get_env_part(mmc);
+#if defined(CONFIG_SYS_MMC_ENV_PART)
+	hwpart = mmc_get_env_part(mmc);
+#endif
 
 #if defined(CONFIG_ENV_MMC_PARTITION)
 	str = CONFIG_ENV_MMC_PARTITION;
@@ -436,6 +436,7 @@ static int env_mmc_load(void)
 
 	ret = env_import_redund((char *)tmp_env1, read1_fail, (char *)tmp_env2,
 				read2_fail, H_EXTERNAL);
+	printf("Reading from %sMMC(%d)... ", gd->env_valid == ENV_REDUND ? "redundant " : "", dev);
 
 fini:
 	fini_mmc_for_env(mmc);
@@ -474,6 +475,8 @@ static int env_mmc_load(void)
 		ret = -EIO;
 		goto fini;
 	}
+
+	printf("Reading from MMC(%d)... ", dev);
 
 	ret = env_import(buf, 1, H_EXTERNAL);
 	if (!ret) {

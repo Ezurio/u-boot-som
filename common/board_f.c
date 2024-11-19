@@ -9,7 +9,7 @@
  * Marius Groeger <mgroeger@sysgo.de>
  */
 
-#include <common.h>
+#include <config.h>
 #include <bloblist.h>
 #include <bootstage.h>
 #include <clock_legacy.h>
@@ -282,7 +282,9 @@ static int init_func_i2c(void)
 
 static int setup_mon_len(void)
 {
-#if defined(__ARM__) || defined(__MICROBLAZE__)
+#if defined(CONFIG_ARCH_NEXELL)
+	gd->mon_len = (ulong)__bss_end - (ulong)__image_copy_start;
+#elif defined(__ARM__) || defined(__MICROBLAZE__)
 	gd->mon_len = (ulong)__bss_end - (ulong)_start;
 #elif defined(CONFIG_SANDBOX) && !defined(__riscv)
 	gd->mon_len = (ulong)_end - (ulong)_init;
@@ -706,19 +708,17 @@ static int reloc_bloblist(void)
 		return 0;
 	}
 	if (gd->new_bloblist) {
-		int size = CONFIG_BLOBLIST_SIZE;
-
 		debug("Copying bloblist from %p to %p, size %x\n",
-		      gd->bloblist, gd->new_bloblist, size);
-		bloblist_reloc(gd->new_bloblist, CONFIG_BLOBLIST_SIZE_RELOC,
-			       gd->bloblist, size);
-		gd->bloblist = gd->new_bloblist;
+		      gd->bloblist, gd->new_bloblist, gd->bloblist->total_size);
+		return bloblist_reloc(gd->new_bloblist,
+				      CONFIG_BLOBLIST_SIZE_RELOC);
 	}
 #endif
 
 	return 0;
 }
 
+void mcheck_on_ramrelocation(size_t offset);
 static int setup_reloc(void)
 {
 	if (!(gd->flags & GD_FLG_SKIP_RELOC)) {
@@ -744,6 +744,9 @@ static int setup_reloc(void)
 	if (gd->flags & GD_FLG_SKIP_RELOC) {
 		debug("Skipping relocation due to flag\n");
 	} else {
+#ifdef MCHECK_HEAP_PROTECTION
+		mcheck_on_ramrelocation(gd->reloc_off);
+#endif
 		debug("Relocation Offset is: %08lx\n", gd->reloc_off);
 		debug("Relocating to %08lx, new gd at %08lx, sp at %08lx\n",
 		      gd->relocaddr, (ulong)map_to_sysmem(gd->new_gd),
@@ -807,10 +810,7 @@ static int initf_bootstage(void)
 	if (ret)
 		return ret;
 	if (from_spl) {
-		const void *stash = map_sysmem(CONFIG_BOOTSTAGE_STASH_ADDR,
-					       CONFIG_BOOTSTAGE_STASH_SIZE);
-
-		ret = bootstage_unstash(stash, CONFIG_BOOTSTAGE_STASH_SIZE);
+		ret = bootstage_unstash_default();
 		if (ret && ret != -ENOENT) {
 			debug("Failed to unstash bootstage: err=%d\n", ret);
 			return ret;
@@ -946,7 +946,7 @@ static const init_fnc_t init_sequence_f[] = {
 	 *  - board info struct
 	 */
 	setup_dest_addr,
-#ifdef CONFIG_OF_BOARD_FIXUP
+#if defined(CONFIG_OF_BOARD_FIXUP) && !defined(CONFIG_OF_INITIAL_DTB_READONLY)
 	fix_fdt,
 #endif
 #ifdef CFG_PRAM
@@ -962,6 +962,10 @@ static const init_fnc_t init_sequence_f[] = {
 	reserve_board,
 	reserve_global_data,
 	reserve_fdt,
+#if defined(CONFIG_OF_BOARD_FIXUP) && defined(CONFIG_OF_INITIAL_DTB_READONLY)
+	reloc_fdt,
+	fix_fdt,
+#endif
 	reserve_bootstage,
 	reserve_bloblist,
 	reserve_arch,
@@ -972,7 +976,9 @@ static const init_fnc_t init_sequence_f[] = {
 	setup_bdinfo,
 	display_new_sp,
 	INIT_FUNC_WATCHDOG_RESET
+#if !defined(CONFIG_OF_BOARD_FIXUP) || !defined(CONFIG_OF_INITIAL_DTB_READONLY)
 	reloc_fdt,
+#endif
 	reloc_bootstage,
 	reloc_bloblist,
 	setup_reloc,

@@ -37,14 +37,11 @@
 #define CFG_EXTRA_ENV_SETTINGS \
 	BOOTENV \
 	MEM_LAYOUT_ENV_SETTINGS \
-	"boot_file=Image\0" \
 	"boot_script_dhcp=boot.scr\0" \
 	"console=ttymxc0\0" \
 	"fdt_board=dev\0" \
 	"initrd_addr=0x43800000\0" \
 	"initrd_high=0xffffffffffffffff\0" \
-	"setup=setenv setupargs console=tty1 console=${console},${baudrate} " \
-		"consoleblank=0 earlycon\0" \
 	"update_uboot=askenv confirm Did you load flash.bin (y/N)?; " \
 		"if test \"$confirm\" = \"y\"; then " \
 		"setexpr blkcnt ${filesize} + 0x1ff && setexpr blkcnt " \
@@ -61,8 +58,10 @@
 #define CFG_SYS_SDRAM_BASE           0x40000000
 
 /* SDRAM configuration */
-#define PHYS_SDRAM                      0x40000000
-#define PHYS_SDRAM_SIZE			SZ_2G /* 2GB DDR */
+#define PHYS_SDRAM                   0x40000000
+#define PHYS_SDRAM_SIZE              (long)(SZ_2G + SZ_1G)
+#define PHYS_SDRAM_2                 0x100000000
+#define PHYS_SDRAM_2_SIZE            (long)(SZ_1G)
 
 /* USB Configs */
 #define CFG_MXC_USB_PORTSC	(PORT_PTS_UTMI | PORT_PTS_PTW)

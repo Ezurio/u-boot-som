@@ -3,7 +3,6 @@
  * Copyright 2019 Toradex
  */
 
-#include <common.h>
 #include <cpu_func.h>
 #include <init.h>
 #include <asm/global_data.h>
@@ -289,14 +288,6 @@ int board_init(void)
 	}
 
 	return 0;
-}
-
-/*
- * Board specific reset that is system reset.
- */
-void reset_cpu(void)
-{
-	/* TODO */
 }
 
 #if defined(CONFIG_OF_LIBFDT) && defined(CONFIG_OF_BOARD_SETUP)

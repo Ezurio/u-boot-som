@@ -10,9 +10,9 @@ config EFI_LOADER
 	depends on !EFI_STUB || !X86_64 || EFI_STUB_64BIT
 	# We need EFI_STUB_32BIT to be set on x86_32 with EFI_STUB
 	depends on !EFI_STUB || !X86 || X86_64 || EFI_STUB_32BIT
-	depends on BLK
 	depends on !EFI_APP
 	default y if !ARM || SYS_CPU = armv7 || SYS_CPU = armv8
+	select BLK
 	select CHARSET
 	# We need to send DM events, dynamically, in the EFI block driver
 	select DM_EVENT
@@ -44,7 +44,6 @@ config EFI_BINARY_EXEC
 config EFI_BOOTMGR
 	bool "UEFI Boot Manager"
 	default y
-	select BOOTMETH_GLOBAL if BOOTSTD
 	help
 	  Select this option if you want to select the UEFI binary to be booted
 	  via UEFI variables Boot####, BootOrder, and BootNext. You should also
@@ -62,6 +61,22 @@ config EFI_VARIABLE_FILE_STORE
 	help
 	  Select this option if you want non-volatile UEFI variables to be
 	  stored as file /ubootefi.var on the EFI system partition.
+
+config EFI_RT_VOLATILE_STORE
+	bool "Allow variable runtime services in volatile storage (e.g RAM)"
+	depends on EFI_VARIABLE_FILE_STORE
+	help
+	  When EFI variables are stored on file we don't allow SetVariableRT,
+	  since the OS doesn't know how to write that file. At the same time
+	  we copy runtime variables in DRAM and support GetVariableRT
+
+	  Enable this option to allow SetVariableRT on the RAM backend of
+	  the EFI variable storage. The OS will be responsible for syncing
+	  the RAM contents to the file, otherwise any changes made during
+	  runtime won't persist reboots.
+	  Authenticated variables are not supported. Note that this will
+	  violate the EFI spec since writing auth variables will return
+	  EFI_INVALID_PARAMETER
 
 config EFI_MM_COMM_TEE
 	bool "UEFI variables storage service via the trusted world"
@@ -130,7 +145,7 @@ if EFI_VARIABLES_PRESEED
 
 config EFI_VAR_SEED_FILE
 	string "File with initial values of non-volatile UEFI variables"
-	default ubootefi.var
+	default "ubootefi.var"
 	help
 	  File with initial values of non-volatile UEFI variables. The file must
 	  be in the same format as the storage in the EFI system partition. The
@@ -205,6 +220,7 @@ config EFI_CAPSULE_ON_DISK
 config EFI_IGNORE_OSINDICATIONS
 	bool "Ignore OsIndications for CapsuleUpdate on-disk"
 	depends on EFI_CAPSULE_ON_DISK
+	default y if !EFI_RT_VOLATILE_STORE
 	help
 	  There are boards where U-Boot does not support SetVariable at runtime.
 	  Select this option if you want to use the capsule-on-disk feature
@@ -283,13 +299,15 @@ config EFI_CAPSULE_MAX
 	  Select the max capsule index value used for capsule report
 	  variables. This value is used to create CapsuleMax variable.
 
-config EFI_CAPSULE_ESL_FILE
-	string "Path to the EFI Signature List File"
+config EFI_CAPSULE_CRT_FILE
+	string "Path to the EFI capsule public key certificate"
 	depends on EFI_CAPSULE_AUTHENTICATE
 	help
-	  Provides the path to the EFI Signature List file which will
-	  be embedded in the platform's device tree and used for
-	  capsule authentication at the time of capsule update.
+	  Provides the path to the EFI capsule public key certificate that
+	  corresponds to the capsule signing key. This certificate will be used
+	  to generate the EFI capsule ESL (signature list file) that gets
+	  embedded in the platform's device tree and used for capsule
+	  authentication at the time of capsule update.
 
 config EFI_DEVICE_PATH_TO_TEXT
 	bool "Device path to text protocol"
@@ -346,7 +364,6 @@ endif
 
 config EFI_LOADER_BOUNCE_BUFFER
 	bool "EFI Applications use bounce buffers for DMA operations"
-	depends on ARM64
 	help
 	  Some hardware does not support DMA to full 64bit addresses. For this
 	  hardware we can create a bounce buffer so that payloads don't have to
@@ -366,7 +383,7 @@ config EFI_HAVE_RUNTIME_RESET
 	bool
 	default y
 	depends on ARCH_BCM283X || FSL_LAYERSCAPE || PSCI_RESET || \
-		   SANDBOX || SYSRESET_X86
+		   SANDBOX || SYSRESET_SBI || SYSRESET_X86
 
 config EFI_GRUB_ARM32_WORKAROUND
 	bool "Workaround for GRUB on 32bit ARM"
@@ -469,6 +486,7 @@ config EFI_ECPT
 
 config EFI_EBBR_2_1_CONFORMANCE
 	bool "Add the EBBRv2.1 conformance entry to the ECPT table"
+	depends on BOOTMETH_EFI_BOOTMGR
 	depends on EFI_ECPT
 	depends on EFI_LOADER_HII
 	depends on EFI_RISCV_BOOT_PROTOCOL || !RISCV

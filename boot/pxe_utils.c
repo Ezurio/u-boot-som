@@ -4,7 +4,8 @@
  * Copyright (c) 2014, NVIDIA CORPORATION.  All rights reserved.
  */
 
-#include <common.h>
+#define LOG_CATEGORY	LOGC_BOOT
+
 #include <command.h>
 #include <dm.h>
 #include <env.h>
@@ -21,9 +22,7 @@
 #include <errno.h>
 #include <linux/list.h>
 
-#ifdef CONFIG_DM_RNG
 #include <rng.h>
-#endif
 
 #include <splash.h>
 #include <asm/io.h>
@@ -323,13 +322,9 @@ static int label_localboot(struct pxe_label *label)
 
 static void label_boot_kaslrseed(void)
 {
-#ifdef CONFIG_DM_RNG
+#if CONFIG_IS_ENABLED(DM_RNG)
 	ulong fdt_addr;
 	struct fdt_header *working_fdt;
-	size_t n = 0x8;
-	struct udevice *dev;
-	u64 *buf;
-	int nodeoffset;
 	int err;
 
 	/* Get the main fdt and map it */
@@ -345,35 +340,7 @@ static void label_boot_kaslrseed(void)
 	if (err <= 0)
 		return;
 
-	if (uclass_get_device(UCLASS_RNG, 0, &dev) || !dev) {
-		printf("No RNG device\n");
-		return;
-	}
-
-	nodeoffset = fdt_find_or_add_subnode(working_fdt, 0, "chosen");
-	if (nodeoffset < 0) {
-		printf("Reading chosen node failed\n");
-		return;
-	}
-
-	buf = malloc(n);
-	if (!buf) {
-		printf("Out of memory\n");
-		return;
-	}
-
-	if (dm_rng_read(dev, buf, n)) {
-		printf("Reading RNG failed\n");
-		goto err;
-	}
-
-	err = fdt_setprop(working_fdt, nodeoffset, "kaslr-seed", buf, sizeof(buf));
-	if (err < 0) {
-		printf("Unable to set kaslr-seed on chosen node: %s\n", fdt_strerror(err));
-		goto err;
-	}
-err:
-	free(buf);
+	fdt_kaslrseed(working_fdt, true);
 #endif
 	return;
 }
@@ -634,7 +601,12 @@ static int label_boot(struct pxe_context *ctx, struct pxe_label *label)
 		char *fdtfilefree = NULL;
 
 		if (label->fdt) {
-			fdtfile = label->fdt;
+			if (IS_ENABLED(CONFIG_SUPPORT_PASSING_ATAGS)) {
+				if (strcmp("-", label->fdt))
+					fdtfile = label->fdt;
+			} else {
+				fdtfile = label->fdt;
+			}
 		} else if (label->fdtdir) {
 			char *f1, *f2, *f3, *f4, *slash;
 
@@ -731,14 +703,26 @@ static int label_boot(struct pxe_context *ctx, struct pxe_label *label)
 		zboot_argc = 5;
 	}
 
-	if (!bootm_argv[3])
-		bootm_argv[3] = env_get("fdt_addr");
+	if (!bootm_argv[3]) {
+		if (IS_ENABLED(CONFIG_SUPPORT_PASSING_ATAGS)) {
+			if (strcmp("-", label->fdt))
+				bootm_argv[3] = env_get("fdt_addr");
+		} else {
+			bootm_argv[3] = env_get("fdt_addr");
+		}
+	}
 
 	kernel_addr_r = genimg_get_kernel_addr(kernel_addr);
 	buf = map_sysmem(kernel_addr_r, 0);
 
-	if (!bootm_argv[3] && genimg_get_format(buf) != IMAGE_FORMAT_FIT)
-		bootm_argv[3] = env_get("fdtcontroladdr");
+	if (!bootm_argv[3] && genimg_get_format(buf) != IMAGE_FORMAT_FIT) {
+		if (IS_ENABLED(CONFIG_SUPPORT_PASSING_ATAGS)) {
+			if (strcmp("-", label->fdt))
+				bootm_argv[3] = env_get("fdtcontroladdr");
+		} else {
+			bootm_argv[3] = env_get("fdtcontroladdr");
+		}
+	}
 
 	if (bootm_argv[3]) {
 		if (!bootm_argv[2])
@@ -748,17 +732,22 @@ static int label_boot(struct pxe_context *ctx, struct pxe_label *label)
 
 	/* Try bootm for legacy and FIT format image */
 	if (genimg_get_format(buf) != IMAGE_FORMAT_INVALID &&
-            IS_ENABLED(CONFIG_CMD_BOOTM))
+	    IS_ENABLED(CONFIG_CMD_BOOTM)) {
+		log_debug("using bootm\n");
 		do_bootm(ctx->cmdtp, 0, bootm_argc, bootm_argv);
 	/* Try booting an AArch64 Linux kernel image */
-	else if (IS_ENABLED(CONFIG_CMD_BOOTI))
+	} else if (IS_ENABLED(CONFIG_CMD_BOOTI)) {
+		log_debug("using booti\n");
 		do_booti(ctx->cmdtp, 0, bootm_argc, bootm_argv);
 	/* Try booting a Image */
-	else if (IS_ENABLED(CONFIG_CMD_BOOTZ))
+	} else if (IS_ENABLED(CONFIG_CMD_BOOTZ)) {
+		log_debug("using bootz\n");
 		do_bootz(ctx->cmdtp, 0, bootm_argc, bootm_argv);
 	/* Try booting an x86_64 Linux kernel image */
-	else if (IS_ENABLED(CONFIG_CMD_ZBOOT))
+	} else if (IS_ENABLED(CONFIG_CMD_ZBOOT)) {
+		log_debug("using zboot\n");
 		do_zboot_parent(ctx->cmdtp, 0, zboot_argc, zboot_argv, NULL);
+	}
 
 	unmap_sysmem(buf);
 
@@ -1480,7 +1469,6 @@ static struct menu *pxe_menu_to_menu(struct pxe_menu *cfg)
 		if (label_override && !strcmp(label->name, label_override))
 			override_num = label->num;
 	}
-
 
 	if (label_override) {
 		if (override_num)

@@ -5,9 +5,7 @@
  * Copyright (C) 2017 Marek Vasut <marex@denx.de>
  */
 
-#include <common.h>
 #include <dm.h>
-#include <eeprom.h>
 #include <image.h>
 #include <init.h>
 #include <net.h>
@@ -32,6 +30,7 @@
 #include <fuse.h>
 #include <i2c_eeprom.h>
 #include <mmc.h>
+#include <power/regulator.h>
 #include <usb.h>
 #include <linux/delay.h>
 #include <usb/ehci-ci.h>
@@ -92,6 +91,9 @@ int dh_setup_mac_address(void)
 	if (dh_mac_is_in_env("ethaddr"))
 		return 0;
 
+	if (dh_get_mac_is_enabled("ethernet0"))
+		return 0;
+
 	if (!dh_imx_get_mac_from_fuse(enetaddr))
 		goto out;
 
@@ -125,6 +127,8 @@ int board_init(void)
 	setbits_le32(&mxc_ccm->CCGR6, 0x1 << MXC_CCM_CCGR6_EMI_SLOW_OFFSET);
 
 	setup_fec_clock();
+
+	regulators_enable_boot_on(_DEBUG);
 
 	return 0;
 }

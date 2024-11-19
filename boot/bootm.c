@@ -5,7 +5,6 @@
  */
 
 #ifndef USE_HOSTCC
-#include <common.h>
 #include <bootm.h>
 #include <bootstage.h>
 #include <cli.h>
@@ -25,6 +24,7 @@
 #include <asm/io.h>
 #include <linux/sizes.h>
 #include <tpm-v2.h>
+#include <tpm_tcg2.h>
 #if defined(CONFIG_CMD_USB)
 #include <usb.h>
 #endif
@@ -242,13 +242,13 @@ static int boot_get_kernel(const char *addr_fit, struct bootm_headers *images,
 #ifdef CONFIG_LMB
 static void boot_start_lmb(struct bootm_headers *images)
 {
-	ulong		mem_start;
+	phys_addr_t	mem_start;
 	phys_size_t	mem_size;
 
 	mem_start = env_get_bootm_low();
 	mem_size = env_get_bootm_size();
 
-	lmb_init_and_reserve_range(&images->lmb, (phys_addr_t)mem_start,
+	lmb_init_and_reserve_range(&images->lmb, mem_start,
 				   mem_size, NULL);
 }
 #else
@@ -740,18 +740,6 @@ ulong bootm_disable_interrupts(void)
 	eth_halt();
 #endif
 
-#if defined(CONFIG_CMD_USB)
-	/*
-	 * turn off USB to prevent the host controller from writing to the
-	 * SDRAM while Linux is booting. This could happen (at least for OHCI
-	 * controller), because the HCCA (Host Controller Communication Area)
-	 * lies within the SDRAM and the host controller writes continously to
-	 * this area (as busmaster!). The HccaFrameNumber is for example
-	 * updated every 1 ms within the HCCA structure in SDRAM! For more
-	 * details see the OpenHCI specification.
-	 */
-	usb_stop();
-#endif
 	return iflag;
 }
 
@@ -964,7 +952,7 @@ int bootm_measure(struct bootm_headers *images)
 			goto unmap_initrd;
 
 		if (IS_ENABLED(CONFIG_MEASURE_DEVICETREE)) {
-			ret = tcg2_measure_data(dev, &elog, 0, images->ft_len,
+			ret = tcg2_measure_data(dev, &elog, 1, images->ft_len,
 						(u8 *)images->ft_addr,
 						EV_TABLE_OF_DEVICES,
 						strlen("dts") + 1,

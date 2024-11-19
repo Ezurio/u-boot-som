@@ -49,6 +49,12 @@ extern bool usb_started; /* flag for the started/stopped USB status */
  */
 #define USB_TIMEOUT_MS(pipe) (usb_pipebulk(pipe) ? 5000 : 1000)
 
+/*
+ * The xhcd hcd driver prepares only a limited number interfaces / endpoints.
+ * Define this limit so that drivers do not exceed it.
+ */
+#define USB_MAX_ACTIVE_INTERFACES	2
+
 /* device request (setup) */
 struct devrequest {
 	__u8	requesttype;
@@ -267,7 +273,6 @@ int usb_init(void);
 
 int usb_stop(void); /* stop the USB Controller */
 int usb_detect_change(void); /* detect if a USB device has been (un)plugged */
-
 
 int usb_set_protocol(struct usb_device *dev, int ifnum, int protocol);
 int usb_set_idle(struct usb_device *dev, int ifnum, int duration,
@@ -593,7 +598,6 @@ struct usb_hub_descriptor {
 		} __attribute__ ((packed)) ss;
 	} u;
 } __attribute__ ((packed));
-
 
 struct usb_hub_device {
 	struct usb_device *pusb_dev;
