@@ -9,7 +9,7 @@
 #include <linux/ctype.h>
 #include <linux/errno.h>
 
-#include <som60_eeprom.h>
+#include "som60_eeprom.h"
 
 #define MINI_MENU_INPUT_SIZE    20
 

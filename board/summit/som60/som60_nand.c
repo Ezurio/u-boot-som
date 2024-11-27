@@ -381,7 +381,7 @@ static int __maybe_unused nandflash_detect_onfi(void)
 
 void nand_init(void)
 {
-#ifndef CONFIG_TARGET_WB50N_SYSD
+#ifndef CONFIG_TARGET_WB50N
 	at91_periph_clk_enable(ATMEL_ID_SMC);
 
 	atmel_setup_data_interface(NULL, 1, NULL);

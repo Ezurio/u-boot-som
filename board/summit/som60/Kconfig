@@ -1,4 +1,4 @@
-if TARGET_SOM60 || TARGET_IG60 || TARGET_WB50N || TARGET_WB50N_SYSD
+if TARGET_SOM60 || TARGET_WB50N
 
 config SYS_BOARD
 	default "som60"
@@ -7,20 +7,13 @@ config SYS_VENDOR
 	default "summit"
 
 config SYS_CONFIG_NAME
-	default "ig60" if TARGET_IG60
 	default "som60" if TARGET_SOM60
 	default "wb50n" if TARGET_WB50N
-	default "wb50n_sysd" if TARGET_WB50N_SYSD
-
-config TARGET_WB50N_ALL
-	bool
-	default y
-	depends on TARGET_WB50N || TARGET_WB50N_SYSD
 
 config SYS_EEPROM_SETUP
 	bool "Run-time EEPROM based Module Configuration"
 	default y
-	depends on TARGET_SOM60 || TARGET_IG60
+	depends on TARGET_SOM60
 	select DM_I2C
 	select SYS_I2C_AT91
 	select I2C_EEPROM

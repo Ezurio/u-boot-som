@@ -179,7 +179,6 @@ static int __maybe_unused read_mac_eeprom(u8 *mac0, u8 *mac1)
 		0 : -ERANGE;
 
 read_dvk:
-#ifndef CONFIG_TARGET_IG60
 	ret = mac_nvmem_read(mac1, "mac-address-dvk");
 	if (ret)
 		return ret;
@@ -188,7 +187,6 @@ read_dvk:
 		return -ERANGE;
 
 	mac_calc_inc(mac1, mac0, 1);
-#endif
 
 	return ret;
 }
