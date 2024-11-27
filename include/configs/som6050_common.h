@@ -41,23 +41,23 @@
 /* our CLE is AD22 */
 #define CFG_SYS_NAND_MASK_CLE           (1 << 22)
 
-#define DEFAULT_ENV_SETTINGS \
-	"autoload=no\0" \
-	"autostart=no\0" \
-	"cdc_connect_timeout=15\0" \
-	"version=" PLAIN_VERSION "\0"
-
 #ifdef CONFIG_ENV_WRITEABLE_LIST
-#ifdef CONFIG_NET_CMD
-#define CFG_ENV_FLAGS_LIST_STATIC "bootside:sw,rescueside:sw,ethaddr:mw,eth1addr:mw,fips:dw,fips_wifi:dw,version:sw"
+#ifdef CONFIG_BOOTCOUNT_ENV
+#define CFG_ENV_FLAGS_LIST_BOOTCOUNT \
+	"bootcount:dw,bootlimit:dw,upgrade_available:dw,"
 #else
-#define CFG_ENV_FLAGS_LIST_STATIC "bootside:sw,rescueside:sw,ethaddr:sw,eth1addr:sw,fips:dw,fips_wifi:dw,version:sw"
-#endif
+#define CFG_ENV_FLAGS_LIST_BOOTCOUNT ""
 #endif
 
-#ifndef __ASSEMBLY__
-/* Define hook for custom board initialization */
-void som60_custom_hw_init(void);
+#ifdef CONFIG_NET_CMD
+#define CFG_ENV_FLAGS_LIST_NET "ethaddr:mw,eth1addr:mw,"
+#else
+#define CFG_ENV_FLAGS_LIST_NET "ethaddr:sw,eth1addr:sw,"
+#endif
+
+#define CFG_ENV_FLAGS_LIST_STATIC \
+	CFG_ENV_FLAGS_LIST_BOOTCOUNT CFG_ENV_FLAGS_LIST_NET \
+	"bootside:sw,rescueside:sw,fips:dw,fips_wifi:dw,version:sw"
 #endif
 
 #endif

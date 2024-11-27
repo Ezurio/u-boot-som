@@ -62,7 +62,7 @@ typedef struct {
 } ram_config_t;
 
 static const ram_config_t ram_configs[] = {
-#if defined(CONFIG_TARGET_WB50N_ALL)
+#if defined(CONFIG_TARGET_WB50N)
 	[MT46H16M32LF] = {
 		.name = "W949D2DB",
 		.type = RAM_TYPE_LPDDR1,
@@ -323,10 +323,12 @@ int board_late_init(void)
 
 	if ((gd->flags & GD_FLG_ENV_DEFAULT) || save_env) {
 		puts("Saving default environment...\n");
+		env_save();
+#ifdef CONFIG_SYS_REDUNDAND_ENVIRONMENT		
 		/* Save default environment twice to populate both
 		   primary and redundant environment blocks */
 		env_save();
-		env_save();
+#endif
 	}
 
 #ifdef CONFIG_USB_ETHER
@@ -334,10 +336,6 @@ int board_late_init(void)
 #endif
 
 	return 0;
-}
-
-void __weak som60_custom_hw_init(void)
-{
 }
 
 int board_init(void)
@@ -352,15 +350,13 @@ int board_init(void)
 	at91_set_pio_output(AT91_PIO_PORTE, 14, 1);
 #endif
 
-	som60_custom_hw_init();
-
 	return 0;
 }
 
 void board_quiesce_devices(void)
 {
 #ifdef CONFIG_MTD_RAW_NAND
-#if !defined(CONFIG_TARGET_WB50N_ALL)
+#if !defined(CONFIG_TARGET_WB50N)
 	/* Activate Flash Write Protect discrete,
 	 * so that flash enter standby if not used in kernel */
 	at91_set_pio_output(AT91_PIO_PORTE, 14, 0);
@@ -406,7 +402,7 @@ int ft_board_setup(void *blob, struct bd_info *bd)
 	fdt_fixup_mtdparts(blob, nodes, ARRAY_SIZE(nodes));
 #endif
 
-#if defined(CONFIG_TARGET_WB50N_ALL)
+#if defined(CONFIG_TARGET_WB50N)
 	dts_set_mac(blob, "/ahb/apb/ethernet@f802c000", "ethaddr");
 #else
 	dts_set_mac(blob, "/ahb/apb/ethernet@f0028000", "ethaddr");
@@ -423,7 +419,7 @@ int is_micron(void);
 
 static int board_hw_id(void)
 {
-#if defined(CONFIG_TARGET_WB50N_ALL)
+#if defined(CONFIG_TARGET_WB50N)
 	return LEGACY_BOARD_HW_ID;
 #elif defined(CONFIG_SPL_SYS_EEPROM_SETUP)
 	int hw_id = board_hw_id_nvmem_read();
@@ -550,7 +546,7 @@ void spl_board_init(void)
 	/* Disable SMD to resolve power consumption */
 	at91_disable_smd_clock();
 
-#if defined(CONFIG_TARGET_WB50N_ALL)
+#if defined(CONFIG_TARGET_WB50N)
 	/* Disable WB50n Wi-Fi Radio */
 	at91_set_pio_output(AT91_PIO_PORTE, 3, 0);
 #endif
