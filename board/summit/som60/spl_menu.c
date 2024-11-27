@@ -7,6 +7,7 @@
 #include <asm/global_data.h>
 #include <wdt.h>
 #include <linux/ctype.h>
+#include <linux/errno.h>
 
 #include <som60_eeprom.h>
 
@@ -133,6 +134,7 @@ void spl_display_print(void)
 			read_show_mac(true);
 			break;
 		case 'a':
+			wdt_stop_all();
 			return;
 		default:
 			puts("Unknown option ");
