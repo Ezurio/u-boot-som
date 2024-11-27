@@ -37,38 +37,38 @@
 
 				mmc0 {
 					mmc0_dat4_7 {
-						/delete-node/ u-boot,dm-pre-reloc;
+						/delete-property/ bootph-all;
 					};
 				};
 
 				mmc1 {
-					/delete-property/ u-boot,dm-pre-reloc;
+					/delete-property/ bootph-all;
 					mmc1_clk_cmd_dat0 {
-						/delete-property/ u-boot,dm-pre-reloc;
+						/delete-property/ bootph-all;
 					};
 
 					mmc1_dat1_3 {
-						/delete-property/ u-boot,dm-pre-reloc;
+						/delete-property/ bootph-all;
 					};
 				};
 
 				spi0 {
-					/delete-property/ u-boot,dm-pre-reloc;
+					/delete-property/ bootph-all;
 					spi0-0 {
-						/delete-property/ u-boot,dm-pre-reloc;
+						/delete-property/ bootph-all;
 					};
 				};
 
 				spi1 {
-					/delete-property/ u-boot,dm-pre-reloc;
+					/delete-property/ bootph-all;
 					spi1-0 {
-						/delete-property/ u-boot,dm-pre-reloc;
+						/delete-property/ bootph-all;
 					};
 				};
 			};
 /*
 			sha@f8034000 {
-				u-boot,dm-pre-reloc;
+				bootph-all;
 			};
 */
 			watchdog@fffffe40 {
@@ -178,7 +178,7 @@
 };
 /*
 &sha_clk {
-	u-boot,dm-pre-reloc;
+	bootph-all;
 };
 */
 &mci1_clk {
