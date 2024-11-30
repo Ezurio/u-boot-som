@@ -1038,6 +1038,13 @@ int image_locate_script(void *buf, int size, const char *fit_uname,
 								 noffset,
 								 FIT_SCRIPT_PROP,
 								 IH_PHASE_NONE);
+#if defined(CONFIG_TARGET_SOM60) || defined(CONFIG_TARGET_WB50N)
+				if (noffset < 0)
+					noffset = fit_conf_get_prop_node(fit_hdr,
+									noffset,
+									FIT_LOADABLE_PROP,
+									IH_PHASE_NONE);
+#endif
 				if (noffset < 0) {
 					if (!confname)
 						goto fallback;
