@@ -1618,7 +1618,7 @@ U_BOOT_DRIVER(at91_udc) = {
 	.id		= UCLASS_USB_GADGET_GENERIC,
 	.of_match	= at91_udc_ids,
 	.probe		= at91_udc_usb_probe,
-	.ops 		= &usba_gadget_ops,
+	.ops 		= &at91_udc_gadget_ops,
 	.remove		= at91_udc_usb_remove,
 	.plat_auto	= sizeof(struct usb_plat),
 };
