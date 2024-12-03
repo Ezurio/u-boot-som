@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2024 Ezurio
  */
-#include <common.h>
+#include <config.h>
 #include <asm/io.h>
 #include <asm/arch/clk.h>
 #include <asm/arch/sama5d3_smc.h>

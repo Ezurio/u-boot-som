@@ -3,7 +3,7 @@
  * Copyright (C) 2022 Ezurio
  */
 
-#include <common.h>
+#include <config.h>
 #include <asm/global_data.h>
 #include <wdt.h>
 #include <linux/ctype.h>

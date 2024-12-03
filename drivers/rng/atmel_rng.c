@@ -3,7 +3,7 @@
  * Copyright (c) 2023 Boris Krasnovskiy <boris.krasnovskiy@ezurio.com>
  */
 
-#include <common.h>
+#include <config.h>
 #include <clk.h>
 #include <dm.h>
 #include <rng.h>

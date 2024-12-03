@@ -3,7 +3,7 @@
  * Copyright (C) 2022 Ezurio
  */
 
-#include <common.h>
+#include <config.h>
 #include <command.h>
 #include <dm/uclass.h>
 #include <nvmem.h>

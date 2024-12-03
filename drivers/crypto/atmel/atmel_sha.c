@@ -3,7 +3,7 @@
  * Copyright (c) 2019 Boris Krasnovskiy <boris.krasnovskiy@ezurio.com>
  */
 
-#include <common.h>
+#include <config.h>
 #include <dm.h>
 #include <malloc.h>
 #include <watchdog.h>

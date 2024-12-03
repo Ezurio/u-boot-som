@@ -1452,62 +1452,6 @@ static const struct at91_udc_caps at91sam9261_udc_caps = {
 };
 #endif
 
-int dm_usb_gadget_handle_interrupts(struct udevice *dev)
-{
-	struct at91_udc *udc = controller;
-
-	return at91_udc_irq(udc);
-}
-
-#if ! CONFIG_IS_ENABLED(DM_USB_GADGET)
-
-int usb_gadget_register_driver(struct usb_gadget_driver *driver)
-{
-	struct at91_udc *udc = controller;
-	int ret;
-
-	if (!driver || !driver->bind || !driver->setup) {
-		printf("bad paramter\n");
-		return -EINVAL;
-	}
-
-	if (udc->driver) {
-		printf("UDC already has a gadget driver\n");
-		return -EBUSY;
-	}
-
-	at91_start(&udc->gadget, driver);
-
-	udc->driver = driver;
-
-	ret = driver->bind(&udc->gadget);
-	if (ret) {
-		pr_err("driver->bind() returned %d\n", ret);
-		udc->driver = NULL;
-	}
-
-	return ret;
-}
-
-int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
-{
-	struct at91_udc *udc = controller;
-
-	if (!driver || !driver->unbind || !driver->disconnect) {
-		pr_err("bad paramter\n");
-		return -EINVAL;
-	}
-
-	driver->disconnect(&udc->gadget);
-	driver->unbind(&udc->gadget);
-	udc->driver = NULL;
-
-	at91_stop(&udc->gadget);
-
-	return 0;
-}
-#endif
-
 int at91_udc_probe(struct at91_udc_data *pdata)
 {
 	struct at91_udc	*udc;
@@ -1571,10 +1515,76 @@ int at91_udc_probe(struct at91_udc_data *pdata)
 	return 0;
 }
 
-#if CONFIG_IS_ENABLED(DM_USB_GADGET)
+#if ! CONFIG_IS_ENABLED(DM_USB_GADGET)
+
+int dm_usb_gadget_handle_interrupts(struct udevice *dev)
+{
+	struct at91_udc *udc = controller;
+
+	return at91_udc_irq(udc);
+}
+
+int usb_gadget_register_driver(struct usb_gadget_driver *driver)
+{
+	struct at91_udc *udc = controller;
+	int ret;
+
+	if (!driver || !driver->bind || !driver->setup) {
+		printf("bad paramter\n");
+		return -EINVAL;
+	}
+
+	if (udc->driver) {
+		printf("UDC already has a gadget driver\n");
+		return -EBUSY;
+	}
+
+	at91_start(&udc->gadget, driver);
+
+	udc->driver = driver;
+
+	ret = driver->bind(&udc->gadget);
+	if (ret) {
+		pr_err("driver->bind() returned %d\n", ret);
+		udc->driver = NULL;
+	}
+
+	return ret;
+}
+
+int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
+{
+	struct at91_udc *udc = controller;
+
+	if (!driver || !driver->unbind || !driver->disconnect) {
+		pr_err("bad paramter\n");
+		return -EINVAL;
+	}
+
+	driver->disconnect(&udc->gadget);
+	driver->unbind(&udc->gadget);
+	udc->driver = NULL;
+
+	at91_stop(&udc->gadget);
+
+	return 0;
+}
+
+#else
 
 static struct at91_udc_data udc_data = {
 	.baseaddr	= ATMEL_BASE_UDP0,
+};
+
+static int at91_udc_gadget_handle_interrupts(struct udevice *dev)
+{
+	struct at91_udc *udc = controller;
+
+	return at91_udc_irq(udc);
+}
+
+static const struct usb_gadget_generic_ops at91_udc_gadget_ops = {
+	.handle_interrupts	= at91_udc_gadget_handle_interrupts,
 };
 
 static int at91_udc_usb_probe(struct udevice *dev)
@@ -1608,6 +1618,7 @@ U_BOOT_DRIVER(at91_udc) = {
 	.id		= UCLASS_USB_GADGET_GENERIC,
 	.of_match	= at91_udc_ids,
 	.probe		= at91_udc_usb_probe,
+	.ops 		= &usba_gadget_ops,
 	.remove		= at91_udc_usb_remove,
 	.plat_auto	= sizeof(struct usb_plat),
 };

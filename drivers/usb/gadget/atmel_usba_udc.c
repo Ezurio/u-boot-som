@@ -1217,6 +1217,46 @@ static int atmel_usba_stop(struct usba_udc *udc)
 	return 0;
 }
 
+static struct usba_ep *usba_udc_pdata(struct usba_platform_data *pdata,
+				      struct usba_udc *udc)
+{
+	struct usba_ep *eps;
+	int i;
+
+	eps = malloc(sizeof(struct usba_ep) * pdata->num_ep);
+	if (!eps) {
+		pr_err("failed to alloc eps\n");
+		return NULL;
+	}
+
+	udc->gadget.ep0 = &eps[0].ep;
+
+	INIT_LIST_HEAD(&udc->gadget.ep_list);
+	INIT_LIST_HEAD(&eps[0].ep.ep_list);
+
+	for (i = 0; i < pdata->num_ep; i++) {
+		struct usba_ep *ep = &eps[i];
+
+		ep->ep_regs = udc->regs + USBA_EPT_BASE(i);
+		ep->dma_regs = udc->regs + USBA_DMA_BASE(i);
+		ep->fifo = udc->fifo + USBA_FIFO_BASE(i);
+		ep->ep.ops = &usba_ep_ops;
+		ep->ep.name = pdata->ep[i].name;
+		ep->ep.maxpacket = pdata->ep[i].fifo_size;
+		ep->fifo_size = ep->ep.maxpacket;
+		ep->udc = udc;
+		INIT_LIST_HEAD(&ep->queue);
+		ep->nr_banks = pdata->ep[i].nr_banks;
+		ep->index = pdata->ep[i].index;
+		ep->can_dma = pdata->ep[i].can_dma;
+		ep->can_isoc = pdata->ep[i].can_isoc;
+		if (i)
+			list_add_tail(&ep->ep.ep_list, &udc->gadget.ep_list);
+	};
+
+	return eps;
+}
+
 static struct usba_udc controller = {
 	.regs = (unsigned *)ATMEL_BASE_UDPHS,
 	.fifo = (unsigned *)ATMEL_BASE_UDPHS_FIFO,
@@ -1229,14 +1269,14 @@ static struct usba_udc controller = {
 	},
 };
 
+#if ! CONFIG_IS_ENABLED(DM_USB_GADGET)
+
 int dm_usb_gadget_handle_interrupts(struct udevice *dev)
 {
 	struct usba_udc *udc = &controller;
 
 	return usba_udc_irq(udc);
 }
-
-#if ! CONFIG_IS_ENABLED(DM_USB_GADGET)
 
 int usb_gadget_register_driver(struct usb_gadget_driver *driver)
 {
@@ -1284,7 +1324,16 @@ int usb_gadget_unregister_driver(struct usb_gadget_driver *driver)
 	return 0;
 }
 
-#else /* !CONFIG_IS_ENABLED(DM_USB_GADGET) */
+int usba_udc_probe(struct usba_platform_data *pdata)
+{
+	struct usba_udc *udc = &controller;
+
+	udc->usba_ep = usba_udc_pdata(pdata, udc);
+
+	return 0;
+}
+
+#else
 
 static int usba_gadget_start(struct usb_gadget *g,
 			     struct usb_gadget_driver *driver)
@@ -1333,62 +1382,6 @@ static int usba_gadget_stop(struct usb_gadget *g)
 
 	return 0;
 }
-#endif
-
-static struct usba_ep *usba_udc_pdata(struct usba_platform_data *pdata,
-				      struct usba_udc *udc)
-{
-	struct usba_ep *eps;
-	int i;
-
-	eps = malloc(sizeof(struct usba_ep) * pdata->num_ep);
-	if (!eps) {
-		pr_err("failed to alloc eps\n");
-		return NULL;
-	}
-
-	udc->gadget.ep0 = &eps[0].ep;
-
-	INIT_LIST_HEAD(&udc->gadget.ep_list);
-	INIT_LIST_HEAD(&eps[0].ep.ep_list);
-
-	for (i = 0; i < pdata->num_ep; i++) {
-		struct usba_ep *ep = &eps[i];
-
-		ep->ep_regs = udc->regs + USBA_EPT_BASE(i);
-		ep->dma_regs = udc->regs + USBA_DMA_BASE(i);
-		ep->fifo = udc->fifo + USBA_FIFO_BASE(i);
-		ep->ep.ops = &usba_ep_ops;
-		ep->ep.name = pdata->ep[i].name;
-		ep->ep.maxpacket = pdata->ep[i].fifo_size;
-		ep->fifo_size = ep->ep.maxpacket;
-		ep->udc = udc;
-		INIT_LIST_HEAD(&ep->queue);
-		ep->nr_banks = pdata->ep[i].nr_banks;
-		ep->index = pdata->ep[i].index;
-		ep->can_dma = pdata->ep[i].can_dma;
-		ep->can_isoc = pdata->ep[i].can_isoc;
-		if (i)
-			list_add_tail(&ep->ep.ep_list, &udc->gadget.ep_list);
-	};
-
-	return eps;
-}
-
-#if ! CONFIG_IS_ENABLED(DM_USB_GADGET)
-
-int usba_udc_probe(struct usba_platform_data *pdata)
-{
-	struct usba_udc *udc;
-
-	udc = &controller;
-
-	udc->usba_ep = usba_udc_pdata(pdata, udc);
-
-	return 0;
-}
-
-#else
 
 static int usba_gadget_probe(struct udevice *dev)
 {
@@ -1413,6 +1406,17 @@ static int usba_gadget_remove(struct udevice *dev)
 	return 0;
 }
 
+static int usba_gadget_handle_interrupts(struct udevice *dev)
+{
+	struct usba_udc *udc = &controller;
+
+	return usba_udc_irq(udc);
+}
+
+static const struct usb_gadget_generic_ops usba_gadget_ops = {
+	.handle_interrupts	= usba_gadget_handle_interrupts,
+};
+
 static const struct udevice_id usba_gadget_ids[] = {
 	{ .compatible = "atmel,at91sam9g45-udc" },
 	{ .compatible = "atmel,sama5d3-udc" },
@@ -1423,6 +1427,7 @@ U_BOOT_DRIVER(usb_usba_udc) = {
 	.name		= "atmel-usba_udc",
 	.id		= UCLASS_USB_GADGET_GENERIC,
 	.of_match	= usba_gadget_ids,
+	.ops 		= &usba_gadget_ops,
 	.probe		= usba_gadget_probe,
 	.remove		= usba_gadget_remove,
 	.plat_auto	= sizeof(struct usb_plat),

@@ -3,7 +3,7 @@
  * Copyright (C) 2020 Ezurio
  */
 
-#include <common.h>
+#include <config.h>
 #include <init.h>
 #include <env.h>
 #include <net.h>
