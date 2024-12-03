@@ -336,15 +336,9 @@ config TARGET_WB50N
 	select BOARD_LATE_INIT
 	select SAMA5D3
 	select OF_BOARD_SETUP
-
-config TARGET_WB50N_SYSD
-	bool "Support Ezurio WB50N SYSD"
-	select BOARD_LATE_INIT
-	select SAMA5D3
-	select OF_BOARD_SETUP
 	select SUPPORT_SPL
-	select SPL_MISC
-	select SPL_DRIVERS_MISC
+	select SPL_MISC if SPL
+	select SPL_DRIVERS_MISC if SPL
 
 config TARGET_SOM60
 	bool "Support Ezurio SOM60"
@@ -352,15 +346,6 @@ config TARGET_SOM60
 	select SAMA5D3
 	select OF_BOARD_SETUP
 	select FDT_FIXUP_PARTITIONS
-	select SUPPORT_SPL
-	select SPL_MISC
-	select SPL_DRIVERS_MISC
-
-config TARGET_IG60
-	bool "Support Ezurio IG60"
-	select BOARD_LATE_INIT
-	select SAMA5D3
-	select OF_BOARD_SETUP
 	select SUPPORT_SPL
 	select SPL_MISC
 	select SPL_DRIVERS_MISC
