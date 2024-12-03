@@ -5,7 +5,7 @@
  * SPDX-License-Identifier:	LicenseRef-Ezurio-Clause
  */
 
-#include <common.h>
+#include <config.h>
 #include <console.h>
 #include <errno.h>
 #include <linux/delay.h>
