@@ -1814,7 +1814,7 @@ quiet_cmd_gen_envp = ENVP    $@
 		rm -f $@; \
 		touch $@ ; \
 	fi
-include/generated/env.in: include/generated/env.txt
+include/generated/env.in: include/generated/env.txt $(version_h)
 	$(call cmd,gen_envp)
 
 # Regenerate the environment if it changes
