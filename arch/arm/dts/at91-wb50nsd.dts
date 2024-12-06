@@ -10,6 +10,7 @@
 #include "at91-wb50n.dtsi"
 
 &mmc0 {
+	bootph-all;
 	status = "okay";
 };
 
