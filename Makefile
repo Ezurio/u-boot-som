@@ -1841,7 +1841,7 @@ quiet_cmd_gen_envp = ENVP    $@
 	if [ -s "$(ENV_FILE)" ]; then \
 		$(CPP) -P $(cpp_flags) -x assembler-with-cpp -undef \
 			-D__ASSEMBLY__ \
-			-D__UBOOT_CONFIG__ \
+			-D__UBOOT_CONFIG__ -DUBOOTRELEASE=$(UBOOTRELEASE) \
 			-I . -I include -I $(srctree)/include \
 			-include linux/kconfig.h -include include/config.h \
 			-I$(srctree)/arch/$(ARCH)/include \
@@ -1850,7 +1850,7 @@ quiet_cmd_gen_envp = ENVP    $@
 		rm -f $@; \
 		touch $@ ; \
 	fi
-include/generated/env.in: include/generated/env.txt $(version_h)
+include/generated/env.in: include/generated/env.txt
 	$(call cmd,gen_envp)
 
 # Regenerate the environment if it changes
@@ -2492,7 +2492,7 @@ cmd_genenv = \
 	sed -e '/^\s*$$/d' | \
 	sort -t '=' -k 1,1 -s -o $@
 
-u-boot-initial-env: scripts_basic $(env_h) $(version_h) FORCE
+u-boot-initial-env: scripts_basic $(env_h) FORCE
 	$(Q)$(MAKE) $(build)=tools $(objtree)/tools/printinitialenv
 	$(call if_changed,genenv)
 
