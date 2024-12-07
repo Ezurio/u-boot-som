@@ -8,7 +8,6 @@
 
 #include <linux/sizes.h>
 #include <asm/arch/sama5d3.h>
-#include <version.h>
 
 /* ARM asynchronous clock */
 #define CFG_SYS_AT91_SLOW_CLOCK         32768
