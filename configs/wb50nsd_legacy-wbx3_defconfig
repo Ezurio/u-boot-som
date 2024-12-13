@@ -11,6 +11,7 @@ CONFIG_CMD_FUSE=y
 CONFIG_CMD_DHCP=y
 CONFIG_CMD_HASH=y
 CONFIG_MTDPARTS_DEFAULT="mtdparts=atmel_nmtdparts=atmel_nand:128k(at91bs)ro,512k(u-boot)ro,128k(u-boot-env-a),128k(u-boot-env-b),5M(kernel-a),5M(kernel-b),48M(rootfs-a),48M(rootfs-b),21376k(user)"
+CONFIG_NET=y
 CONFIG_NET_RANDOM_ETHADDR=y
 CONFIG_AT91_FUSE=y
 CONFIG_SYS_NAND_U_BOOT_LOCATIONS=y
