@@ -7,10 +7,11 @@ CONFIG_DEFAULT_DEVICE_TREE="at91-wb50nsd"
 CONFIG_LOCALVERSION="-wb50nsd_legacy-wbx3"
 # CONFIG_AUTOBOOT is not set
 CONFIG_SYS_PROMPT="U-Boot> "
-CONFIG_NCMD_CRC32=y
+CONFIG_CMD_CRC32=y
 CONFIG_CMD_FUSE=y
 CONFIG_CMD_DHCP=y
 CONFIG_CMD_HASH=y
+CONFIG_CMD_MEMORY=y
 CONFIG_MTDPARTS_DEFAULT="mtdparts=atmel_nmtdparts=atmel_nand:128k(at91bs)ro,512k(u-boot)ro,128k(u-boot-env-a),128k(u-boot-env-b),5M(kernel-a),5M(kernel-b),48M(rootfs-a),48M(rootfs-b),21376k(user)"
 CONFIG_NET=y
 CONFIG_NET_RANDOM_ETHADDR=y
