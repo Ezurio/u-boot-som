@@ -23,6 +23,10 @@ config SYS_EEPROM_SETUP
 	select SPL_I2C_EEPROM if SUPPORT_SPL
 	select SPL_NVMEM if SUPPORT_SPL
 
+config SYS_GPIO_SIDE_SELECT
+	int "GPIO for side select"
+	default -1
+
 config SPL_SYS_MENU
 	bool "Board configuration SPL Menu"
 	depends on SUPPORT_SPL
