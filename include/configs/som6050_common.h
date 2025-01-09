@@ -54,9 +54,16 @@
 #define CFG_ENV_FLAGS_LIST_NET "ethaddr:sw,eth1addr:sw,"
 #endif
 
+#if CONFIG_SYS_GPIO_SIDE_SELECT > -1
+#define CFG_ENV_FLAGS_LIST_RESCUE "rescueside:sw,"
+#else
+#define CFG_ENV_FLAGS_LIST_RESCUE ""
+#endif
+
 #define CFG_ENV_FLAGS_LIST_STATIC \
 	CFG_ENV_FLAGS_LIST_BOOTCOUNT CFG_ENV_FLAGS_LIST_NET \
-	"bootside:sw,rescueside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw"
+	CFG_ENV_FLAGS_LIST_RESCUE \
+	"bootside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw"
 #endif
 
 #endif
