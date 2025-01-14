@@ -34,7 +34,7 @@ DECLARE_GLOBAL_DATA_PTR;
 #define LEGACY_BOARD_HW_ID  0x00000000
 #define MAX_BOARD_HW_ID     0x00000004
 
-int save_env = 0;
+int __section(".data") save_env = 0;
 
 #ifdef CONFIG_SPL_BUILD
 /* RAM IC's used on boards.  Note JSFBAB3YH3BBG_425 and JSFBAB3Y63GBG_425
