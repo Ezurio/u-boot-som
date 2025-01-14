@@ -324,11 +324,6 @@ int board_late_init(void)
 	if ((gd->flags & GD_FLG_ENV_DEFAULT) || save_env) {
 		puts("Saving default environment...\n");
 		env_save();
-#ifdef CONFIG_SYS_REDUNDAND_ENVIRONMENT		
-		/* Save default environment twice to populate both
-		   primary and redundant environment blocks */
-		env_save();
-#endif
 	}
 
 #ifdef CONFIG_USB_ETHER
