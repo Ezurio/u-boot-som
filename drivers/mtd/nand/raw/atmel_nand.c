@@ -120,46 +120,35 @@ static void __iomem *pmecc_get_alpha_to(struct atmel_nand_host *host)
 			table_size * sizeof(int16_t);
 }
 
-static void pmecc_data_free(struct atmel_nand_host *host)
-{
-	free(host->pmecc_partial_syn);
-	free(host->pmecc_si);
-	free(host->pmecc_lmu);
-	free(host->pmecc_smu);
-	free(host->pmecc_mu);
-	free(host->pmecc_dmu);
-	free(host->pmecc_delta);
-}
-
 static int pmecc_data_alloc(struct atmel_nand_host *host)
 {
 	const int cap = host->pmecc_corr_cap;
 	int size;
 
-	size = (2 * cap + 1) * sizeof(int16_t);
-	host->pmecc_partial_syn = malloc(size);
-	host->pmecc_si = malloc(size);
-	host->pmecc_lmu = malloc((cap + 1) * sizeof(int16_t));
-	host->pmecc_smu = malloc((cap + 2) * size);
+	/* Reserve space for partial_syn, si and smu */
+	size = ((2 * cap) + 1) * sizeof(u16) *
+		(2 + cap + 2);
+	/* Reserve space for lmu. */
+	size += (cap + 1) * sizeof(u16);
+	/* Reserve space for mu, dmu and delta. */
+	size = ALIGN(size, sizeof(s32));
+	size += (cap + 1) * sizeof(s32) * 3;
 
-	size = (cap + 1) * sizeof(int);
-	host->pmecc_mu = malloc(size);
-	host->pmecc_dmu = malloc(size);
-	host->pmecc_delta = malloc(size);
+	host->pmecc_partial_syn = kzalloc(size, GFP_KERNEL);
+	if (!host->pmecc_partial_syn)
+		return -ENOMEM;
 
-	if (host->pmecc_partial_syn &&
-			host->pmecc_si &&
-			host->pmecc_lmu &&
-			host->pmecc_smu &&
-			host->pmecc_mu &&
-			host->pmecc_dmu &&
-			host->pmecc_delta)
-		return 0;
+	host->pmecc_si = host->pmecc_partial_syn + ((2 * cap) + 1);
+	host->pmecc_lmu = host->pmecc_si + ((2 * cap) + 1);
+	host->pmecc_smu = host->pmecc_lmu + (cap + 1);
+	host->pmecc_mu = (s32 *)PTR_ALIGN(host->pmecc_smu +
+				    (((2 * cap) + 1) *
+				     (cap + 2)),
+				    sizeof(s32));
+	host->pmecc_dmu = host->pmecc_mu + cap + 1;
+	host->pmecc_delta = host->pmecc_dmu + cap + 1;
 
-	/* error happened */
-	pmecc_data_free(host);
-	return -ENOMEM;
-
+	return 0;
 }
 
 static void pmecc_gen_syndrome(struct mtd_info *mtd, int sector)
