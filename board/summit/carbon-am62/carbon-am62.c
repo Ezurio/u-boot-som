@@ -60,7 +60,7 @@ int dram_init(void)
 	return 0;
 }
 
-static int get_boot_side(int dev)
+static int __maybe_unused get_boot_side(int dev)
 {
 	struct mmc *mmc;
 
