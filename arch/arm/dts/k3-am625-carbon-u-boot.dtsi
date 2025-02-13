@@ -66,10 +66,6 @@
 	status = "okay";
 };
 
-&phy_gmii_sel {
-	bootph-all;
-};
-
 /* Required for USB DFU Boot */
 &usb0 {
 	dr_mode = "peripheral";
@@ -78,4 +74,28 @@
 /* Required for USB DFU Boot */
 &usb0_phy_ctrl {
 	bootph-all;
+};
+
+&main_gpio0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_default>,
+		<&main_wifi_en2_default>;
+
+	wifi_en {
+		gpio-hog;
+		gpios = <20 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	wifi_en2 {
+		gpio-hog;
+		gpios = <21 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
+		gpio-hog;
+		gpios = <22 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
 };
