@@ -141,7 +141,9 @@
 
 #ifdef CONFIG_TARGET_CARBON_AM62_A53
 
-#define SPL_AM625_CARBON_DTB "spl/dts/k3-am625-carbon.dtb"
+#ifndef SPL_AM625_CARBON_DTB
+#define SPL_AM625_CARBON_DTB "spl/dts/k3-am625-carbon-minimal.dtb"
+#endif
 #define AM625_CARBON_DTB "u-boot.dtb"
 
 &binman {

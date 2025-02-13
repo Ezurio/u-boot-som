@@ -1,0 +1,44 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2024 Ezurio LLC
+ *
+ */
+
+/dts-v1/;
+
+#include "k3-am625-carbon-som.dtsi"
+
+/ {
+	model = "Summit Carbon AM625 Minimal";
+	compatible = "summit,am62-min", "ti,am625";
+
+	vdd_mmc1: regulator-sdio-a {
+		bootph-all;
+		compatible = "regulator-fixed";
+		pinctrl-names = "default";
+		pinctrl-0 = <&main_vdd_sdio_a_gpio>;
+		regulator-name = "vdd_mmc1";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+		startup-delay-us = <250000>;
+		enable-active-high;
+		gpio = <&main_gpio0 18 GPIO_ACTIVE_HIGH>;
+	};
+};
+
+&main_pmx0 {
+	main_vdd_sdio_a_gpio: main-vd4d-sdio-a-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x0048, PIN_INPUT, 7) /* SDIO_A_PWR_EN (N25) GPMC0_AD3.GPIO0_18 */
+		>;
+	};
+};
+
+&sdhci1 { /* SDIO_A uSD / M.2_SDIO */
+	status = "okay";
+	vmmc-supply = <&vdd_mmc1>; /* SDIO_A_PWR_EN */
+	vqmmc-supply = <&vdd_sd>; /* VSEL_SD */
+	disable-wp; // MMC1_SDWP is just pulled down, so lets not use this.
+
+	ti,driver-strength-ohm = <50>;
+};
