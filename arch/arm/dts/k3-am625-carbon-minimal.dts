@@ -27,9 +27,9 @@
 };
 
 &main_pmx0 {
-	main_vdd_sdio_a_gpio: main-vd4d-sdio-a-default-pins {
+	main_vdd_sdio_a_gpio: main-vdd-sdio-a-gpio-default-pins {
 		pinctrl-single,pins = <
-			AM62X_IOPAD(0x0048, PIN_INPUT, 7) /* SDIO_A_PWR_EN (N25) GPMC0_AD3.GPIO0_18 */
+			AM62X_IOPAD(0x048, PIN_INPUT, 7) /* SDIO_A_PWR_EN (N25) GPMC0_AD3.GPIO0_18 */
 		>;
 	};
 };

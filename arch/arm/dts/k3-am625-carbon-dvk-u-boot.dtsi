@@ -62,10 +62,6 @@
 	bootph-all;
 };
 
-&cpsw_port2 {
-	status = "okay";
-};
-
 /* Required for USB DFU Boot */
 &usb0 {
 	dr_mode = "peripheral";
