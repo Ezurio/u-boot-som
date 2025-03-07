@@ -92,7 +92,7 @@ uint mmc_get_env_part(struct mmc *mmc)
 		return CONFIG_SYS_MMC_ENV_PART;
 
 	case BOOT_DEVICE_MMC1:
-		devno = bdev - BOOT_DEVICE_MMC1;
+		devno = 0;
 		return get_boot_side(devno);
 
 	default:
