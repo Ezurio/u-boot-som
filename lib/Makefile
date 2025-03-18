@@ -74,13 +74,9 @@ obj-$(CONFIG_ECDSA) += ecdsa/
 obj-$(CONFIG_$(SPL_)RSA) += rsa/
 obj-$(CONFIG_HASH) += hash-checksum.o
 obj-$(CONFIG_BLAKE2) += blake2/blake2b.o
-ifneq ($(CONFIG_$(SPL_)SHA_HW_ACCEL),y)
 obj-$(CONFIG_$(SPL_)SHA1) += sha1.o
 obj-$(CONFIG_$(SPL_)SHA256) += sha256.o
-endif
-ifneq ($(CONFIG_SHA512_HW_ACCEL),y)
 obj-$(CONFIG_$(SPL_)SHA512) += sha512.o
-endif
 
 ifneq ($(CONFIG_ATMEL_AES),y)
 obj-$(CONFIG_AES) += aes.o
