@@ -26,6 +26,9 @@
 	ahb {
 		apb {
 			pinctrl@fffff200 {
+				pinctrl-names = "default";
+				pinctrl-0 = <&pinctrl_led>;
+
 				board {
 					bootph-all;
 					pinctrl_mmc0_cd: mmc0_cd {
@@ -39,78 +42,24 @@
 						atmel,pins =
 							<AT91_PIOE 30 AT91_PERIPH_GPIO AT91_PINCTRL_NONE>;
 					};
+
+					pinctrl_led: led {
+						bootph-all;
+						atmel,pins =
+							<AT91_PIOA 29 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(0))>,
+							<AT91_PIOA 17 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(0))>,
+							<AT91_PIOA 13 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA 15 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA 18 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA 25 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA  1 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA  6 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA 16 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA 27 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>,
+							<AT91_PIOA  3 AT91_PERIPH_GPIO (AT91_PINCTRL_OUTPUT | AT91_PINCTRL_OUTPUT_VAL(1))>;
+					};
 				};
 			};
-		};
-	};
-
-	status_leds {
-		compatible = "gpio-leds";
-
-		led-1 {
-			label = "ig60:red:power";
-			gpios = <&pioA 29 GPIO_ACTIVE_LOW>;
-			default-state = "on";
-		};
-
-		power_led_green: led-2 {
-			label = "ig60:green:power";
-			gpios = <&pioA 17 GPIO_ACTIVE_LOW>;
-			default-state = "on";
-		};
-
-		led-3 {
-			label = "ig60:red:device";
-			gpios = <&pioA 13 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-4 {
-			label = "ig60:green:device";
-			gpios = <&pioA 15 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-5 {
-			label = "ig60:red:storage";
-			gpios = <&pioA 18 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-6 {
-			label = "ig60:green:iot";
-			gpios = <&pioA 25 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-7 {
-			label = "ig60:red:signal1";
-			gpios = <&pioA 1 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-8 {
-			label = "ig60:green:signal1";
-			gpios = <&pioA 6 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-9 {
-			label = "ig60:green:signal2";
-			gpios = <&pioA 16 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-10 {
-			label = "ig60:green:signal3";
-			gpios = <&pioA 27 GPIO_ACTIVE_LOW>;
-			default-state = "off";
-		};
-
-		led-11 {
-			label = "ig60:green:signal4";
-			gpios = <&pioA 3 GPIO_ACTIVE_LOW>;
-			default-state = "off";
 		};
 	};
 };
