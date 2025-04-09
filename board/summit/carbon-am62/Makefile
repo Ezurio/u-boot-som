@@ -4,3 +4,5 @@
 #
 
 obj-y	+= carbon-am62.o
+obj-y	+= ../common/k3-common.o
+
