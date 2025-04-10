@@ -112,7 +112,6 @@ config FIT_RSASSA_PSS
 
 config FIT_CIPHER
 	bool "Enable ciphering data in a FIT uImages"
-	depends on DM
 	select AES
 	help
 	  Enable the feature of data ciphering/unciphering in the tool mkimage
@@ -220,8 +219,8 @@ config SPL_FIT_RSASSA_PSS
 
 config SPL_FIT_CIPHER
 	bool "Enable ciphering data in a FIT uImages in SPL"
-	depends on DM
-	select AES
+	depends on SPL_FIT
+	select SPL_AES
 	help
 	  Enable the feature of data ciphering/unciphering in the tool mkimage
 	  and in the u-boot support of the FIT image.

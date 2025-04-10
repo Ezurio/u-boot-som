@@ -11,6 +11,10 @@
 		tick-timer = &main_timer0;
 	};
 
+	memory@80000000 {
+		bootph-all;
+	};
+
 	panel_lvds: panel-lvds {
 		bootph-pre-ram;
 		compatible = "simple-panel";
@@ -18,6 +22,7 @@
 		width-mm = <217>;
 		height-mm = <136>;
 		data-mapping = "vesa-24";
+
 		panel-timing {
 				bootph-pre-ram;
 				clock-frequency = <150274>;

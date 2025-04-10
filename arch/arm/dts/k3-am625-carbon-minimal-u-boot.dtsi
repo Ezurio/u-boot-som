@@ -10,6 +10,10 @@
 	chosen {
 		tick-timer = &main_timer0;
 	};
+
+	memory@80000000 {
+		bootph-all;
+	};
 };
 
 &main_timer0 {

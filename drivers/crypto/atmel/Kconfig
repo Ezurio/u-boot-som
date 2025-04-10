@@ -23,6 +23,16 @@ config ATMEL_SHA
 
 if SPL
 
+config SPL_ATMEL_AES
+	bool "Atmel AES Engine in SPL"
+	depends on ARCH_AT91
+	depends on CPU_V7A || SAM9X60
+	depends on SPL_AES
+	default y
+	help
+	  Select this option to enable a driver for using the AES hardware
+	  engine in the Microchip/Atmel SoCs.
+
 config SPL_ATMEL_SHA
 	bool "Atmel Hash Engine in SPL"
 	depends on ARCH_AT91

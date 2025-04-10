@@ -3,6 +3,5 @@
 # Copyright 2024 Ezurio
 #
 
-obj-y	+= carbon-am62.o
-obj-y	+= ../common/k3-common.o
-
+obj-y	+= carbon-am62.o ../common/k3-common.o
+obj-y	+= ../../ti/common/k3-ddr.o

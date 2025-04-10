@@ -74,27 +74,28 @@ enum env_location env_get_location(enum env_operation op, int prio)
 		return ENVL_UNKNOWN;
 
 	switch (bdev) {
+#if CONFIG_IS_ENABLED(ENV_IS_IN_FAT)
 	case SD1_BOOT:
 	case SD2_BOOT:
 	case SD3_BOOT:
-		if (CONFIG_IS_ENABLED(ENV_IS_IN_FAT))
-			return ENVL_FAT;
-		else
-			return ENVL_NOWHERE;
+		return ENVL_FAT;
+#endif
 
+#if CONFIG_IS_ENABLED(ENV_IS_IN_MMC)
 	case MMC1_BOOT:
 	case MMC2_BOOT:
 	case MMC3_BOOT:
-		if (CONFIG_IS_ENABLED(ENV_IS_IN_MMC))
-			return ENVL_MMC;
+		return ENVL_MMC;
+#endif
 
+#if CONFIG_IS_ENABLED(ENV_IS_IN_NAND)
 	case NAND_BOOT:
-		if (CONFIG_IS_ENABLED(ENV_IS_IN_NAND))
-			return ENVL_NAND;
+		return ENVL_NAND;
+#endif
 
 	default:
 		return ENVL_NOWHERE;
-	};
+	}
 }
 
 void set_bootside(void)

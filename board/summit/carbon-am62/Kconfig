@@ -30,6 +30,4 @@ config SYS_CONFIG_NAME
 config SPL_LDSCRIPT
 	default "arch/arm/mach-omap2/u-boot-spl.lds"
 
-# source "board/ti/common/Kconfig"
-
 endif

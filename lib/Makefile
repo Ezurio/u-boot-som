@@ -18,10 +18,6 @@ obj-$(CONFIG_CMD_DHRYSTONE) += dhry/
 obj-$(CONFIG_ARCH_AT91) += at91/
 obj-$(CONFIG_OPTEE_LIB) += optee/
 
-ifneq ($(CONFIG_ATMEL_AES),y)
-obj-$(CONFIG_AES) += aes.o
-endif
-obj-$(CONFIG_AES) += aes/
 obj-$(CONFIG_$(PHASE_)BINMAN_FDT) += binman.o
 
 ifndef API_BUILD
@@ -59,6 +55,9 @@ obj-$(CONFIG_RBTREE)	+= rbtree.o
 obj-$(CONFIG_BITREVERSE) += bitrev.o
 obj-y += list_sort.o
 endif
+
+obj-$(CONFIG_$(PHASE_)AES) += aes.o
+obj-$(CONFIG_$(PHASE_)AES) += aes/
 
 obj-$(CONFIG_$(PHASE_)TPM) += tpm-common.o
 ifeq ($(CONFIG_$(PHASE_)TPM),y)

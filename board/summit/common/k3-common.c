@@ -42,9 +42,10 @@ int mmc_get_env_dev(void)
 	u32 bdev = get_boot_device();
 
 	switch (bdev) {
-	case BOOT_DEVICE_MMC:
-		return 0;
 	case BOOT_DEVICE_EMMC:
+		return 0;
+
+	case BOOT_DEVICE_MMC:
 		return 1;
 	}
 
@@ -80,23 +81,24 @@ enum env_location env_get_location(enum env_operation op, int prio)
 		return ENVL_UNKNOWN;
 
 	switch (bdev) {
+#if CONFIG_IS_ENABLED(ENV_IS_IN_FAT)
 	case BOOT_DEVICE_MMC:
-		if (CONFIG_IS_ENABLED(ENV_IS_IN_FAT))
-			return ENVL_FAT;
-		else
-			return ENVL_NOWHERE;
+		return ENVL_FAT;
+#endif
 
+#if CONFIG_IS_ENABLED(ENV_IS_IN_MMC)
 	case BOOT_DEVICE_EMMC:
-		if (CONFIG_IS_ENABLED(ENV_IS_IN_MMC))
-			return ENVL_MMC;
+		return ENVL_MMC;
+#endif
 
+#if CONFIG_IS_ENABLED(ENV_IS_IN_NAND)
 	case BOOT_DEVICE_GPMC_NAND:
-		if (CONFIG_IS_ENABLED(ENV_IS_IN_NAND))
-			return ENVL_NAND;
+		return ENVL_NAND;
+#endif
 
 	default:
 		return ENVL_NOWHERE;
-	};
+	}
 }
 
 void set_bootside(void)

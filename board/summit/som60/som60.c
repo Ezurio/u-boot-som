@@ -660,7 +660,7 @@ void mem_init_lpddr1(const struct atmel_mpddrc_config *mpddr_value)
 	configure_ddrcfg_input_buffers(false);
 }
 
-void mem_init(void)
+void at91_mem_init(void)
 {
 	const ram_config_t* ram_config;
 

@@ -2216,14 +2216,14 @@ int fit_image_load(struct bootm_headers *images, ulong addr,
 	}
 
 	/* Decrypt data before uncompress/move */
-#if IMAGE_ENABLE_DECRYPT == 1
-	puts("   Decrypting Data ... ");
-	if (fit_image_uncipher(fit, noffset, &buf, &size)) {
-		puts("Error\n");
-		return -EACCES;
+	if (IMAGE_ENABLE_DECRYPT) {
+		puts("   Decrypting Data ... ");
+		if (fit_image_uncipher(fit, noffset, &buf, &size)) {
+			puts("Error\n");
+			return -EACCES;
+		}
+		puts("OK\n");
 	}
-	puts("OK\n");
-#endif
 
 	/* perform any post-processing on the image data */
 	if (!tools_build() && IS_ENABLED(CONFIG_FIT_IMAGE_POST_PROCESS))
