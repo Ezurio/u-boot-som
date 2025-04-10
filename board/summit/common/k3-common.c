@@ -127,6 +127,10 @@ void set_bootside(void)
 		env_set("mmcdev", NULL);
 		env_set("boot_src", "nand");
 		side_str = env_get("bootside");
+		if (!side_str) {
+			side_str = "a";
+			env_set("bootside", side_str);
+		}
 		printf("Booting from NAND, side %s\n", side_str);
 		break;
 
