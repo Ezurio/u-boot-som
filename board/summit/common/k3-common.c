@@ -42,9 +42,9 @@ int mmc_get_env_dev(void)
 	u32 bdev = get_boot_device();
 
 	switch (bdev) {
-	case BOOT_DEVICE_MMC1:
+	case BOOT_DEVICE_MMC:
 		return 0;
-	case BOOT_DEVICE_MMC2:
+	case BOOT_DEVICE_EMMC:
 		return 1;
 	}
 
@@ -58,10 +58,10 @@ uint mmc_get_env_part(struct mmc *mmc)
 	int devno;
 
 	switch (bdev) {
-	case BOOT_DEVICE_MMC2:
+	case BOOT_DEVICE_MMC:
 		return CONFIG_SYS_MMC_ENV_PART;
 
-	case BOOT_DEVICE_MMC1:
+	case BOOT_DEVICE_EMMC:
 		devno = 0;
 		return get_boot_side(devno);
 
@@ -80,15 +80,19 @@ enum env_location env_get_location(enum env_operation op, int prio)
 		return ENVL_UNKNOWN;
 
 	switch (bdev) {
-	case BOOT_DEVICE_MMC2:
+	case BOOT_DEVICE_MMC:
 		if (CONFIG_IS_ENABLED(ENV_IS_IN_FAT))
 			return ENVL_FAT;
 		else
 			return ENVL_NOWHERE;
 
-	case BOOT_DEVICE_MMC1:
+	case BOOT_DEVICE_EMMC:
 		if (CONFIG_IS_ENABLED(ENV_IS_IN_MMC))
 			return ENVL_MMC;
+
+	case BOOT_DEVICE_GPMC_NAND:
+		if (CONFIG_IS_ENABLED(ENV_IS_IN_NAND))
+			return ENVL_NAND;
 
 	default:
 		return ENVL_NOWHERE;
@@ -99,6 +103,7 @@ void set_bootside(void)
 {
 	u32 bdev = get_boot_device();
 	int devno, side;
+	const char *side_str;
 
 	switch (bdev) {
 	case BOOT_DEVICE_MMC:
@@ -116,6 +121,12 @@ void set_bootside(void)
 		side = get_boot_side(devno);
 		env_set("bootside", side == 2 ? "b" : "a");
 		printf("Booting from eMMC, side %s\n", side == 2 ? "b" : "a");
+		break;
+
+	case BOOT_DEVICE_GPMC_NAND:
+		env_set("boot_src", "nand");
+		side_str = env_get("bootside");
+		printf("Booting from NAND, side %s\n", side_str);
 		break;
 
 	default:

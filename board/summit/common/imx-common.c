@@ -88,6 +88,10 @@ enum env_location env_get_location(enum env_operation op, int prio)
 		if (CONFIG_IS_ENABLED(ENV_IS_IN_MMC))
 			return ENVL_MMC;
 
+	case NAND_BOOT:
+		if (CONFIG_IS_ENABLED(ENV_IS_IN_NAND))
+			return ENVL_NAND;
+
 	default:
 		return ENVL_NOWHERE;
 	};
@@ -97,6 +101,7 @@ void set_bootside(void)
 {
 	enum boot_device bdev = get_boot_device();
 	int devno, side;
+	const char *side_str;
 
 	switch (bdev) {
 	case SD1_BOOT:
@@ -118,6 +123,12 @@ void set_bootside(void)
 		side = get_boot_side(devno);
 		env_set("bootside", side == 2 ? "b" : "a");
 		printf("Booting from eMMC, side %s\n", side == 2 ? "b" : "a");
+		break;
+
+	case NAND_BOOT:
+		env_set("boot_src", "nand");
+		side_str = env_get("bootside");
+		printf("Booting from NAND, side %s\n", side_str);
 		break;
 
 	default:
