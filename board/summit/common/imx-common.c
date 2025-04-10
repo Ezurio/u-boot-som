@@ -15,7 +15,7 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-static int __maybe_unused get_boot_side(int dev)
+static int __maybe_unused emmc_get_boot_side(int dev)
 {
 	struct mmc *mmc;
 
@@ -57,7 +57,7 @@ uint mmc_get_env_part(struct mmc *mmc)
 	case MMC2_BOOT:
 	case MMC3_BOOT:
 		devno = bdev - MMC1_BOOT;
-		return get_boot_side(devno);
+		return emmc_get_boot_side(devno);
 
 	default:
 		return 0;
@@ -120,12 +120,13 @@ void set_bootside(void)
 		devno = bdev - MMC1_BOOT;
 		env_set_ulong("mmcdev", devno);
 		env_set("boot_src", "emmc");
-		side = get_boot_side(devno);
+		side = emmc_get_boot_side(devno);
 		env_set("bootside", side == 2 ? "b" : "a");
 		printf("Booting from eMMC, side %s\n", side == 2 ? "b" : "a");
 		break;
 
 	case NAND_BOOT:
+		env_set("mmcdev", NULL);
 		env_set("boot_src", "nand");
 		side_str = env_get("bootside");
 		printf("Booting from NAND, side %s\n", side_str);
