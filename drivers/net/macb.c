@@ -39,7 +39,6 @@
 #include <asm/io.h>
 #include <linux/dma-mapping.h>
 #include <asm/arch/clk.h>
-#include <asm/gpio.h>
 #include <linux/errno.h>
 
 #include "macb.h"
@@ -672,37 +671,6 @@ static int macb_phy_init(struct udevice *dev, const char *name)
 	int media, speed, duplex;
 	int ret;
 	int i;
-
-#if CONFIG_IS_ENABLED(DM_GPIO)
-	struct gpio_desc phy_reset_gpio;
-	uint32_t reset_delay;
-	uint32_t reset_post_delay;
-
-	if (!gpio_request_by_name(dev, "phy-reset-gpios", 0,
-				  &phy_reset_gpio, GPIOD_IS_OUT)) {
-		reset_delay = dev_read_u32_default(dev, "phy-reset-duration", 1);
-		if (reset_delay > 1000) {
-			printf("phy reset duration should be <= 1000ms\n");
-			/* property value wrong, use default value */
-			reset_delay = 1;
-		}
-
-		reset_post_delay = dev_read_u32_default(dev,
-							"phy-reset-post-delay",
-							0);
-		if (reset_post_delay > 1000) {
-			printf("phy reset post delay should be <= 1000ms\n");
-			/* property value wrong, use default value */
-			reset_post_delay = 0;
-		}
-
-		dm_gpio_set_value(&phy_reset_gpio, 1);
-		mdelay(reset_delay);
-		dm_gpio_set_value(&phy_reset_gpio, 0);
-		if (reset_post_delay)
-			mdelay(reset_post_delay);
-	}
-#endif
 
 	arch_get_mdio_control(name);
 	/* If port is not fixed -> setup PHY */
