@@ -668,7 +668,6 @@
 	};
 
 	ospi0_pins_default: ospi0-default-pins {
-		bootph-all;
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x000, PIN_OUTPUT, 0) /* (H24) OSPI0_CLK */
 			AM62X_IOPAD(0x02c, PIN_OUTPUT, 0) /* (F23) OSPI0_CSn0 */

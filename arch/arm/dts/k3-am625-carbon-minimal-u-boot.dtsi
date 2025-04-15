@@ -12,7 +12,7 @@
 	};
 
 	memory@80000000 {
-		bootph-all;
+		bootph-pre-ram;
 	};
 };
 
@@ -48,8 +48,14 @@
 };
 
 /* Required for USB DFU Boot */
+&usbss0 {
+	bootph-all;
+};
+
+/* Required for USB DFU Boot */
 &usb0 {
 	dr_mode = "peripheral";
+	bootph-all;
 };
 
 /* Required for USB DFU Boot */
