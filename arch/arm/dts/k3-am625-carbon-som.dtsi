@@ -154,6 +154,7 @@
 
 	vdd_sd: regulator-u3-ldo1 {
 		/* Output of U3 TPS6521920WRHBRQ1 VLDO1 */
+		bootph-all;
 		compatible = "regulator-gpio";
 		vin-supply = <&ldo1_reg>;
 		regulator-name = "vdd_sd_u3_vldo1";
@@ -632,18 +633,21 @@
 	};
 
 	main_bt_en_pins_default: main-bt-en-default-pins {
+		bootph-all;
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x058, PIN_INPUT, 7) /* W_DISABLE2# (R23) GPMC0_AD7.GPIO0_22 */
 		>;
 	};
 
 	main_bt_wake_pins_default: main-bt-wake-default-pins {
+		bootph-all;
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x0ac, PIN_INPUT_PULLUP, 7) /* BT_HOST_WAKE (L21) GPMC0_CSn1.GPIO0_42 */
 		>;
 	};
 
 	main_wifi_en_default: main-wifi-en-default-pins {
+		bootph-all;
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x050, PIN_INPUT, 7) /* W_DISABLE1# (P22) GPMC0_AD5.GPIO0_20 */
 		>;
