@@ -1,5 +1,6 @@
 config K3_LOAD_SYSFW
 	bool
+	select LIB_ELF
 
 config K3_OPP_LOW
 	depends on ARCH_K3 && K3_AVS0
