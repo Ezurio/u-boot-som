@@ -1,0 +1,148 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Common AM625 Carbon dts file for SPLs
+ * Copyright (C) 2024 Ezurio LLC
+ */
+
+#include "k3-am625-carbon-som-binman.dtsi"
+
+/ {
+	chosen {
+		tick-timer = &main_timer0;
+	};
+
+	memory@80000000 {
+		bootph-pre-ram;
+	};
+};
+
+&main_timer0 {
+	clock-frequency = <25000000>;
+};
+
+&main_bcdma {
+	reg = <0x00 0x485c0100 0x00 0x100>,
+	      <0x00 0x4c000000 0x00 0x20000>,
+	      <0x00 0x4a820000 0x00 0x20000>,
+	      <0x00 0x4aa40000 0x00 0x20000>,
+	      <0x00 0x4bc00000 0x00 0x100000>,
+	      <0x00 0x48600000 0x00 0x8000>,
+	      <0x00 0x484a4000 0x00 0x2000>,
+	      <0x00 0x484c2000 0x00 0x2000>;
+	reg-names = "gcfg", "bchanrt", "rchanrt", "tchanrt",
+		    "ringrt" , "cfg", "tchan", "rchan";
+};
+
+&main_pktdma {
+	reg = <0x00 0x485c0000 0x00 0x100>,
+	      <0x00 0x4a800000 0x00 0x20000>,
+	      <0x00 0x4aa00000 0x00 0x20000>,
+	      <0x00 0x4b800000 0x00 0x200000>,
+	      <0x00 0x485e0000 0x00 0x10000>,
+	      <0x00 0x484a0000 0x00 0x2000>,
+	      <0x00 0x484c0000 0x00 0x2000>,
+	      <0x00 0x48430000 0x00 0x1000>;
+	reg-names = "gcfg", "rchanrt", "tchanrt", "ringrt",
+		    "cfg", "tchan", "rchan", "rflow";
+	bootph-all;
+};
+
+#ifdef CONFIG_SPL_DFU
+/* Required for USB DFU Boot */
+&usbss0 {
+	bootph-all;
+};
+
+&usb0 {
+	dr_mode = "peripheral";
+	bootph-all;
+};
+
+&usb0_phy_ctrl {
+	bootph-all;
+};
+#endif
+
+&main_mmc0_pins_default {
+	bootph-all;
+};
+
+&main_mmc1_pins_default {
+	bootph-all;
+};
+
+&main_uart0_pins_default {
+	bootph-all;
+};
+
+&main_uart1_pins_default {
+	bootph-pre-ram;
+};
+
+&main_bt_en_pins_default {
+	bootph-all;
+};
+
+&main_wifi_en_default {
+	bootph-all;
+};
+
+&main_wifi_en2_default {
+	bootph-all;
+};
+
+&vdd_sd_pins_default {
+	bootph-all;
+};
+
+&vdd_sd {
+	bootph-all;
+};
+
+&main_uart0 {
+	bootph-all;
+};
+
+&wkup_uart0_pins_default {
+	bootph-pre-ram;
+};
+
+&sdhci0 {
+	bootph-all;
+};
+
+&sdhci1 {
+	bootph-all;
+};
+
+&wkup_uart0 {
+	bootph-pre-ram;
+};
+
+&main_gpio0 {
+	bootph-all;
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_default>,
+		<&main_wifi_en2_default>;
+
+	wifi_en {
+		bootph-pre-ram;
+		gpio-hog;
+		gpios = <20 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	wifi_en2 {
+		bootph-pre-ram;
+		gpio-hog;
+		gpios = <21 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
+		bootph-pre-ram;
+		gpio-hog;
+		gpios = <22 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+};
