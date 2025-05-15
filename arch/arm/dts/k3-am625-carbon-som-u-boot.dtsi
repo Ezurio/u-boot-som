@@ -111,10 +111,6 @@
 	bootph-all;
 };
 
-&sdhci1 {
-	bootph-all;
-};
-
 &wkup_uart0 {
 	bootph-pre-ram;
 };

@@ -8,9 +8,20 @@
 
 #include "k3-am625-carbon-som-u-boot.dtsi"
 
+&sdhci1 {
+	bootph-all;
+};
+
+&vdd_mmc1 {
+	bootph-all;
+};
+
+&main_vdd_sdio_a_gpio {
+	bootph-all;
+};
+
 / {
 	panel_lvds: panel-lvds {
-		bootph-pre-ram;
 		compatible = "simple-panel";
 		status= "okay";
 		width-mm = <217>;
@@ -18,7 +29,6 @@
 		data-mapping = "vesa-24";
 
 		panel-timing {
-				bootph-pre-ram;
 				clock-frequency = <150274>;
 				hactive = <1920>;
 				vactive = <1200>;
@@ -34,8 +44,6 @@
 };
 
 &dss {
-	clocks = <&k3_clks 186 6>,
-		 <&k3_clks 186 0>,
-		 <&k3_clks 186 2>;
+	clocks = <&k3_clks 186 6>, <&k3_clks 186 0>, <&k3_clks 186 2>;
 	ti,am65x-oldi-io-ctrl = <&dss_oldi_io_ctrl>;
 };
