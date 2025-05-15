@@ -13,7 +13,6 @@
 	compatible = "summit,am62-min", "ti,am625";
 
 	vdd_mmc1: regulator-sdio-a {
-		bootph-all;
 		compatible = "regulator-fixed";
 		pinctrl-names = "default";
 		pinctrl-0 = <&main_vdd_sdio_a_gpio>;
@@ -27,7 +26,6 @@
 
 &main_pmx0 {
 	main_vdd_sdio_a_gpio: main-vdd-sdio-a-gpio-default-pins {
-		bootph-all;
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x064, PIN_INPUT, 7) /* SDIO_A_PWR_EN (T25) GPMC0_AD10.GPIO0_25 */
 		>;
