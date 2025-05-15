@@ -20,10 +20,8 @@
 		regulator-name = "vdd_mmc1";
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
-		startup-delay-us = <250000>;
-		off-on-delay-us = <10000>;
 		enable-active-high;
-		gpio = <&main_gpio0 18 GPIO_ACTIVE_HIGH>;
+		gpio = <&main_gpio0 25 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -31,7 +29,7 @@
 	main_vdd_sdio_a_gpio: main-vdd-sdio-a-gpio-default-pins {
 		bootph-all;
 		pinctrl-single,pins = <
-			AM62X_IOPAD(0x048, PIN_INPUT, 7) /* SDIO_A_PWR_EN (N25) GPMC0_AD3.GPIO0_18 */
+			AM62X_IOPAD(0x064, PIN_INPUT, 7) /* SDIO_A_PWR_EN (T25) GPMC0_AD10.GPIO0_25 */
 		>;
 	};
 };
