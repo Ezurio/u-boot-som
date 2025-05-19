@@ -18,6 +18,23 @@ static void usage(void);
 #define MTD_DEV_START "/dev/mtd"
 #define MTD_SYSFS "/sys/class/mtd"
 
+static off_t get_sysfs_data_size(const char *path)
+{
+	FILE *file;
+	off_t res = 0;
+
+	file = fopen(path, "r");
+	if (!file)
+		return 0;
+
+	if (fscanf(file, "%ld", &res) != 1)
+		res = 0;
+
+	fclose(file);
+
+	return res;
+}
+
 static int is_ubi_devname(const char *devname)
 {
 	return !strncmp(devname, UBI_DEV_START, sizeof(UBI_DEV_START) - 1);
@@ -25,34 +42,11 @@ static int is_ubi_devname(const char *devname)
 
 static off_t get_ubi_data_size(const char *devname)
 {
-	FILE *file;
-	off_t res = 0;
-	char *type, path[256];
-
-	snprintf(path, sizeof(path), UBI_SYSFS "%s/type", devname + 4);
-	file = fopen(path, "r");
-	if (file) {
-		type = fgets(path, 20, file);
-		fclose(file);
-
-		if (!type)
-			return 0;
-
-		type[strcspn(type, "\n")] = 0;
-		 if(strcmp(type, "static"))
-			return 0;
-	}
+	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path), UBI_SYSFS "%s/data_bytes", devname + 4);
 
-	file = fopen(path, "r");
-	if (file) {
-		if (fscanf(file, "%ld", &res) != 1)
-			res = 0;
-		fclose(file);
-	}
-
-	return res;
+	return get_sysfs_data_size(path);
 }
 
 static int is_mtd_devname(const char *devname)
@@ -62,21 +56,13 @@ static int is_mtd_devname(const char *devname)
 
 static off_t get_mtd_data_size(const char *devname)
 {
-	FILE *file;
-	off_t res = 0;
-	char path[256];
+	char path[PATH_MAX];
 
 	snprintf(path, sizeof(path), MTD_SYSFS "%s/size", devname + 4);
 
-	file = fopen(path, "r");
-	if (file) {
-		if (fscanf(file, "%ld", &res) != 1)
-			res = 0;
-		fclose(file);
-	}
-
-	return res;
+	return get_sysfs_data_size(path);
 }
+
 /* parameters initialized by core will be used by the image type code */
 static struct image_tool_params params;
 
@@ -226,19 +212,6 @@ int main(int argc, char **argv)
 			get_ubi_data_size(params.imagefile) :
 			get_mtd_data_size(params.imagefile);
 		sbuf.st_mode = S_IFREG;
-
-		if (!sbuf.st_size) {
-			struct fdt_header fdt;
-
-			retval = read(ifd, &fdt, sizeof(fdt));
-				if (retval < sizeof(fdt) || fdt_magic(&fdt) != FDT_MAGIC) {
-				fprintf(stderr, "%s: Can't stat \"%s\"\n",
-					params.cmdname, params.imagefile);
-				exit(EXIT_FAILURE);
-			}
-			sbuf.st_size = fdt_totalsize(&fdt);
-			lseek(ifd, 0, SEEK_SET);
-		}
 	} else if (fstat(ifd, &sbuf) < 0) {
 		fprintf(stderr, "%s: Can't stat \"%s\": %s\n", params.cmdname,
 			params.imagefile, strerror(errno));
