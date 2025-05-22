@@ -83,11 +83,11 @@
 	bootph-all;
 };
 
-&main_wifi_en_default {
+&main_wifi_en_pins_default {
 	bootph-all;
 };
 
-&main_wifi_en2_default {
+&main_wifi_en2_pins_default {
 	bootph-all;
 };
 
@@ -118,8 +118,8 @@
 &main_gpio0 {
 	bootph-all;
 	pinctrl-names = "default";
-	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_default>,
-		<&main_wifi_en2_default>;
+	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_pins_default>,
+		<&main_wifi_en2_pins_default>;
 
 	wifi_en {
 		bootph-pre-ram;
