@@ -14,6 +14,7 @@
 
 &vdd_mmc1 {
 	bootph-all;
+	startup-delay-us = <5000>;
 };
 
 &main_vdd_sdio_a_gpio {
