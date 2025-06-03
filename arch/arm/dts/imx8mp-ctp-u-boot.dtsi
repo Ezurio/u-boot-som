@@ -69,14 +69,16 @@
 	bootph-all;
 };
 
+&reg_usdhc2_vmmc {
+	startup-delay-us = <5000>;
+};
+
 &usdhc2 {
-	bootph-pre-ram;
 	sd-uhs-sdr104;
 	sd-uhs-ddr50;
 };
 
 &usdhc3 {
-	bootph-pre-ram;
 	mmc-hs400-1_8v;
 	mmc-hs400-enhanced-strobe;
 };
