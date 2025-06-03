@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: (GPL-2.0-or-later OR MIT)
+// SPDX-License-Identifier: LicenseRef-Ezurio-Clause
 /*
- * Copyright 2025 Ezurio
+ * Copyright 2024 Ezurio
  */
 
 #include <dt-bindings/net/ti-dp83867.h>
@@ -11,7 +11,7 @@
 
 / {
 	model = "Summit i.MX8M Plus Common Test Platform board";
-	compatible = "lrd,imx8mp-ctp", "fsl,imx8mp";
+	compatible = "summit,imx8mp-ctp", "fsl,imx8mp";
 
 	chosen {
 		stdout-path = &uart2;
@@ -26,6 +26,7 @@
 	// M.2 E-key
  	reg_usdhc1_vmmc: regulator-usdhc1 {
 		compatible = "regulator-fixed";
+		status = "okay";
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_wifi_pmu>;
@@ -39,8 +40,9 @@
 	};
 
 	// Full-SD
-	reg_usdhc2_vmmc: regulator-usdhc2 {
+ 	reg_usdhc2_vmmc: regulator-usdhc2 {
 		compatible = "regulator-fixed";
+		status = "okay";
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
@@ -53,6 +55,12 @@
 		// gpio2.IO[19], ball AD28
 		gpio = <&gpio2 19 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
+
+		/*
+		 * LWB/LWB5/LWB5+ requires minimum 150ms after power-up until first access
+		 * Testing shows this isn't always sufficient
+		 */
+		startup-delay-us = <250000>;
 	};
 
 	radio_wake {
@@ -77,12 +85,6 @@
 		};
 	};
 
-	pcie0_refclk: pcie0-refclk {
-		compatible = "fixed-clock";
-		#clock-cells = <0>;
-		clock-frequency = <100000000>;
-	};
-
 	reg_usb0: regulator-usb0 {
 		compatible = "regulator-fixed";
 
@@ -90,8 +92,8 @@
 		pinctrl-0 = <&pinctrl_usb0_power>;
 
 		regulator-name = "USB1 Power";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
 
 		gpio = <&gpio4 20 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
@@ -186,7 +188,7 @@
 		interrupt-parent = <&gpio1>;
 		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 
-		pmic_reg: regulators {
+		regulators {
 			buck1: BUCK1 {
 				regulator-name = "BUCK1";
 				regulator-min-microvolt = <600000>;
@@ -346,6 +348,7 @@
 	pinctrl-0 = <&pinctrl_uart3>;
 	assigned-clocks = <&clk IMX8MP_CLK_UART3>;
 	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
+	status = "okay";
 };
 
 &usdhc1 {
@@ -377,6 +380,7 @@
 // ctp - eMMC
 &usdhc3 {
 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
+
 	pinctrl-0 = <&pinctrl_usdhc3>;
 	pinctrl-1 = <&pinctrl_usdhc3_100mhz>;
 	pinctrl-2 = <&pinctrl_usdhc3_200mhz>;
@@ -614,7 +618,6 @@
 		>;
 	};
 
-	// ctp - identical to Summit SOM, including GPIO RESET & INT pins
 	pinctrl_fec: fecgrp {
 		fsl,pins = <
 			MX8MP_IOMUXC_SAI1_RXD2__ENET1_MDC		0x00000002
@@ -631,13 +634,13 @@
 			MX8MP_IOMUXC_SAI1_TXD3__ENET1_RGMII_TD3		0x00000016
 			MX8MP_IOMUXC_SAI1_TXD4__ENET1_RGMII_TX_CTL	0x00000016
 			MX8MP_IOMUXC_SAI1_TXD5__ENET1_RGMII_TXC		0x00000016
-			MX8MP_IOMUXC_SAI1_RXD1__GPIO4_IO03		0x00000000
+			MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02		0x00000000
 		>;
 	};
 
 	pinctrl_fec_phy: fecphygrp {
 		fsl,pins = <
-			MX8MP_IOMUXC_SAI1_RXD0__GPIO4_IO02		0x000001C0
+			MX8MP_IOMUXC_SAI1_RXD1__GPIO4_IO03		0x000001C0
 		>;
 	};
 
@@ -689,29 +692,27 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_fec>;
 	phy-mode = "rgmii-id";
-	phy-handle = <&ethphy1>;
+	phy-handle = <&ethphy0>;
 	fsl,magic-packet;
 	status = "okay";
-
-	reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
-	reset-delay-us = <10>;
-	reset-post-delay-us = <300>;
 
 	mdio {
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		// ctp - boot strapped for PHY address=0
-		ethphy1: ethernet-phy@0 {
+		reset-gpios = <&gpio4 2 GPIO_ACTIVE_LOW>;
+		reset-delay-us = <150>;
+		reset-post-delay-us = <300>;
+
+		ethphy0: ethernet-phy@0 {
 			compatible = "ethernet-phy-ieee802.3-c22";
 			reg = <0>;
 
 			pinctrl-names = "default";
 			pinctrl-0 = <&pinctrl_fec_phy>;
 
-			// ctp - ENET0_nINT, SAI1_RXD1, AF10 (pinmux of gpio4, io3)
 			interrupt-parent = <&gpio4>;
-			interrupts = <3 IRQ_TYPE_EDGE_FALLING>;
+			interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 
 			ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
 			ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
@@ -744,15 +745,9 @@
 
 &usb3_phy0 {
 	vbus-supply = <&reg_usb0>;
-
-	fsl,phy-tx-vref-tune = <0xe>;
-	fsl,phy-tx-preemp-amp-tune = <3>;
-	fsl,phy-tx-vboost-level = <5>;
-	fsl,phy-comp-dis-tune = <7>;
-	fsl,pcs-tx-deemph-3p5db = <0x21>;
-	fsl,phy-pcs-tx-swing-full = <0x7f>;
-
 	status = "okay";
+	fsl,phy-tx-preemp-amp-tune = <3>;
+	fsl,phy-tx-vref-tune = <0xb>;
 };
 
 &usb3_0 {
@@ -761,18 +756,12 @@
 
 &usb_dwc3_0 {
 	dr_mode = "host";
-	status = "okay";
 };
 
 &usb3_phy1 {
-	fsl,phy-tx-vref-tune = <0xe>;
-	fsl,phy-tx-preemp-amp-tune = <3>;
-	fsl,phy-tx-vboost-level = <5>;
-	fsl,phy-comp-dis-tune = <7>;
-	fsl,pcs-tx-deemph-3p5db = <0x21>;
-	fsl,phy-pcs-tx-swing-full = <0x7f>;
-
 	status = "okay";
+	fsl,phy-tx-preemp-amp-tune = <3>;
+	fsl,phy-tx-vref-tune = <0xb>;
 };
 
 &usb3_1 {
@@ -781,5 +770,4 @@
 
 &usb_dwc3_1 {
 	dr_mode = "host";
-	status = "okay";
 };
