@@ -34,7 +34,7 @@
 
 #define CFG_ENV_FLAGS_LIST_STATIC \
 	CFG_ENV_FLAGS_LIST_BOOTCOUNT CFG_ENV_FLAGS_LIST_NET \
-	"bootside:sw,rescueside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw"
+	"bootside:sw,rescueside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw,regdomain:sw"
 #endif
 
 #endif /* __CONFIG_CARBON_AM62_H */
