@@ -21,13 +21,14 @@
 		regulator-max-microvolt = <3300000>;
 		enable-active-high;
 		gpio = <&main_gpio0 25 GPIO_ACTIVE_HIGH>;
+		startup-delay-us = <5000>;
 	};
 };
 
 &main_pmx0 {
 	main_vdd_sdio_a_gpio: main-vdd-sdio-a-gpio-default-pins {
 		pinctrl-single,pins = <
-			AM62X_IOPAD(0x064, PIN_INPUT, 7) /* SDIO_A_PWR_EN (T25) GPMC0_AD10.GPIO0_25 */
+			AM62X_IOPAD(0x064, PIN_INPUT_PULLUP, 7) /* SDIO_A_PWR_EN (T25) GPMC0_AD10.GPIO0_25 */
 		>;
 	};
 };
@@ -36,7 +37,7 @@
 	status = "okay";
 	vmmc-supply = <&vdd_mmc1>; /* SDIO_A_PWR_EN */
 	vqmmc-supply = <&vdd_sd>; /* VSEL_SD */
-	disable-wp; // MMC1_SDWP is just pulled down, so lets not use this.
+	disable-wp;
 
 	ti,driver-strength-ohm = <50>;
 };
