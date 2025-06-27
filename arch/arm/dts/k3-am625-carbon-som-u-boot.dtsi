@@ -75,6 +75,14 @@
 	bootph-all;
 };
 
+&main_mmc1_power_en_default {
+	bootph-all;
+};
+
+&vsel_mmc1_pins_default {
+	bootph-all;
+};
+
 &main_uart1_pins_default {
 	bootph-pre-ram;
 };
@@ -84,18 +92,6 @@
 };
 
 &main_wifi_en_pins_default {
-	bootph-all;
-};
-
-&main_wifi_en2_pins_default {
-	bootph-all;
-};
-
-&vdd_sd_pins_default {
-	bootph-all;
-};
-
-&vdd_sd {
 	bootph-all;
 };
 
@@ -111,6 +107,19 @@
 	bootph-all;
 };
 
+&sdhci1 {
+	bootph-all;
+};
+
+&vdd_mmc1 {
+	bootph-all;
+	startup-delay-us = <5000>;
+};
+
+&vsel_mmc1 {
+	bootph-all;
+};
+
 &wkup_uart0 {
 	bootph-pre-ram;
 };
@@ -118,20 +127,12 @@
 &main_gpio0 {
 	bootph-all;
 	pinctrl-names = "default";
-	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_pins_default>,
-		<&main_wifi_en2_pins_default>;
+	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_pins_default>;
 
 	wifi_en {
 		bootph-pre-ram;
 		gpio-hog;
 		gpios = <20 GPIO_ACTIVE_HIGH>;
-		output-low;
-	};
-
-	wifi_en2 {
-		bootph-pre-ram;
-		gpio-hog;
-		gpios = <21 GPIO_ACTIVE_HIGH>;
 		output-low;
 	};
 

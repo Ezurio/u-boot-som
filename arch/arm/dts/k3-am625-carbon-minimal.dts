@@ -11,33 +11,16 @@
 / {
 	model = "Summit Carbon AM625 Minimal";
 	compatible = "summit,am62-min", "ti,am625";
-
-	vdd_mmc1: regulator-sdio-a {
-		compatible = "regulator-fixed";
-		pinctrl-names = "default";
-		pinctrl-0 = <&main_vdd_sdio_a_gpio>;
-		regulator-name = "vdd_mmc1";
-		regulator-min-microvolt = <3300000>;
-		regulator-max-microvolt = <3300000>;
-		enable-active-high;
-		gpio = <&main_gpio0 25 GPIO_ACTIVE_HIGH>;
-		startup-delay-us = <5000>;
-	};
 };
 
-&main_pmx0 {
-	main_vdd_sdio_a_gpio: main-vdd-sdio-a-gpio-default-pins {
-		pinctrl-single,pins = <
-			AM62X_IOPAD(0x064, PIN_INPUT_PULLUP, 7) /* SDIO_A_PWR_EN (T25) GPMC0_AD10.GPIO0_25 */
-		>;
-	};
+&vsel_mmc1 {
+	status = "okay";
+};
+
+&vdd_mmc1 {
+	status = "okay";
 };
 
 &sdhci1 { /* SDIO_A uSD / M.2_SDIO */
 	status = "okay";
-	vmmc-supply = <&vdd_mmc1>; /* SDIO_A_PWR_EN */
-	vqmmc-supply = <&vdd_sd>; /* VSEL_SD */
-	disable-wp;
-
-	ti,driver-strength-ohm = <50>;
 };
