@@ -41,7 +41,6 @@ int board_late_init(void)
 #if defined(CONFIG_XPL_BUILD)
 void spl_board_init(void)
 {
-#if IS_ENABLED(CONFIG_CPU_V7R)
 	u32 val;
 
 	/* We have 32k crystal, so lets enable it */
@@ -52,7 +51,6 @@ void spl_board_init(void)
 	/* Make sure to mux up to take the SoC 32k from the crystal */
 	writel(MCU_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
 	       MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
-#endif
 }
 
 void spl_perform_fixups(struct spl_image_info *spl_image)
