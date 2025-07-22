@@ -2,7 +2,7 @@
 /*
  * k3 eMMC Common boot 
  *
- * Copyright (C) 2023 Ezurio
+ * Copyright (C) 2024 Ezurio
  *
  */
 #include <spl.h>

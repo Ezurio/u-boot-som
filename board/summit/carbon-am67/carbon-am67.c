@@ -39,6 +39,7 @@ int board_late_init(void)
 #endif
 
 #if defined(CONFIG_XPL_BUILD)
+#if defined(CONFIG_SPL_BOARD_INIT)
 void spl_board_init(void)
 {
 	u32 val;
@@ -50,8 +51,26 @@ void spl_board_init(void)
 	/* Add any TRIM needed for the crystal here.. */
 	/* Make sure to mux up to take the SoC 32k from the crystal */
 	writel(MCU_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
-	       MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
+		MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
+
+	/*
+	 * Setup debounce time registers.
+	 * arbitrary values. Times are approx
+	 */
+	/* 1.9ms debounce @ 32k */
+	writel(0x1, CTRLMMR_DBOUNCE_CFG(1));
+	/* 5ms debounce @ 32k */
+	writel(0x5, CTRLMMR_DBOUNCE_CFG(2));
+	/* 20ms debounce @ 32k */
+	writel(0x14, CTRLMMR_DBOUNCE_CFG(3));
+	/* 46ms debounce @ 32k */
+	writel(0x18, CTRLMMR_DBOUNCE_CFG(4));
+	/* 100ms debounce @ 32k */
+	writel(0x1c, CTRLMMR_DBOUNCE_CFG(5));
+	/* 156ms debounce @ 32k */
+	writel(0x1f, CTRLMMR_DBOUNCE_CFG(6));
 }
+#endif /* CONFIG_SPL_BOARD_INIT */
 
 void spl_perform_fixups(struct spl_image_info *spl_image)
 {
@@ -59,4 +78,4 @@ void spl_perform_fixups(struct spl_image_info *spl_image)
 	fixup_memory_node(spl_image);
 #endif
 }
-#endif
+#endif /* CONFIG_XPL_BUILD */
