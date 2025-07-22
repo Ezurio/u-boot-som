@@ -45,7 +45,7 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 		enable-active-high;
-		gpio = <&exp1 8 GPIO_ACTIVE_HIGH>;
+		gpios = <&exp1 8 GPIO_ACTIVE_HIGH>;
 	};
 
 	codec_audio: sound {
@@ -86,6 +86,8 @@
 
 	audio_volume {
 		compatible = "gpio-keys";
+		pinctrl-names = "default";
+		pinctrl-0 = <&mcu_wake_pins_default>;
 
 		volume-up {
 			label = "Volume Up";
@@ -140,7 +142,7 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&main_usb0_pins_default>;
 		enable-active-high;
-		gpio = <&main_gpio1 50 GPIO_ACTIVE_HIGH>;
+		gpios = <&main_gpio1 50 GPIO_ACTIVE_HIGH>;
 		regulator-max-microvolt = <5000000>;
 		regulator-min-microvolt = <5000000>;
 		regulator-name = "vcc_usb0_vbus";
@@ -360,20 +362,6 @@
 		>;
 	};
 
-	main_rgmii_phy0_gpio: main-rgmii-phy0-gpio-default-pins {
-		pinctrl-single,pins = <
-			AM62X_IOPAD(0x008, PIN_INPUT, 7) /* ETH_A_RST (J24) OSPI0_DQS.GPIO0_2 */
-			AM62X_IOPAD(0x004, PIN_INPUT, 7) /* ETH_A_INT (G25) OSPI0_LBCLKO.GPIO0_1 */
-		>;
-	};
-
-	main_rgmii_phy1_gpio: main-rgmii-phy1-gpio-default-pins {
-		pinctrl-single,pins = <
-			AM62X_IOPAD(0x0a0, PIN_INPUT, 7) /* ETH_B_RST (K25) GPMC0_WPn.GPIO0_39 */
-			AM62X_IOPAD(0x0a8, PIN_INPUT, 7) /* ETH_B_INT(M21) GPMC0_CSn0.GPIO0_41 */
-		>;
-	};
-
 	main_led_pins_default: main-led-default-pins {
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x034, PIN_OUTPUT, 7) /* (H21) OSPI0_CSN2.GPIO0_13 */
@@ -385,6 +373,14 @@
 	pinctrl-single,pins = <
 		AM62X_IOPAD(0x254, PIN_INPUT, 7) /* (C20) USB0_DRVVBUS.GPIO1_50 */
 	>;
+};
+
+&mcu_pmx0 {
+	mcu_wake_pins_default: mcu-wake-default-pins {
+		pinctrl-single,pins = <
+			AM62X_MCU_IOPAD(0x004, PIN_INPUT_PULLUP, 7) /* WAKEUP (B8) MCU_SPI0_CS1.MCU_GPIO0_1 */
+		>;
+	};
 };
 
 &main_spi0 { /* SPI_B */
