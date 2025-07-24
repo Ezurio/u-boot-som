@@ -4,11 +4,8 @@
  * Copyright (C) 2024 Ezurio LLC
  */
 
-#include "k3-am625-carbon-minimal.dts"
 #include "k3-am625-carbon-lpddr4-1600MTs.dtsi"
 #include "k3-am62-ddr.dtsi"
-
-#include "k3-am625-carbon-minimal-u-boot.dtsi"
 
 / {
 	aliases {
@@ -64,7 +61,9 @@
 &cbass_main {
 	sysctrler: sysctrler {
 		compatible = "ti,am654-system-controller";
-		mboxes= <&secure_proxy_main 1>, <&secure_proxy_main 0>, <&secure_proxy_sa3 0>;
+		mboxes=<&secure_proxy_main 1>,
+		       <&secure_proxy_main 0>,
+		       <&secure_proxy_sa3 0>;
 		mbox-names = "tx", "rx", "boot_notify";
 		bootph-pre-ram;
 	};
