@@ -40,6 +40,10 @@ int board_late_init(void)
 
 #if defined(CONFIG_XPL_BUILD)
 #if defined(CONFIG_SPL_BOARD_INIT)
+
+#define WKUP_CTRL_DEVICE_CLKOUT_CTRL		(WKUP_CTRL_MMR0_BASE + 0x8020)
+#define WKUP_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL	(0x1)
+
 void spl_board_init(void)
 {
 	u32 val;
@@ -52,6 +56,10 @@ void spl_board_init(void)
 	/* Make sure to mux up to take the SoC 32k from the crystal */
 	writel(MCU_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
 		MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
+
+	/* Set WKUP CLKOUT SEL to LFOSC0 */
+	writel(WKUP_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
+		WKUP_CTRL_DEVICE_CLKOUT_CTRL);
 
 	/*
 	 * Setup debounce time registers.
