@@ -1,0 +1,119 @@
+// SPDX-License-Identifier: GPL-2.0
+/*
+ * Common AM67 Carbon dts file for SPLs
+ * Copyright (C) 2025 Ezurio LLC
+ */
+
+#include "k3-am675-carbon-som-binman.dtsi"
+
+/ {
+	chosen {
+		stdout-path = "serial2:115200n8";
+		tick-timer = &main_timer0;
+	};
+
+	memory@80000000 {
+		bootph-pre-ram;
+	};
+};
+
+&dmsc {
+	bootph-pre-ram;
+};
+
+&main_bcdma {
+	bootph-pre-ram;
+};
+
+#ifdef CONFIG_SPL_DFU
+/* Required for USB DFU Boot */
+&usbss0 {
+	bootph-all;
+};
+
+&usb0 {
+	dr_mode = "peripheral";
+	bootph-all;
+};
+
+&usb0_phy_ctrl {
+	bootph-all;
+};
+#endif
+
+&main_mmc1_pins_default {
+	bootph-all;
+};
+
+&main_uart2_pins_default {
+	bootph-all;
+};
+
+&main_mmc1_power_en_default {
+	bootph-all;
+};
+
+&vsel_mmc1_pins_default {
+	bootph-all;
+};
+
+&main_uart1_pins_default {
+	bootph-pre-ram;
+};
+
+&main_bt_en_pins_default {
+	bootph-all;
+};
+
+&main_wifi_en_pins_default {
+	bootph-all;
+};
+
+&main_uart2 {
+	bootph-all;
+};
+
+&wkup_uart0_pins_default {
+	bootph-pre-ram;
+};
+
+&sdhci0 {
+	bootph-all;
+};
+
+&sdhci1 {
+	bootph-all;
+};
+
+&vdd_mmc1 {
+	bootph-all;
+	startup-delay-us = <5000>;
+};
+
+&vsel_mmc1 {
+	bootph-all;
+};
+
+&wkup_uart0 {
+	bootph-pre-ram;
+};
+
+&main_gpio0 {
+	bootph-all;
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_bt_en_pins_default>, <&main_wifi_en_pins_default>;
+
+	wifi_en {
+		bootph-pre-ram;
+		gpio-hog;
+		gpios = <17 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
+		bootph-pre-ram;
+		gpio-hog;
+		gpios = <18 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+};

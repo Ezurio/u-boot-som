@@ -1,0 +1,26 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2024 Ezurio LLC
+ *
+ */
+
+/dts-v1/;
+
+#include "k3-am675-carbon-som.dtsi"
+
+/ {
+	model = "Summit Carbon AM675 Minimal";
+	compatible = "summit,am675-min", "ti,j722s";
+};
+
+&vsel_mmc1 {
+	status = "okay";
+};
+
+&vdd_mmc1 {
+	status = "okay";
+};
+
+&sdhci1 { /* SDIO_A uSD / M.2_SDIO */
+	status = "okay";
+};

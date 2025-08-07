@@ -1,0 +1,33 @@
+# SPDX-License-Identifier: GPL-2.0+
+#
+# Copyright (C) 2025 Ezurio LLC
+#
+
+if TARGET_CARBON_AM67_A53
+
+config SYS_BOARD
+       default "carbon-am67"
+
+config SYS_VENDOR
+       default "summit"
+
+config SYS_CONFIG_NAME
+       default "carbon-am67"
+
+endif
+
+if TARGET_CARBON_AM67_R5
+
+config SYS_BOARD
+       default "carbon-am67"
+
+config SYS_VENDOR
+       default "summit"
+
+config SYS_CONFIG_NAME
+       default "carbon-am67"
+
+config SPL_LDSCRIPT
+	default "arch/arm/mach-omap2/u-boot-spl.lds"
+
+endif
