@@ -9,6 +9,7 @@
 
 #include <dt-bindings/gpio/gpio.h>
 #include <dt-bindings/input/input.h>
+#include <dt-bindings/input/gpio-keys.h>
 #include <dt-bindings/net/ti-dp83867.h>
 
 #include "k3-am625.dtsi"
@@ -246,16 +247,28 @@
 
 		wifi-wake {
 			label = "Wi-Fi Wake Up";
-			gpios = <&main_gpio0 16 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_WAKEUP>;
 			wakeup-source;
+
+			interrupts-extended = <&main_gpio0 16 IRQ_TYPE_EDGE_FALLING>,
+				<&main_pmx0 0x040>;
+			interrupt-names = "irq", "wakeup";
+
+			//gpios = <&main_gpio0 16 GPIO_ACTIVE_LOW>;
+			//wakeup-event-action = <EV_ACT_ASSERTED>;
 		};
 
 		bt-wake {
 			label = "BT Wake Up";
-			gpios = <&main_gpio0 42 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_WAKEUP>;
 			wakeup-source;
+
+			interrupts-extended = <&main_gpio0 42 IRQ_TYPE_EDGE_FALLING>,
+				<&main_pmx0 0x0ac>;
+			interrupt-names = "irq", "wakeup";
+
+			//gpios = <&main_gpio0 42 GPIO_ACTIVE_LOW>;
+			//wakeup-event-action = <EV_ACT_ASSERTED>;
 		};
 	};
 };
@@ -371,14 +384,18 @@
 	clock-frequency = <400000>;
 
 	rv3028: rtc@52 {
-		backup-switchover-dsm;
-		#clock-cells = <0>;
-		pinctrl-names = "default";
-		pinctrl-0 = <&mcu_rtc_pins_default>;
 		compatible = "microcrystal,rv3028";
 		reg = <0x52>;
+
+		backup-switchover-dsm;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&mcu_rtc_pins_default>;
 		interrupts-extended = <&mcu_gpio0 23 IRQ_TYPE_EDGE_FALLING>;
+		interrupt-names = "irq";
 		wakeup-source;
+
+		#clock-cells = <0>;
 	};
 
 	tps65219: pmic@30 {
@@ -822,6 +839,36 @@
 			AM62X_IOPAD(0x074, PIN_INPUT, 7) /* CAM_A_RST# (U25) GPMC0_AD14.GPIO0_29 */
 		>;
 	};
+
+	main_rgb_power_default: main-rgb-power-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x038, PIN_INPUT, 7) /* RGB_VDD_EN (E24) OSPI0_CSn3.GPIO0_14 */
+		>;
+	};
+
+	main_rgb_reset_default: main-rgb-reset-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x04c, PIN_INPUT, 7) /* RGB_RESET# (P24) GPMC0_AD4.GPIO0_19 */
+		>;
+	};
+
+	main_rgb_backlight_en_default: main-rgb-backlight-en-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x124, PIN_INPUT, 7) /* RGB_BL_EN (A23) MMC2_SDCD.GPIO0_71 */
+		>;
+	};
+
+	main_lvds_d_power_default: main-lvds-d-power-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x078, PIN_INPUT, 7) /* LVDS_D_VDD_EN (U24) GPMC0_AD15.GPIO0_30 */
+		>;
+	};
+
+	main_lvds_d_backlight_en_default: main-lvds-d-backlight-en-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x088, PIN_INPUT, 7) /* LVDS_D_BL_EN (L17) GPMC0_OEn_REn.GPIO0_33 */
+		>;
+	};
 };
 
 &main_spi0 { /* SPI_B */
@@ -832,11 +879,11 @@
 &main_uart0 {
 	/* Console ttyS2 */
 	status = "okay";
+
 	pinctrl-names = "default";
 	pinctrl-0 = <&main_uart0_pins_default>;
-	interrupts-extended = <&gic500 GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>,
-			      <&main_pmx0 0x1c8>; /* (D14) UART0_RXD PADCONFIG114 */
-	interrupt-names = "irq", "wakeup";
+	interrupts-extended = <&gic500 GIC_SPI 178 IRQ_TYPE_LEVEL_HIGH>;
+	interrupt-names = "irq";
 };
 
 /* On-module Bluetooth */
@@ -881,7 +928,6 @@
 
 /* mcu_gpio0 and mcu_gpio_intr are reserved for mcu firmware usage */
 &mcu_gpio0 {
-	status = "okay";
 	gpio-line-names =
 		"","","","","",						/* 0 - 4 */
 		"","","","","",
@@ -890,15 +936,10 @@
 		"GPIO_B_5","","","rv3028_int";				/* 20 - 23 */
 };
 
-&mcu_gpio_intr {
-	status = "okay";
-};
-
 &mcu_m4fss {
 	mboxes = <&mailbox0_cluster0 &mbox_m4_0>;
 	memory-region = <&mcu_m4fss_dma_memory_region>,
 			<&mcu_m4fss_memory_region>;
-	status = "okay";
 };
 
 &wkup_r5fss0_core0 {
@@ -953,7 +994,7 @@
 
 	mcu_usb_a_id_pins_default: mcu-usb-a-id-default-pins {
 		pinctrl-single,pins = <
-			AM62X_MCU_IOPAD(0x040, PIN_INPUT, 7) /* USB_A_ID (D4) MCU_MCAN1_RX.MCU_GPIO0_16 */
+			AM62X_MCU_IOPAD(0x040, PIN_INPUT_PULLUP, 7) /* USB_A_ID (D4) MCU_MCAN1_RX.MCU_GPIO0_16 */
 		>;
 	};
 };
@@ -1018,30 +1059,4 @@
 
 &gpu {
 	status = "disabled";
-};
-
-&oldi0_ports {
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	port@0 {
-		reg = <0>; 
-	};
-
-	port@1 {
-		reg = <1>;
-	};
-};
-
-&oldi1_ports {
-	#address-cells = <1>;
-	#size-cells = <0>;
-
-	port@0 {
-		reg = <0>; 
-	};
-
-	port@1 {
-		reg = <1>;
-	};
 };
