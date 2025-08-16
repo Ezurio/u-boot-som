@@ -19,8 +19,8 @@
 		gpio5 = &exp2;
 	};
 
-	vdd_3v3_carrier: regulator-u4-sw2 {
-		/* output of U4 */
+	vdd_3v3_carrier: vdd-3v3-carrier {
+		/* output 3 of U4 */
 		compatible = "regulator-fixed";
 		regulator-name = "vdd_3v3_carrier";
 		regulator-min-microvolt = <3300000>;
@@ -29,8 +29,8 @@
 		regulator-boot-on;
 	};
 
-	vdd_1v8_carrier: regulator-u4-sw3 {
-		/* output of U4 */
+	vdd_1v8_carrier: vdd-1v8-carrier {
+		/* output 3 of U4 */
 		compatible = "regulator-fixed";
 		regulator-name = "vdd_1v8_carrier";
 		regulator-min-microvolt = <1800000>;
@@ -39,7 +39,7 @@
 		regulator-boot-on;
 	};
 
-	vdd_aud_3v3_carrier: regulator-aud-pwr {
+	vdd_aud_3v3_carrier: vdd-aud-3v3-carrier {
 		compatible = "regulator-fixed";
 		regulator-name = "vdd_aud_3v3_carrier";
 		regulator-min-microvolt = <3300000>;
@@ -86,26 +86,39 @@
 
 	audio_volume {
 		compatible = "gpio-keys";
-		pinctrl-names = "default";
-		pinctrl-0 = <&mcu_wake_pins_default>;
+		autorepeat;
 
 		volume-up {
 			label = "Volume Up";
 			gpios = <&exp2 4 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 			linux,code = <KEY_VOLUMEUP>;
+			wakeup-event-action = <EV_ACT_ASSERTED>;
 		};
 
 		volume-down {
 			label = "Volume Down";
 			gpios = <&exp2 5 (GPIO_ACTIVE_LOW | GPIO_PULL_UP)>;
 			linux,code = <KEY_VOLUMEDOWN>;
+			wakeup-event-action = <EV_ACT_ASSERTED>;
 		};
+	};
 
-		cpu_wakeup {
+	wake_gpio_key {
+		compatible = "gpio-keys";
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&mcu_wake_pins_default>;
+
+		wakeup {
 			label = "Wakeup";
-			gpios = <&mcu_gpio0 1 GPIO_ACTIVE_LOW>;
 			linux,code = <KEY_WAKEUP>;
 			wakeup-source;
+
+			interrupts-extended = <&mcu_gpio0 1 IRQ_TYPE_EDGE_FALLING>;
+			interrupt-names = "irq", "wakeup";
+
+			//gpios = <&mcu_gpio0 1 GPIO_ACTIVE_LOW>;
+			//wakeup-event-action = <EV_ACT_ASSERTED>;
 		};
 	};
 
@@ -288,7 +301,7 @@
 
 	exp1: gpio@74 {
 		/* U35, TI, TCAL9539RTWR */
-		compatible = "ti,tcal9539";
+		compatible = "ti,tcal9539", "nxp,pcal9535";
 		vcc-supply = <&vdd_1v8_carrier>;
 		reg = <0x74>;
 
@@ -306,7 +319,7 @@
 
 	exp2: gpio@77 {
 		/* U21, TI, TCAL9539RTWR */
-		compatible = "ti,tcal9539";
+		compatible = "ti,tcal9539", "nxp,pcal9535";
 		vcc-supply = <&vdd_1v8_carrier>;
 		reg = <0x77>;
 		#gpio-cells = <2>;
@@ -316,7 +329,7 @@
 			"M2_SD_HOST_WAKE", "CHRGR_INTn", 
 			"VOL_UP", "VOL_DOWN",
 			"", "",
-			"LVDS_C_INT", "LVDS_C_HPD",
+			"DSI_A_INT", "DSI_A_HPD",
 			"LVDS_D_INT", "LVDS_D_HPD",
 			"LVDS_E_INT", "LVDS_E_HPD",
 			"RGB_INT", "RGB_HDMI_HPD";
@@ -326,8 +339,10 @@
 
 		#interrupt-cells = <2>;
 		interrupt-controller;
-		interrupts-extended = <&main_gpio0 46 IRQ_TYPE_EDGE_FALLING>;
-		interrupt-names = "irq";
+
+		interrupts-extended = <&main_gpio0 46 IRQ_TYPE_EDGE_FALLING>,
+			<&main_pmx0 0x0bc>;
+		interrupt-names = "irq", "wakeup";
 	};
 
 	tac5112: audio-codec@51 {
@@ -374,25 +389,25 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		i2c_cam_a: i2-cam-a@0 {
+		i2c_cam_a: i2c-cam-a@0 {
 			reg = <0>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
 
-		i2c_cam_b: i2-cam-b@1 {
+		i2c_cam_b: i2c-cam-b@1 {
 			reg = <1>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
 
-		i2c_cam_c: i2-cam-c@2 {
+		i2c_cam_c: i2c-cam-c@2 {
 			reg = <2>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
 
-		i2c_cam_d: i2-cam-d@3 {
+		i2c_cam_d: i2c-cam-d@3 {
 			reg = <3>;
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -428,7 +443,7 @@
 &mcu_pmx0 {
 	mcu_wake_pins_default: mcu-wake-default-pins {
 		pinctrl-single,pins = <
-			J722S_MCU_IOPAD(0x004, PIN_INPUT_PULLUP, 7) /* WAKEUP (A10) MCU_SPI0_CS1.MCU_GPIO0_1 */
+			J722S_MCU_IOPAD(0x004, PIN_INPUT_PULLUP | PIN_DS_PULLUD_ENABLE | PIN_DS_PULL_UP, 7) /* WAKEUP (A10) MCU_SPI0_CS1.MCU_GPIO0_1 */
 		>;
 	};
 };
@@ -466,6 +481,7 @@
 &mcu_mcan0 { /* CAN_B */
 	status = "okay";
 	phys = <&transceiver2>;
+	/delete-property/ wakeup-source;
 };
 
 &ospi0 { /* SPI_A Used as a qSPI */
@@ -520,25 +536,25 @@
 		#address-cells = <1>;
 		#size-cells = <0>;
 
-		i2c_port_c: i2-c-port-c@0 {
+		i2c_port_a: i2c-port-a@0 {
 			reg = <0>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
 
-		i2c_port_d: i2-c-port-d@1 {
+		i2c_port_d: i2c-port-d@1 {
 			reg = <1>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
 
-		i2c_port_e: i2-c-port-e@2 {
+		i2c_port_e: i2c-port-e@2 {
 			reg = <2>;
 			#address-cells = <1>;
 			#size-cells = <0>;
 		};
 
-		i2c_port_rgb: i2-c-port-rgb@3 {
+		i2c_port_rgb: i2c-port-rgb@3 {
 			reg = <3>;
 			#address-cells = <1>;
 			#size-cells = <0>;
@@ -585,3 +601,29 @@
 	status = "okay";
 };
 
+/* MCUs not loaded currently because of UART conflict */
+/*
+&wkup_r5fss0 {
+	status = "okay";
+};
+
+&mcu_r5fss0 {
+	status = "okay";
+};
+
+&main_r5fss0 {
+	status = "okay";
+};
+
+&mailbox0_cluster0 {
+	status = "okay";
+};
+
+&mailbox0_cluster1 {
+	status = "okay";
+};
+
+&mailbox0_cluster3 {
+	status = "okay";
+};
+*/
