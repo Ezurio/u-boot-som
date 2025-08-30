@@ -1089,11 +1089,3 @@
 &gpu {
 	status = "disabled";
 };
-
-&pru0 {
-	status = "disabled";
-};
-
-&pru1 {
-	status = "disabled";
-};
