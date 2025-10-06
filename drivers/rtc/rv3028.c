@@ -12,6 +12,7 @@
 #include <dm.h>
 #include <i2c.h>
 #include <rtc.h>
+#include <misc.h>
 #include <dm/device_compat.h>
 #include <linux/delay.h>
 #include <power/regulator.h>
@@ -237,4 +238,150 @@ U_BOOT_DRIVER(rtc_rv3028) = {
 	.of_match = rv3028_rtc_ids,
 	.ops	= &rv3028_rtc_ops,
 	.priv_auto	= sizeof(struct rv3028_priv),
+};
+
+static inline int rv3028_exit_eerd(struct udevice *dev)
+{
+	return dm_i2c_reg_clrset(dev->parent, RV3028_CTRL1, RV3028_CTRL1_EERD,
+		0);
+}
+
+static int rv3028_wait_eebusy(struct udevice *dev)
+{
+	int ret, i;
+	uint8_t status;
+
+	for (i = RV3028_EEBUSY_TIMEOUT / RV3028_EEBUSY_POLL + 1; --i;) {
+		ret = dm_i2c_read(dev->parent, RV3028_STATUS, &status, 1);
+		if (ret)
+			return ret;
+
+		if (!(status & RV3028_STATUS_EEBUSY))
+			return 0;
+
+		udelay(RV3028_EEBUSY_POLL);
+	}
+
+	return -ETIMEDOUT;
+}
+
+static int rv3028_enter_eerd(struct udevice *dev)
+{
+	int ret;
+
+	ret = dm_i2c_reg_clrset(dev->parent, RV3028_CTRL1, 0,
+		RV3028_CTRL1_EERD);
+	if (ret)
+		return ret;
+
+	ret = rv3028_wait_eebusy(dev);
+	if (ret) {
+		rv3028_exit_eerd(dev);
+
+		return ret;
+	}
+
+	return 0;
+}
+
+static int rv3028_eeprom_write(struct udevice *dev, int offset,
+	const void *buf, int size)
+{
+	int i, ret;
+
+	if (offset + size > 43)  /* EEPROM size */
+		return -EINVAL;
+
+	ret = rv3028_enter_eerd(dev);
+	if (ret)
+		return ret;
+
+	for (i = 0; i < size; i++) {
+		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_ADDR,
+			offset + i);
+		if (ret)
+			break;
+
+		ret = dm_i2c_write(dev, RV3028_EEPROM_DATA, (u8*)buf + i, 1);
+		if (ret)
+			break;
+
+		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD, 0x0);
+		if (ret)
+			break;
+
+		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD,
+			RV3028_EEPROM_CMD_WRITE);
+		if (ret)
+			break;
+
+		udelay(RV3028_EEBUSY_POLL);
+
+		ret = rv3028_wait_eebusy(dev);
+		if (ret)
+			break;
+	}
+
+	rv3028_exit_eerd(dev);
+
+	return ret ?: size;
+}
+
+static int rv3028_eeprom_read(struct udevice *dev, int offset, void *buf,
+	int size)
+{
+	int i, ret;
+
+	if (offset + size > 43)  /* EEPROM size */
+		return -EINVAL;
+
+	ret = rv3028_enter_eerd(dev);
+	if (ret)
+		return ret;
+
+	for (i = 0; i < size; i++) {
+		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_ADDR,
+			offset + i);
+		if (ret)
+			break;
+
+		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD, 0x0);
+		if (ret)
+			break;
+
+		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD,
+			RV3028_EEPROM_CMD_READ);
+		if (ret)
+			break;
+
+		ret = rv3028_wait_eebusy(dev);
+		if (ret)
+			break;
+
+		ret = dm_i2c_read(dev->parent, RV3028_EEPROM_DATA,
+			(u8*)buf + i, 1);
+		if (ret)
+			break;
+	}
+
+	rv3028_exit_eerd(dev);
+
+	return ret ?: size;
+}
+
+static const struct misc_ops rv3028_eeprom_ops = {
+	.read	= rv3028_eeprom_read,
+	.write	= rv3028_eeprom_write,
+};
+
+static const struct udevice_id rv3028_eeprom_ids[] = {
+	{ .compatible = "microcrystal,rv3028-eeprom" },
+	{ }
+};
+
+U_BOOT_DRIVER(eeprom_rv3028) = {
+	.name	= "eeprom-rv3028",
+	.id	= UCLASS_MISC,
+	.of_match = rv3028_eeprom_ids,
+	.ops	= &rv3028_eeprom_ops,
 };
