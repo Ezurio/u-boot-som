@@ -14,6 +14,16 @@
 	memory@80000000 {
 		bootph-pre-ram;
 	};
+
+	board-info {
+		compatible = "summit,board-info";
+		bootph-all;
+
+		nvmem-cells = <&eth_mac0>, <&eth_mac1>, <&ram_type>,
+			<&radio_type>;
+		nvmem-cell-names = "mac-address0", "mac-address1", "ram-type",
+			"radio-type";
+	};
 };
 
 &main_timer0 {
@@ -142,4 +152,36 @@
 		gpios = <22 GPIO_ACTIVE_HIGH>;
 		output-low;
 	};
+};
+
+&main_i2c0_pins_default {
+	bootph-all;
+};
+
+&main_i2c0 {
+	bootph-all;
+};
+
+&rv3028 {
+	bootph-all;
+
+	eeprom {
+		bootph-all;
+	};
+};
+
+&eth_mac0 {
+	bootph-all;
+};
+
+&eth_mac1 {
+	bootph-all;
+};
+
+&ram_type {
+	bootph-all;
+};
+
+&radio_type {
+	bootph-all;
 };
