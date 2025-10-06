@@ -1,0 +1,26 @@
+config SUMMIT_BOARD_CONFIG
+	bool "Run-time EEPROM based Module Configuration"
+	depends on NVMEM
+
+config SPL_SUMMIT_BOARD_CONFIG
+	bool "Run-time EEPROM based Module Configuration in SPL"
+	depends on SPL_NVMEM
+	depends on SUPPORT_SPL
+
+config SPL_SUMMIT_SYS_MENU
+	bool "Board configuration SPL Menu"
+	select SPL_DISPLAY_PRINT
+	depends on SPL_SUMMIT_BOARD_CONFIG
+	help
+		Enables programming and verification into EEPROM of
+		board HW ID and MAC addresses for manufacturing.
+		HW ID identifies DRAM type insttalled on the module
+		This is required to run prior to initializing DRAM
+
+config CMD_SUMMIT_MAC
+	bool "MAC and HW ID commands"
+	depends on CMDLINE
+	depends on SUMMIT_BOARD_CONFIG
+	help
+		Enables configuration of MAC and HW ID from the
+		command line
