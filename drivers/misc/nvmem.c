@@ -31,10 +31,8 @@ int nvmem_cell_read(struct nvmem_cell *cell, void *buf, size_t size)
 			return -EIO;
 		return 0;
 	}
-#if CONFIG_IS_ENABLED(DM_RTC)
 	case UCLASS_RTC:
 		return dm_rtc_read(cell->nvmem, cell->offset, buf, size);
-#endif
 	default:
 		return -ENOSYS;
 	}
@@ -58,10 +56,8 @@ int nvmem_cell_write(struct nvmem_cell *cell, const void *buf, size_t size)
 			return -EIO;
 		return 0;
 	}
-#if CONFIG_IS_ENABLED(DM_RTC)
 	case UCLASS_RTC:
 		return dm_rtc_write(cell->nvmem, cell->offset, buf, size);
-#endif
 	default:
 		return -ENOSYS;
 	}

@@ -357,11 +357,21 @@
 &cpsw_port1 {
 	status = "disabled";
 	phy-mode = "rgmii-rxid";
+
+	/delete-property/ mac-address;
+	/delete-property/ ti,syscon-efuse;
+	nvmem-cells = <&eth_mac0>;
+	nvmem-cell-names = "mac-address";
 };
 
 &cpsw_port2 {
 	status = "disabled";
 	phy-mode = "rgmii-rxid";
+
+	/delete-property/ mac-address;
+	/delete-property/ ti,syscon-efuse;
+	nvmem-cells = <&eth_mac1>;
+	nvmem-cell-names = "mac-address";
 };
 
 &cpsw3g_mdio {
@@ -518,6 +528,27 @@
 		wakeup-source;
 
 		#clock-cells = <0>;
+		#address-cells = <1>;
+		#size-cells = <1>;
+
+		nvmem-cells = <&eth_mac0>, <&eth_mac1>, <&ram_type>, <&radio_type>;
+		nvmem-cell-names = "mac-address0", "mac-address1", "ram-type", "radio-type";
+
+		eth_mac0: mac-address@0 {
+			reg = <0x00 0x06>;
+		};
+
+		eth_mac1: mac-address@6 {
+			reg = <0x06 0x06>;
+		};
+
+		ram_type: ram-type@b {
+			reg = <0x0b 0x02>;
+		};
+
+		radio_type: radio-type@d {
+			reg = <0x0d 0x02>;
+		};
 	};
 
 	tps65219: pmic@30 {
@@ -950,8 +981,8 @@
 	ospi0_pins_default: ospi0-default-pins {
 		pinctrl-single,pins = <
 			J722S_IOPAD(0x000, PIN_OUTPUT, 0) /* SPI_A_SCK (H24) OSPI0_CLK */
-			J722S_IOPAD(0x02c, PIN_OUTPUT, 0) /* SPI_A_CS0 (K26) OSPI0_CSn0 */
-			J722S_IOPAD(0x030, PIN_OUTPUT, 0) /* SPI_A_CS1 (K23) OSPI0_CSn1 */
+			J722S_IOPAD(0x02c, PIN_OUTPUT, 0) /* SPI_A_CS0 (K26) OSPI0_CSN0 */
+			J722S_IOPAD(0x030, PIN_OUTPUT, 0) /* SPI_A_CS1 (K23) OSPI0_CSN1 */
 			J722S_IOPAD(0x00c, PIN_INPUT, 0) /* SPI_A_(SDI)IO0 (K27) OSPI0_D0 */
 			J722S_IOPAD(0x010, PIN_INPUT, 0) /* SPI_A_(SDO)IO1 (L27) OSPI0_D1 */
 			J722S_IOPAD(0x014, PIN_INPUT, 0) /* SPI_A_IO2 (L26) OSPI0_D2 */
@@ -1185,7 +1216,7 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&main_mcasp1_pins_default>;
 
-	op-mode = <0>;          /* MCASP_IIS_MODE */
+	op-mode = <0>;	/* MCASP_IIS_MODE */
 	tdm-slots = <2>;
 
 	serial-dir = <  /* 0: INACTIVE, 1: TX, 2: RX */
