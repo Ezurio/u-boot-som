@@ -242,7 +242,7 @@ U_BOOT_DRIVER(rtc_rv3028) = {
 
 static inline int rv3028_exit_eerd(struct udevice *dev)
 {
-	return dm_i2c_reg_clrset(dev->parent, RV3028_CTRL1, RV3028_CTRL1_EERD,
+	return dm_i2c_reg_clrset(dev, RV3028_CTRL1, RV3028_CTRL1_EERD,
 		0);
 }
 
@@ -252,7 +252,7 @@ static int rv3028_wait_eebusy(struct udevice *dev)
 	uint8_t status;
 
 	for (i = RV3028_EEBUSY_TIMEOUT / RV3028_EEBUSY_POLL + 1; --i;) {
-		ret = dm_i2c_read(dev->parent, RV3028_STATUS, &status, 1);
+		ret = dm_i2c_read(dev, RV3028_STATUS, &status, 1);
 		if (ret)
 			return ret;
 
@@ -269,7 +269,7 @@ static int rv3028_enter_eerd(struct udevice *dev)
 {
 	int ret;
 
-	ret = dm_i2c_reg_clrset(dev->parent, RV3028_CTRL1, 0,
+	ret = dm_i2c_reg_clrset(dev, RV3028_CTRL1, 0,
 		RV3028_CTRL1_EERD);
 	if (ret)
 		return ret;
@@ -297,7 +297,7 @@ static int rv3028_eeprom_write(struct udevice *dev, int offset,
 		return ret;
 
 	for (i = 0; i < size; i++) {
-		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_ADDR,
+		ret = dm_i2c_reg_write(dev, RV3028_EEPROM_ADDR,
 			offset + i);
 		if (ret)
 			break;
@@ -306,11 +306,11 @@ static int rv3028_eeprom_write(struct udevice *dev, int offset,
 		if (ret)
 			break;
 
-		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD, 0x0);
+		ret = dm_i2c_reg_write(dev, RV3028_EEPROM_CMD, 0x0);
 		if (ret)
 			break;
 
-		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD,
+		ret = dm_i2c_reg_write(dev, RV3028_EEPROM_CMD,
 			RV3028_EEPROM_CMD_WRITE);
 		if (ret)
 			break;
@@ -340,16 +340,16 @@ static int rv3028_eeprom_read(struct udevice *dev, int offset, void *buf,
 		return ret;
 
 	for (i = 0; i < size; i++) {
-		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_ADDR,
+		ret = dm_i2c_reg_write(dev, RV3028_EEPROM_ADDR,
 			offset + i);
 		if (ret)
 			break;
 
-		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD, 0x0);
+		ret = dm_i2c_reg_write(dev, RV3028_EEPROM_CMD, 0x0);
 		if (ret)
 			break;
 
-		ret = dm_i2c_reg_write(dev->parent, RV3028_EEPROM_CMD,
+		ret = dm_i2c_reg_write(dev, RV3028_EEPROM_CMD,
 			RV3028_EEPROM_CMD_READ);
 		if (ret)
 			break;
@@ -358,7 +358,7 @@ static int rv3028_eeprom_read(struct udevice *dev, int offset, void *buf,
 		if (ret)
 			break;
 
-		ret = dm_i2c_read(dev->parent, RV3028_EEPROM_DATA,
+		ret = dm_i2c_read(dev, RV3028_EEPROM_DATA,
 			(u8*)buf + i, 1);
 		if (ret)
 			break;
@@ -369,9 +369,21 @@ static int rv3028_eeprom_read(struct udevice *dev, int offset, void *buf,
 	return ret ?: size;
 }
 
+static int rv3028_eeprom_dev_write(struct udevice *dev, int offset,
+	const void *buf, int size)
+{
+	return rv3028_eeprom_write(dev->parent, offset, buf, size);
+}
+
+static int rv3028_eeprom_dev_read(struct udevice *dev, int offset, void *buf,
+	int size)
+{
+	return rv3028_eeprom_read(dev->parent, offset, buf, size);
+}
+
 static const struct misc_ops rv3028_eeprom_ops = {
-	.read	= rv3028_eeprom_read,
-	.write	= rv3028_eeprom_write,
+	.read	= rv3028_eeprom_dev_read,
+	.write	= rv3028_eeprom_dev_write,
 };
 
 static const struct udevice_id rv3028_eeprom_ids[] = {
