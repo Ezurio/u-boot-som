@@ -244,7 +244,7 @@ int setup_ram(const struct ddrss_patch *patches)
 			ram_size = SZ_4G;
 			break;
 		case 4:
-			ram_size = SZ_8G;
+			ram_size = SZ_4G * 2;
 			break;
 		}
 	}
