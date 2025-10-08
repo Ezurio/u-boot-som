@@ -151,6 +151,8 @@ static void k3_spl_init(void)
 
 	preloader_console_init();
 
+	do_board_detect();
+
 	if (IS_ENABLED(CONFIG_CPU_V7R)) {
 		/* Disable ROM configured firewalls right after loading sysfw */
 		remove_fwl_configs(cbass_main_fwls, ARRAY_SIZE(cbass_main_fwls));

@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * Board specific initialization for Carbon AM62 OSM module
+ * Board specific initialization for Carbon AM67 OSM module
  *
  * Copyright (C) 2025 Ezurio
  *
@@ -16,8 +16,11 @@
 #include <asm/arch/k3-ddr.h>
 
 #include "../common/common.h"
+#include "../common/k3-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
+
+#include "carbon-ddr-tables.h"
 
 int board_init(void)
 {
@@ -39,6 +42,15 @@ int board_late_init(void)
 #endif
 
 #if defined(CONFIG_XPL_BUILD)
+#if IS_ENABLED(CONFIG_K3_DDRSS)
+int do_board_detect(void)
+{
+	setup_ram(NULL);
+
+	return 0;
+}
+#endif /* CONFIG_K3_DDRSS */
+
 #if defined(CONFIG_SPL_BOARD_INIT)
 
 #define WKUP_CTRL_DEVICE_CLKOUT_CTRL		(WKUP_CTRL_MMR0_BASE + 0x8020)
