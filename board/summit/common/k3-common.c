@@ -10,9 +10,15 @@
 #include <mmc.h>
 #include <env.h>
 #include <env_internal.h>
+#include <limits.h>
 #include <linux/sizes.h>
+#include <linux/libfdt.h> 
 #include <asm/arch/hardware.h>
 #include <asm/global_data.h> 
+
+#include "common.h"
+#include "k3-common.h"
+#include "eeprom-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -145,3 +151,127 @@ void set_bootside(void)
 		env_save();
 	}
 }
+
+#if defined(CONFIG_XPL_BUILD)
+#if IS_ENABLED(CONFIG_K3_DDRSS)
+static int fdt_patch_table(void *fdt, int mem_offset, const char *name,
+			   const struct ddr_patch_record *patch)
+{
+	if (!patch)
+		return 0;
+
+	while (patch->off != UINT32_MAX) {
+		u32 val = cpu_to_fdt32(patch->val);
+
+		int ret = fdt_setprop_inplace_namelen_partial(fdt, mem_offset,
+			name, strlen(name), patch->off * sizeof(val), &val, sizeof(val));
+		if (ret)
+			return ret;
+
+		patch++;
+	}
+
+	return 0;
+}
+
+static int fdt_update_ram_timings(void *fdt, const struct ddrss_patch *patch)
+{
+	int ret;
+	int mem_offset;
+
+	if (!patch)
+		return 0;
+
+	mem_offset = fdt_path_offset(fdt, "/memorycontroller@f300000");
+	if (mem_offset < 0)
+		return -ENODEV;
+
+	ret = fdt_patch_table(fdt, mem_offset, "ti,ctl-data", patch->ctl_patch);
+	if (ret)
+		return ret;
+
+	ret = fdt_patch_table(fdt, mem_offset, "ti,pi-data", patch->pi_patch);
+	if (ret)
+		return ret;
+
+	ret = fdt_patch_table(fdt, mem_offset, "ti,phy-data", patch->phy_patch);
+	if (ret)
+		return ret;
+
+	return 0;
+}
+
+static const struct ddrss_patch *
+get_ddrss_patch(u16 id, const struct ddrss_patch *patches)
+{
+	if (!patches || !id)
+		return NULL;
+
+	while (patches->id) {
+		if (patches->id == id)
+			return patches;
+		patches++;
+	}
+
+	return NULL;
+}	
+
+int setup_ram(const struct ddrss_patch *patches)
+{
+	u64 start[CONFIG_NR_DRAM_BANKS] = { CFG_SYS_SDRAM_BASE, 0x880000000ULL };
+	u64 size[CONFIG_NR_DRAM_BANKS] = { 0, 0 };
+
+	u64 ram_size;
+	void *fdt = (void *)gd->fdt_blob;
+	int banks;
+	int ret;
+	u16 ram_type;
+
+	fdtdec_setup_mem_size_base_lowest();
+
+	ram_size = gd->ram_size;
+
+	ret = nvmem_cell_rw("ram-type", false, &ram_type, sizeof(ram_type));
+	if (!ret) {
+		switch (ram_type) {
+		case 1:
+			ram_size = SZ_1G;
+			break;
+		case 2:
+			ram_size = SZ_2G;
+			break;
+		case 3:
+			ram_size = SZ_4G;
+			break;
+		case 4:
+			ram_size = SZ_8G;
+			break;
+		}
+	}
+
+	if (gd->ram_size != ram_size) {
+#if !CONFIG_IS_ENABLED(PHYS_64BIT) || CONFIG_NR_DRAM_BANKS < 2
+		if (ram_size > SZ_2G)
+			ram_size = SZ_2G;
+#endif
+
+		if (ram_size <= SZ_2G) {
+			banks = 1;
+			size[0] = ram_size;
+			size[1] = 0;
+		} else {
+			banks = 2;
+			size[0] = SZ_2G;
+			size[1] = ram_size - SZ_2G;
+		}
+		gd->ram_size = size[0];
+
+		ret = fdt_fixup_memory_banks(fdt, start, size, banks);
+		if (ret)
+			return ret;
+	}
+
+	return fdt_update_ram_timings(fdt, get_ddrss_patch(ram_type, patches));
+}
+#endif /* CONFIG_K3_DDRSS */
+#endif /* CONFIG_XPL_BUILD */
