@@ -528,26 +528,27 @@
 		wakeup-source;
 
 		#clock-cells = <0>;
-		#address-cells = <1>;
-		#size-cells = <1>;
 
-		nvmem-cells = <&eth_mac0>, <&eth_mac1>, <&ram_type>, <&radio_type>;
-		nvmem-cell-names = "mac-address0", "mac-address1", "ram-type", "radio-type";
+		eeprom {
+			compatible = "microcrystal,rv3028-eeprom";
+			#address-cells = <1>;
+			#size-cells = <1>;
 
-		eth_mac0: mac-address@0 {
-			reg = <0x00 0x06>;
-		};
+			eth_mac0: mac-address@0 {
+				reg = <0x00 0x06>;
+			};
 
-		eth_mac1: mac-address@6 {
-			reg = <0x06 0x06>;
-		};
+			eth_mac1: mac-address@6 {
+				reg = <0x06 0x06>;
+			};
 
-		ram_type: ram-type@b {
-			reg = <0x0b 0x02>;
-		};
+			ram_type: ram-type@c {
+				reg = <0x0c 0x02>;
+			};
 
-		radio_type: radio-type@d {
-			reg = <0x0d 0x02>;
+			radio_type: radio-type@e {
+				reg = <0x0e 0x02>;
+			};
 		};
 	};
 
