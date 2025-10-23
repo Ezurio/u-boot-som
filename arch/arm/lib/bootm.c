@@ -61,10 +61,6 @@ static void announce_and_cleanup(int fake)
 	bootstage_report();
 #endif
 
-#ifdef CONFIG_USB_DEVICE
-	udc_disconnect();
-#endif
-
 	board_quiesce_devices();
 
 	printf("\nStarting kernel ...%s\n\n", fake ?
@@ -187,7 +183,7 @@ __weak void setup_board_tags(struct tag **in_params) {}
 static void do_nonsec_virt_switch(void)
 {
 	smp_kick_all_cpus();
-	dcache_disable();	/* flush cache before swtiching to EL2 */
+	dcache_disable();	/* flush cache before switching to EL2 */
 }
 #endif
 
