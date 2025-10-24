@@ -52,7 +52,7 @@ obj-$(CONFIG_$(PHASE_)MULTI_DTB_FIT) += boot_fit.o common_fit.o
 obj-$(CONFIG_$(PHASE_)IMAGE_PRE_LOAD) += image-pre-load.o
 obj-$(CONFIG_$(PHASE_)IMAGE_SIGN_INFO) += image-sig.o
 obj-$(CONFIG_$(PHASE_)FIT_SIGNATURE) += image-fit-sig.o
-obj-$(CONFIG_$(XPL_)FIT_CIPHER) += image-cipher.o
+obj-$(CONFIG_$(PHASE_)FIT_CIPHER) += image-cipher.o
 
 obj-$(CONFIG_CMD_ADTIMG) += image-android-dt.o
 

@@ -14,6 +14,7 @@
 #include <asm/io.h>
 #include <asm/arch/hardware.h>
 #include <asm/arch/k3-ddr.h>
+#include <linux/sizes.h>
 
 #include "../common/common.h"
 #include "../common/k3-common.h"
