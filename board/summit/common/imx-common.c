@@ -41,7 +41,7 @@ int board_mmc_get_env_dev(int devno)
 	return devno;
 }
 
-#ifdef CONFIG_SYS_MMC_ENV_PART
+#ifdef CONFIG_ENV_MMC_EMMC_HW_PARTITION
 uint mmc_get_env_part(struct mmc *mmc)
 {
 	enum boot_device bdev = get_boot_device();
@@ -51,7 +51,7 @@ uint mmc_get_env_part(struct mmc *mmc)
 	case SD1_BOOT:
 	case SD2_BOOT:
 	case SD3_BOOT:
-		return CONFIG_SYS_MMC_ENV_PART;
+		return CONFIG_ENV_MMC_EMMC_HW_PARTITION;
 
 	case MMC1_BOOT:
 	case MMC2_BOOT:

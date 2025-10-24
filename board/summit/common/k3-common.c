@@ -2,7 +2,7 @@
 /*
  * k3 eMMC Common boot 
  *
- * Copyright (C) 2023 Ezurio
+ * Copyright (C) 2024 Ezurio
  *
  */
 #include <spl.h>
@@ -55,10 +55,10 @@ int mmc_get_env_dev(void)
 		return 1;
 	}
 
-	return CONFIG_SYS_MMC_ENV_DEV;
+	return CONFIG_ENV_MMC_DEVICE_INDEX;
 }
 
-#ifdef CONFIG_SYS_MMC_ENV_PART
+#ifdef CONFIG_ENV_MMC_EMMC_HW_PARTITION
 uint mmc_get_env_part(struct mmc *mmc)
 {
 	u32 bdev = get_boot_device();
@@ -66,7 +66,7 @@ uint mmc_get_env_part(struct mmc *mmc)
 
 	switch (bdev) {
 	case BOOT_DEVICE_MMC:
-		return CONFIG_SYS_MMC_ENV_PART;
+		return CONFIG_ENV_MMC_EMMC_HW_PARTITION;
 
 	case BOOT_DEVICE_EMMC:
 		devno = 0;
