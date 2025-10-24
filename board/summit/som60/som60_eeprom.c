@@ -8,6 +8,7 @@
 #include <dm/uclass.h>
 #include <nvmem.h>
 #include <net.h>
+#include <env.h>
 
 extern int save_env;
 
