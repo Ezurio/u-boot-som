@@ -160,6 +160,10 @@ static void k3_spl_init(void)
 
 	/* Output System Firmware version info */
 	k3_sysfw_print_ver();
+
+	/* Output DM Firmware version info */
+	if (IS_ENABLED(CONFIG_ARM64))
+		k3_dm_print_ver();
 }
 
 static void k3_mem_init(void)
@@ -172,6 +176,8 @@ static void k3_mem_init(void)
 		if (ret)
 			panic("DRAM init failed: %d\n", ret);
 	}
+
+	spl_enable_cache();
 }
 
 static __maybe_unused void enable_mcu_esm_reset(void)
@@ -190,17 +196,7 @@ void board_init_f(ulong dummy)
 
 	k3_spl_init();
 	k3_mem_init();
-	spl_enable_cache();
 	setup_qos();
-
-	if (IS_ENABLED(CONFIG_SPL_ETH) && IS_ENABLED(CONFIG_TI_AM65_CPSW_NUSS) &&
-	    spl_boot_device() == BOOT_DEVICE_ETHERNET) {
-		struct udevice *cpswdev;
-
-		if (uclass_get_device_by_driver(UCLASS_MISC, DM_DRIVER_GET(am65_cpsw_nuss),
-						&cpswdev))
-			printf("Failed to probe am65_cpsw_nuss driver\n");
-	}
 
 	if (IS_ENABLED(CONFIG_ESM_K3)) {
 		/* Probe/configure ESM0 */
