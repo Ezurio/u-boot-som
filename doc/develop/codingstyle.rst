@@ -23,13 +23,55 @@ The following rules apply:
   <https://peps.python.org/pep-0008/>`_. Use `pylint
   <https://github.com/pylint-dev/pylint>`_ for checking the code.
 
-* Use patman to send your patches (``tools/patman/patman -H`` for full
-  instructions). With a few tags in your commits this will check your patches
-  and take care of emailing them.
+* Use the `b4 <https://git.kernel.org/pub/scm/utils/b4/b4.git/>`_ tool to prepare and
+  send your patches. b4 has become the preferred tool to sending patches for many
+  Linux kernel contributors, and U-Boot ships with a ready-to-use ``.b4-config`` that
+  targets ``u-boot@lists.denx.de`` and integrates with ``scripts/get_maintainer.pl`` for
+  recipient discovery.
 
-* If you don't use patman, make sure to run ``scripts/checkpatch.pl``. For
-  more information, read :doc:`checkpatch`. Note that this should be done
-  *before* posting on the mailing list!
+  Start a topical series with ``b4 prep`` and keep the commits organised with
+  ``git rebase -i``. ``b4 prep --edit-cover`` opens an editor for the cover
+  letter, while ``b4 prep --auto-to-cc`` collects reviewers and maintainers from
+  both the configuration file and ``scripts/get_maintainer.pl``.
+
+  .. code-block:: bash
+
+     b4 prep -n mmc-fixes
+     git rebase -i origin/master
+     b4 prep --edit-cover
+     b4 prep --auto-to-cc
+
+  Run the style checks before sending. ``b4 prep --check`` wraps the existing
+  tooling so you see the output from ``scripts/checkpatch.pl`` alongside b4's
+  own validation. You can always invoke ``scripts/checkpatch.pl`` directly for
+  additional runs.
+
+  .. code-block:: bash
+
+     b4 prep --check
+
+  When the series is ready, use ``b4 send``. Begin with ``--dry-run`` to review
+  the generated emails and ``--reflect`` to copy yourself for records before
+  dispatching to ``u-boot@lists.denx.de``.
+
+  .. code-block:: bash
+
+     b4 send --dry-run
+     b4 send --reflect
+     b4 send
+
+  After reviews arrive, collect Acked-by/Tested-by tags with ``b4 trailers -u``
+  and fold them into your commits before resending the updated series.
+
+  .. code-block:: bash
+
+     b4 trailers -u
+     git rebase -i origin/master
+     b4 send
+
+* Run ``scripts/checkpatch.pl`` directly or via ``b4 prep --check`` so that all
+  issues are resolved *before* posting on the mailing list. For more information,
+  read :doc:`checkpatch`.
 
 * Source files originating from different projects (for example the MTD
   subsystem or the hush shell code from the BusyBox project) may, after
@@ -153,6 +195,73 @@ then you can skip that.
 See `here
 <https://www.kernel.org/doc/html/latest/doc-guide/kernel-doc.html#function-documentation>`_
 for style.
+
+Conditional Compilation
+-----------------------
+
+Wherever possible, don't use preprocessor conditionals (#if, #ifdef) in .c
+files; doing so makes code harder to read and logic harder to follow.  Instead,
+use such conditionals in a header file defining functions for use in those .c
+files, providing no-op stub versions in the #else case, and then call those
+functions unconditionally from .c files.  The compiler will avoid generating
+any code for the stub calls, producing identical results, but the logic will
+remain easy to follow.
+
+Prefer to compile out entire functions, rather than portions of functions or
+portions of expressions.  Rather than putting an ifdef in an expression, factor
+out part or all of the expression into a separate helper function and apply the
+conditional to that function.
+
+If you have a function or variable which may potentially go unused in a
+particular configuration, and the compiler would warn about its definition
+going unused, mark the definition as __maybe_unused rather than wrapping it in
+a preprocessor conditional.  (However, if a function or variable *always* goes
+unused, delete it.)
+
+Within code, where possible, use the IS_ENABLED macro to convert a Kconfig
+symbol into a C boolean expression, and use it in a normal C conditional:
+
+.. code-block:: c
+
+	if (IS_ENABLED(CONFIG_SOMETHING)) {
+		...
+	}
+
+The compiler will constant-fold the conditional away, and include or exclude
+the block of code just as with an #ifdef, so this will not add any runtime
+overhead.  However, this approach still allows the C compiler to see the code
+inside the block, and check it for correctness (syntax, types, symbol
+references, etc).  Thus, you still have to use an #ifdef if the code inside the
+block references symbols that will not exist if the condition is not met.
+
+When working with xPL (see :doc:`spl` for more information) we need to take
+further care to use the right macro. In the case where a symbol may be
+referenced with an xPL-specific Kconfig symbol, use the CONFIG_IS_ENABLED macro
+instead, in a similar manner:
+
+.. code-block:: c
+
+	if (CONIG_IS_ENABLED(SOMETHING)) {
+		...
+	}
+
+When dealing with a Kconfig symbol that has both a normal name and one or more
+xPL-prefixed names, the Makefile needs special consideration as well. The
+PHASE\_ macro helps us in this situation thusly:
+
+.. code-block:: make
+
+        obj-$(CONFIG_$(PHASE_)SOMETHING) += something.o
+
+At the end of any non-trivial #if or #ifdef block (more than a few lines),
+place a comment after the #endif on the same line, noting the conditional
+expression used.  For instance:
+
+.. code-block:: c
+
+	#ifdef CONFIG_SOMETHING
+	...
+	#endif /* CONFIG_SOMETHING */
 
 Driver model
 ------------

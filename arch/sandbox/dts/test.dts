@@ -131,6 +131,7 @@
 			font-size = <30>;
 			menu-inset = <3>;
 			menuitem-gap-y = <1>;
+			white-on-black;
 		};
 
 		cedit-theme {
@@ -935,6 +936,14 @@
 		};
 	};
 
+	i3c0 {
+		compatible = "sandbox,i3c";
+	};
+
+	i3c1 {
+		compatible = "sandbox,i3c";
+	};
+
 	bootcount@0 {
 		compatible = "u-boot,bootcount-rtc";
 		rtc = <&rtc_1>;
@@ -1044,6 +1053,31 @@
 			label = "sandbox:function";
 			function = LED_FUNCTION_STATUS;
 			color = <LED_COLOR_ID_GREEN>;
+		};
+	};
+
+	lvds-encoder {
+		compatible = "lvds-encoder";
+
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				reg = <0>;
+
+				bridge_input: endpoint {
+					/* link to output */
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+
+				bridge_output: endpoint {
+					remote-endpoint = <&panel_input>;
+				};
+			};
 		};
 	};
 
@@ -1402,6 +1436,27 @@
 	panel {
 		compatible = "simple-panel";
 		backlight = <&backlight 0 100>;
+
+		display-timings {
+			timing@0 {
+				/* 1280x800@60Hz */
+				clock-frequency = <68000000>;
+				hactive = <1280>;
+				hfront-porch = <48>;
+				hback-porch = <18>;
+				hsync-len = <30>;
+				vactive = <800>;
+				vfront-porch = <3>;
+				vback-porch = <12>;
+				vsync-len = <5>;
+			};
+		};
+
+		port {
+			panel_input: endpoint {
+				remote-endpoint = <&bridge_output>;
+			};
+		};
 	};
 
 	scsi {
@@ -2047,6 +2102,65 @@
 			sandbox,err-count = <3>;
 			sandbox,err-step-size = <512>;
 		};
+	};
+
+	graph1 {
+		ports {
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			port@0 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				reg = <0>;
+
+				endpoint@0 {
+					reg = <0>;
+				};
+
+				endpoint@1 {
+					reg = <1>;
+				};
+			};
+
+			port@1 {
+				reg = <1>;
+
+				endpoint {
+					test-property-0;
+				};
+			};
+
+			port@2 {
+				#address-cells = <1>;
+				#size-cells = <0>;
+
+				reg = <2>;
+
+				graph2_link: endpoint@0 {
+					reg = <0>;
+					test-property-1;
+					remote-endpoint = <&graph1_link>;
+				};
+
+				endpoint@1 {
+					reg = <1>;
+				};
+			};
+		};
+	};
+
+	graph2 {
+		port {
+			graph1_link: endpoint {
+				remote-endpoint = <&graph2_link>;
+			};
+		};
+	};
+
+	aes-engine {
+		compatible = "software-aes-engine";
 	};
 };
 
