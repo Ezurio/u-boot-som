@@ -63,7 +63,7 @@
 #define CFG_ENV_FLAGS_LIST_STATIC \
 	CFG_ENV_FLAGS_LIST_BOOTCOUNT CFG_ENV_FLAGS_LIST_NET \
 	CFG_ENV_FLAGS_LIST_RESCUE \
-	"bootside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw,RegDomain:sw"
+	"bootside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw,RegDomain:sw,hwrevision:sw"
 #endif
 
 #endif
