@@ -1,0 +1,11 @@
+// SPDX-License-Identifier: LicenseRef-Ezurio-Clause
+/*
+ * Copyright 2021 Ezurio
+ */
+
+#include "imx8mp-summitsom-u-boot.dtsi"
+
+&usdhc2 {
+	sd-uhs-sdr104;
+	sd-uhs-ddr50;
+};
