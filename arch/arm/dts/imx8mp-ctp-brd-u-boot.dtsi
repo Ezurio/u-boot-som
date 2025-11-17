@@ -17,10 +17,6 @@
 	bootph-all;
 };
 
-&pinctrl_i2c1_gpio {
-	bootph-all;
-};
-
 &pinctrl_pmic {
 	bootph-all;
 };
@@ -67,6 +63,11 @@
 
 &i2c1 {
 	bootph-all;
+
+	pinctrl-names = "default", "gpio";
+	pinctrl-1 = <&pinctrl_i2c1_gpio>;
+	scl-gpios = <&gpio5 14 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
+	sda-gpios = <&gpio5 15 (GPIO_ACTIVE_HIGH | GPIO_OPEN_DRAIN)>;
 };
 
 &reg_usdhc2_vmmc {
@@ -85,4 +86,47 @@
 
 &wdog1 {
 	bootph-pre-ram;
+};
+
+&uart1 {
+	/* M.2 E-Key Bluetooth */
+	status = "disabled";
+};
+
+&uart3 {
+	status = "disabled";
+};
+
+&fec {
+	status = "disabled";
+};
+
+// ctp - M.2 i2c
+&i2c2 {
+	status = "disabled";
+};
+
+// ctp - Mode PCIe Daughter Board
+&i2c3 {
+	status = "disabled";
+};
+
+&snvs_pwrkey {
+	status = "disabled";
+};
+
+&usb3_phy0 {
+	status = "disabled";
+};
+
+&usb3_0 {
+	status = "disabled";
+};
+
+&usb3_phy1 {
+	status = "disabled";
+};
+
+&usb3_1 {
+	status = "disabled";
 };
