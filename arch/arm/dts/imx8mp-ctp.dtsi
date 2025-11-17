@@ -7,7 +7,7 @@
 #include <dt-bindings/phy/phy-imx8-pcie.h>
 #include <dt-bindings/usb/pd.h>
 
-#include "freescale/imx8mp.dtsi"
+#include "imx8mp.dtsi"
 
 / {
 	model = "Summit i.MX8M Plus Common Test Platform board";
@@ -26,7 +26,6 @@
 	// M.2 E-key
  	reg_usdhc1_vmmc: regulator-usdhc1 {
 		compatible = "regulator-fixed";
-		status = "okay";
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_wifi_pmu>;
@@ -42,7 +41,6 @@
 	// Full-SD
  	reg_usdhc2_vmmc: regulator-usdhc2 {
 		compatible = "regulator-fixed";
-		status = "okay";
 
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_reg_usdhc2_vmmc>;
@@ -180,7 +178,10 @@
 	pinctrl-0 = <&pinctrl_i2c1>;
 	status = "okay";
 
-	pmic: pca9450@25 {
+	#address-cells = <1>;
+	#size-cells = <0>;
+
+	pmic: pmic@25 {
 		compatible = "nxp,pca9450c";
 		reg = <0x25>;
 		pinctrl-names = "default";
@@ -188,7 +189,7 @@
 		interrupt-parent = <&gpio1>;
 		interrupts = <3 IRQ_TYPE_LEVEL_LOW>;
 
-		regulators {
+		pmic_reg: regulators {
 			buck1: BUCK1 {
 				regulator-name = "BUCK1";
 				regulator-min-microvolt = <600000>;
@@ -278,32 +279,33 @@
 	pac193x@10 {
 		compatible = "microchip,pac1934";
 		reg = <0x10>;
-		samp-rate = <8>;
-		status = "okay";
+
+		#address-cells = <1>;
+		#size-cells = <0>;
 
 		// ctp - current Sense on M2 3V3, socket 1.8V, 3.3V, 5V
-		ch1: channel1 {
-			uohms-shunt-res = <33000>; /* shunt resistor is 33 mOhm */
-			rail-name = "3V3_M2";
-			channel_enabled;
+		channel@1 {
+			reg = <0x1>;
+			shunt-resistor-micro-ohms = <33000>;
+			label = "3V3_M2";
 		};
 
-		ch2: channel2 {
-			uohms-shunt-res = <33000>; /* shunt resistor is 33 mOhm */
-			rail-name = "5V_SOCKET";
-			channel_enabled;
+		channel@2 {
+			reg = <0x2>;
+			shunt-resistor-micro-ohms = <33000>;
+			label = "5V_SOCKET";
 		};
 
-		ch3: channel3 {
-			uohms-shunt-res = <33000>; /* shunt resistor is 33 mOhm */
-			rail-name = "3V3_SOCKET";
-			channel_enabled;
+		channel@3 {
+			reg = <0x3>;
+			shunt-resistor-micro-ohms = <33000>;
+			label = "3V3_SOCKET";
 		};
 
-		ch4: channel4 {
-			uohms-shunt-res = <33000>; /* shunt resistor is 33 mOhm */
-			rail-name = "1V8_SOCKET";
-			channel_enabled;
+		channel@4 {
+			reg = <0x4>;
+			shunt-resistor-micro-ohms = <33000>;
+			label = "1V8_SOCKET";
 		};
 	};
 };
@@ -333,14 +335,12 @@
 	pinctrl-0 = <&pinctrl_uart1>;
 
 	uart-has-rtscts;
-	status = "okay";
 };
 
 &uart2 {
 	/* console */
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_uart2>;
-	status = "okay";
 };
 
 &uart3 {
@@ -348,7 +348,6 @@
 	pinctrl-0 = <&pinctrl_uart3>;
 	assigned-clocks = <&clk IMX8MP_CLK_UART3>;
 	assigned-clock-parents = <&clk IMX8MP_SYS_PLL1_80M>;
-	status = "okay";
 };
 
 &usdhc1 {
@@ -373,8 +372,6 @@
 	cd-gpios = <&gpio2 12 GPIO_ACTIVE_LOW>;
 
 	vmmc-supply = <&reg_usdhc2_vmmc>;
-
-	status = "okay";
 };
 
 // ctp - eMMC
@@ -390,15 +387,12 @@
 
 	bus-width = <8>;
 	non-removable;
-
-	status = "okay";
 };
 
 &wdog1 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_wdog>;
 	fsl,ext-reset-output;
-	status = "okay";
 };
 
 &iomuxc {
@@ -406,6 +400,13 @@
 		fsl,pins = <
 			MX8MP_IOMUXC_I2C1_SCL__I2C1_SCL		0x400001c2
 			MX8MP_IOMUXC_I2C1_SDA__I2C1_SDA		0x400001c2
+		>;
+	};
+
+	pinctrl_i2c1_gpio: i2c1grp-gpio {
+		fsl,pins = <
+			MX8MP_IOMUXC_I2C1_SCL__GPIO5_IO14	0x1c2
+			MX8MP_IOMUXC_I2C1_SDA__GPIO5_IO15	0x1c2
 		>;
 	};
 
@@ -694,7 +695,6 @@
 	phy-mode = "rgmii-id";
 	phy-handle = <&ethphy0>;
 	fsl,magic-packet;
-	status = "okay";
 
 	mdio {
 		#address-cells = <1>;
@@ -725,33 +725,22 @@
 &i2c2 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c2>;
-	status = "okay";
 
-	clock-frequency = <100000>;
+	clock-frequency = <384000>;
 };
 
 // ctp - Mode PCIe Daughter Board
 &i2c3 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_i2c3>;
-	status = "okay";
 
 	clock-frequency = <384000>;
 };
 
-&snvs_pwrkey {
-	status = "okay";
-};
-
 &usb3_phy0 {
 	vbus-supply = <&reg_usb0>;
-	status = "okay";
 	fsl,phy-tx-preemp-amp-tune = <3>;
 	fsl,phy-tx-vref-tune = <0xb>;
-};
-
-&usb3_0 {
-	status = "okay";
 };
 
 &usb_dwc3_0 {
@@ -759,13 +748,8 @@
 };
 
 &usb3_phy1 {
-	status = "okay";
 	fsl,phy-tx-preemp-amp-tune = <3>;
 	fsl,phy-tx-vref-tune = <0xb>;
-};
-
-&usb3_1 {
-	status = "okay";
 };
 
 &usb_dwc3_1 {

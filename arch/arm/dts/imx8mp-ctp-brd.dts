@@ -1,0 +1,73 @@
+// SPDX-License-Identifier: LicenseRef-Ezurio-Clause
+/*
+ * Copyright 2025 Ezurio
+ */
+
+/dts-v1/;
+
+#include "imx8mp-ctp.dtsi"
+
+&i2c1 {
+	status = "okay";
+};
+
+&uart1 {
+	/* M.2 E-Key Bluetooth */
+	status = "okay";
+};
+
+&uart2 {
+	/* console */
+	status = "okay";
+};
+
+&uart3 {
+	status = "okay";
+};
+
+&usdhc2 {
+	status = "okay";
+};
+
+// ctp - eMMC
+&usdhc3 {
+	status = "okay";
+};
+
+&wdog1 {
+	status = "okay";
+};
+
+&fec {
+	status = "okay";
+};
+
+// ctp - M.2 i2c
+&i2c2 {
+	status = "okay";
+};
+
+// ctp - Mode PCIe Daughter Board
+&i2c3 {
+	status = "okay";
+};
+
+&snvs_pwrkey {
+	status = "okay";
+};
+
+&usb3_phy0 {
+	status = "okay";
+};
+
+&usb3_0 {
+	status = "okay";
+};
+
+&usb3_phy1 {
+	status = "okay";
+};
+
+&usb3_1 {
+	status = "okay";
+};
