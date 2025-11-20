@@ -149,7 +149,7 @@
 	bt_en {
 		bootph-pre-ram;
 		gpio-hog;
-		gpios = <22 GPIO_ACTIVE_HIGH>;
+		gpios = <21 GPIO_ACTIVE_HIGH>;
 		output-low;
 	};
 };
