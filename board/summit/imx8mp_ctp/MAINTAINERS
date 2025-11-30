@@ -1,6 +1,0 @@
-i.MX8MP CTP BOARD
-M:	Ezurio <support@ezuro.com>
-S:	Maintained
-F:  board/summit/imx8mp_ctp/
-F:  include/configs/imx8mp_ctp.h
-F:  configs/imx8mp_ctp_defconfig

@@ -1,0 +1,12 @@
+if TARGET_NITROGEN_IMX91
+
+config SYS_BOARD
+	default "nitrogen_imx91"
+
+config SYS_VENDOR
+	default "summit"
+
+config SYS_CONFIG_NAME
+	default "nitrogen_imx91"
+
+endif

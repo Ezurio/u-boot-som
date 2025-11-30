@@ -4,7 +4,7 @@
 # SPDX-License-Identifier:      GPL-2.0+
 #
 
-obj-y += imx8mp_summitsom.o ../common/imx-common.o
+obj-y += summitsom_imx8mp.o ../common/imx-common.o
 
 ifdef CONFIG_SPL_BUILD
 obj-y += spl.o lpddr4_timing_all.o

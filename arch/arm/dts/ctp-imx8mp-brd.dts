@@ -5,7 +5,7 @@
 
 /dts-v1/;
 
-#include "imx8mp-ctp.dtsi"
+#include "ctp-imx8mp.dtsi"
 
 &i2c1 {
 	status = "okay";

@@ -4,7 +4,7 @@
 # SPDX-License-Identifier:      GPL-2.0+
 #
 
-obj-y += imx8mp_ctp.o
+obj-y += ctp_imx8mp.o
 obj-y += ../common/imx-common.o
 
 ifdef CONFIG_SPL_BUILD
