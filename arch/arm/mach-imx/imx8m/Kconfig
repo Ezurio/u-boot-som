@@ -383,15 +383,15 @@ config TARGET_LIBREM5
 	select SUPPORT_SPL
 	select IMX8M_LPDDR4
 
-config TARGET_IMX8MP_CTP
-	bool "Support i.MX8MP CTP"
+config TARGET_CTP_IMX8MP
+	bool "Common Test Platform i.MX8MP"
 	select IMX8MP
 	select SUPPORT_SPL
 	select IMX8M_LPDDR4
 	select FSL_CAAM
 	select ARCH_MISC_INIT
 
-config TARGET_IMX8MP_SUMMITSOM
+config TARGET_SUMMITSOM_IMX8MP
 	bool "Summit SOM i.MX8M Plus"
 	select IMX8MP
 	select SUPPORT_SPL
@@ -399,7 +399,6 @@ config TARGET_IMX8MP_SUMMITSOM
 	select FSL_CAAM
 	select MISC
 	select ARCH_MISC_INIT
-	select SPL_CRYPTO if SPL
 
 endchoice
 
@@ -437,7 +436,7 @@ source "board/variscite/imx8mn_var_som/Kconfig"
 source "board/toradex/smarc-imx8mp/Kconfig"
 source "board/toradex/verdin-imx8mm/Kconfig"
 source "board/toradex/verdin-imx8mp/Kconfig"
-source "board/summit/imx8mp_ctp/Kconfig"
-source "board/summit/imx8mp_summitsom/Kconfig"
+source "board/summit/ctp_imx8mp/Kconfig"
+source "board/summit/summitsom_imx8mp/Kconfig"
 
 endif

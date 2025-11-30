@@ -1,0 +1,6 @@
+i.MX91 Nitrogen BOARD
+M:	Ezurio <support@ezuro.com>
+S:	Maintained
+F:  board/summit/nitrogen_imx95/
+F:  include/configs/nitrogen_imx95.h
+F:  configs/nitrogen_imx95_defconfig

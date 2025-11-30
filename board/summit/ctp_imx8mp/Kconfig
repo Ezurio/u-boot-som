@@ -1,0 +1,15 @@
+if TARGET_CTP_IMX8MP
+
+config SYS_BOARD
+	default "ctp_imx8mp"
+
+config SYS_VENDOR
+	default "summit"
+
+config SYS_CONFIG_NAME
+	default "ctp_imx8mp"
+
+config IMX_CONFIG
+	default "board/summit/ctp_imx8mp/imximage-8mp-lpddr4.cfg"
+
+endif

@@ -110,7 +110,11 @@ static int pca953x_write_single(struct udevice *dev, int reg, u8 val,
 	int off = offset / BANK_SZ;
 	int ret = 0;
 
-	ret = dm_i2c_write(dev, (reg << bank_shift) + off, &val, 1);
+	if (info->gpio_count == 34)
+		ret = dm_i2c_write(dev, reg + bank_shift + off, &val, 1);
+	else
+		ret = dm_i2c_write(dev, (reg << bank_shift) + off, &val, 1);
+
 	if (ret) {
 		dev_err(dev, "%s error\n", __func__);
 		return ret;
@@ -128,7 +132,11 @@ static int pca953x_read_single(struct udevice *dev, int reg, u8 *val,
 	int ret;
 	u8 byte;
 
-	ret = dm_i2c_read(dev, (reg << bank_shift) + off, &byte, 1);
+	if (info->gpio_count == 34)
+		ret = dm_i2c_read(dev, (reg + bank_shift) + off, &byte, 1);
+	else
+		ret = dm_i2c_read(dev, (reg << bank_shift) + off, &byte, 1);
+
 	if (ret) {
 		dev_err(dev, "%s error\n", __func__);
 		return ret;
@@ -151,6 +159,10 @@ static int pca953x_read_regs(struct udevice *dev, int reg, u8 *val)
 	} else if (info->gpio_count <= 24) {
 		/* Auto increment */
 		ret = dm_i2c_read(dev, (reg << 2) | 0x80, val,
+				  info->bank_count);
+	} else if (info->gpio_count == 34) {
+		/* Auto increment */
+		ret = dm_i2c_read(dev, (reg * 5) | 0x80, val,
 				  info->bank_count);
 	} else if (info->gpio_count == 40) {
 		/* Auto increment */
@@ -177,6 +189,9 @@ static int pca953x_write_regs(struct udevice *dev, int reg, u8 *val)
 		/* Auto increment */
 		ret = dm_i2c_write(dev, (reg << 2) | 0x80, val,
 				   info->bank_count);
+	} else if (info->gpio_count == 34) {
+		/* Auto increment */
+		ret = dm_i2c_write(dev, (reg * 5) | 0x80, val, info->bank_count);
 	} else if (info->gpio_count == 40) {
 		/* Auto increment */
 		ret = dm_i2c_write(dev, (reg << 3) | 0x80, val, info->bank_count);
@@ -303,6 +318,7 @@ static int pca953x_probe(struct udevice *dev)
 {
 	struct pca953x_info *info = dev_get_plat(dev);
 	struct gpio_dev_priv *uc_priv = dev_get_uclass_priv(dev);
+	struct gpio_desc *reset_gpio;
 	char name[32], label[8], *str;
 	int addr;
 	ulong driver_data;
@@ -332,6 +348,13 @@ static int pca953x_probe(struct udevice *dev)
 		info->regs = &pca957x_regs;
 
 	info->bank_count = DIV_ROUND_UP(info->gpio_count, BANK_SZ);
+
+	reset_gpio = devm_gpiod_get_optional(dev, "reset",
+		GPIOD_IS_OUT | GPIOD_ACTIVE_LOW);
+	if (IS_ERR(reset_gpio)) {
+		dev_err(dev, "Failed to get reset gpio\n");
+		return PTR_ERR(reset_gpio);
+	}
 
 	ret = pca953x_read_regs(dev, info->regs->output, info->reg_output);
 	if (ret) {
@@ -396,6 +419,7 @@ static const struct udevice_id pca953x_ids[] = {
 	{ .compatible = "nxp,pcal6408", .data = OF_953X(8, PCA_LATCH_INT), },
 	{ .compatible = "nxp,pcal6416", .data = OF_953X(16, PCA_LATCH_INT), },
 	{ .compatible = "nxp,pcal6524", .data = OF_953X(24, PCA_LATCH_INT), },
+	{ .compatible = "nxp,pcal6534", .data = OF_953X(34, PCA_LATCH_INT), },
 
 	{ .compatible = "maxim,max7310", .data = OF_953X(8, 0), },
 	{ .compatible = "maxim,max7312", .data = OF_953X(16, PCA_INT), },

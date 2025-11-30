@@ -8,11 +8,6 @@
 
 #include "../common/common.h"
 
-int board_init(void)
-{
-	return 0;
-}
-
 int board_late_init(void)
 {
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG

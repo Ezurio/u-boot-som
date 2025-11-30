@@ -4,8 +4,8 @@
  * Copyright 2024 Ezurio
  */
 
-#ifndef __IMX8MP_SUMMITSOM_H
-#define __IMX8MP_SUMMITSOM_H
+#ifndef __SUMMITSOM_IMX8MP_H
+#define __SUMMITSOM_IMX8MP_H
 
 #include <linux/sizes.h>
 #include <asm/arch/imx-regs.h>

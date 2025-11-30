@@ -5,7 +5,7 @@
 
 /dts-v1/;
 
-#include "imx8mp-summitsom.dtsi"
+#include "summitsom-imx8mp.dtsi"
 
 &reg_usdhc2_vmmc {
 	status = "okay";
