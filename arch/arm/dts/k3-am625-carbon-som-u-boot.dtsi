@@ -185,15 +185,3 @@
 &radio_type {
 	bootph-all;
 };
-
-&tps65219 {
-	bootph-all;
-
-	regulators {
-		bootph-all;
-	};
-};
-
-&vdd_core {
-	bootph-all;
-};
