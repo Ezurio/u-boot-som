@@ -3,7 +3,10 @@
  * Copyright 2025 Ezurio
  */
 
-#include <asm/mach-imx/sys_proto.h>
+#include <init.h>
+#include <asm/arch/clock.h>
+
+#include "../common/common.h" 
 
 int board_early_init_f(void)
 {
@@ -15,14 +18,13 @@ int board_early_init_f(void)
 
 int board_late_init(void)
 {
-#if CONFIG_IS_ENABLED(ENV_IS_IN_MMC) || CONFIG_IS_ENABLED(ENV_IS_NOWHERE)
-	board_late_mmc_env_init();
-#endif
-
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 	env_set("board_name", "NITROGEN");
 	env_set("board_rev", "iMX95");
 #endif
+
+	set_bootside();
+
 	return 0;
 }
 int board_phys_sdram_size(phys_size_t *size)
