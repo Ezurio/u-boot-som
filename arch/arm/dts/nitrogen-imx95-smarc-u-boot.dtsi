@@ -60,3 +60,33 @@
 &pinctrl_reg_usdhc2_vmmc {
 	bootph-pre-ram;
 };
+
+&pinctrl_lpi2c7 {
+	bootph-all;
+};
+
+&pinctrl_pcal6524 {
+	bootph-all;
+};
+
+&lpi2c7 {
+	bootph-all;
+};
+
+&pcal6524 {
+	bootph-all;
+
+	wifi_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <12 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <2 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+};
