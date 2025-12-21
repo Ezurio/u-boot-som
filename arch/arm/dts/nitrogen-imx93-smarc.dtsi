@@ -7,7 +7,7 @@
 
 #include <dt-bindings/usb/pd.h>
 #include <dt-bindings/leds/common.h>
-#include "imx93.dtsi"
+#include <imx93.dtsi>
 
 / {
 	aliases {

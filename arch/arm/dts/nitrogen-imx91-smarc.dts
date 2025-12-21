@@ -9,7 +9,7 @@
 
 / {
 	model = "Ezurio i.MX91 Nitrogen SMARC board";
-	compatible = "boundary,imx91-nitrogen-smarc", "fsl,imx91";
+	compatible = "summit,imx91-nitrogen-smarc", "fsl,imx91";
 };
 
 &usdhc2 { /* SDIO - SDCARD */

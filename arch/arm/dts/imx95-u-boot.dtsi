@@ -93,6 +93,7 @@
 				container;
 				image0 = "a55", "bl31.bin", "0x8a200000";
 				image1 = "a55", "u-boot.bin", "0x90200000";
+				image2 = "a55", "tee.bin", "0x8c000000";
 			};
 		};
 	};

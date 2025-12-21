@@ -17,10 +17,12 @@
 		ethernet1 = &enetc_port1;
 		rtc0 = &rv3028;
 		rtc1 = &scmi_bbm;
+		gpio5 = &pcal6524;
+		spi0 = &lpspi6;
 	};
 
 	chosen {
-		stdout-path = &lpuart1;
+		stdout-path = "serial0:115200n8";
 	};
 
 	memory@80000000 {
@@ -128,7 +130,7 @@
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
 
-		gpio = <&pcal6524 19 GPIO_ACTIVE_LOW>;
+		gpio = <&pcal6524 19 GPIO_ACTIVE_HIGH>;
 		enable-active-high;
 	};
 
