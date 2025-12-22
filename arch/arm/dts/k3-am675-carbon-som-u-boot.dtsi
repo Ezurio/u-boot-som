@@ -54,7 +54,7 @@
 	bootph-all;
 };
 
-&main_uart2_pins_default {
+&main_uart0_pins_default {
 	bootph-all;
 };
 
@@ -78,7 +78,7 @@
 	bootph-all;
 };
 
-&main_uart2 {
+&main_uart0 {
 	bootph-all;
 };
 
