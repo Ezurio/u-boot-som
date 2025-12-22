@@ -128,11 +128,6 @@ static const char * const main_usart0_fclk_sel_out0_parents[] = {
 	"hsdiv4_16fft_main_1_hsdivout1_clk",
 };
 
-static const char * const main_usart2_fclk_sel_out2_parents[] = {
-	"usart_programmable_clock_divider_out2",
-	"hsdiv4_16fft_main_1_hsdivout1_clk",
-};
-
 static const struct clk_data clk_list[] = {
 	CLK_FIXED_RATE("osc_26_mhz", 26000000, 0),
 	CLK_FIXED_RATE("osc_25_mhz", 25000000, 0),
@@ -206,12 +201,10 @@ static const struct clk_data clk_list[] = {
 	CLK_MUX("main_ospi_ref_clk_sel_out0", main_ospi_ref_clk_sel_out0_parents, 2, 0x108500, 0, 1, 0),
 	CLK_MUX("main_timerclkn_sel_out0", main_timerclkn_sel_out0_parents, 16, 0x1081b0, 0, 4, 0),
 	CLK_DIV_DEFFREQ("usart_programmable_clock_divider_out0", "hsdiv4_16fft_main_1_hsdivout0_clk", 0x108240, 0, 2, 0, 0, 48000000),
-	CLK_DIV_DEFFREQ("usart_programmable_clock_divider_out2", "hsdiv4_16fft_main_1_hsdivout0_clk", 0x108248, 0, 2, 0, 0, 48000000),
 	CLK_MUX("wkup_clkout_sel_out0", wkup_clkout_sel_out0_parents, 8, 0x43008020, 0, 3, 0),
 	CLK_MUX("wkup_clkout_sel_io_out0", wkup_clkout_sel_io_out0_parents, 2, 0x43008020, 24, 1, 0),
 	CLK_MUX("wkup_clksel_out0", wkup_clksel_out0_parents, 2, 0x43008010, 0, 1, 0),
 	CLK_MUX("main_usart0_fclk_sel_out0", main_usart0_fclk_sel_out0_parents, 2, 0x108280, 0, 1, 0),
-	CLK_MUX("main_usart2_fclk_sel_out2", main_usart2_fclk_sel_out2_parents, 2, 0x108288, 0, 1, 0),
 	CLK_DIV("sam62_pll_ctrl_wrap_main_0_chip_div24_clk_clk", "sam62_pll_ctrl_wrap_main_0_sysclkout_clk", 0x41011c, 0, 5, 0, 0),
 	CLK_DIV("sam62_pll_ctrl_wrap_mcu_0_chip_div24_clk_clk", "sam62_pll_ctrl_wrap_mcu_0_sysclkout_clk", 0x402011c, 0, 5, 0, 0),
 };
@@ -283,10 +276,6 @@ static const struct dev_clk soc_dev_clk_data[] = {
 	DEV_CLK(146, 1, "usart_programmable_clock_divider_out0"),
 	DEV_CLK(146, 2, "hsdiv4_16fft_main_1_hsdivout1_clk"),
 	DEV_CLK(146, 5, "sam62_pll_ctrl_wrap_main_0_chip_div1_clk_clk"),
-	DEV_CLK(153, 0, "main_usart2_fclk_sel_out2"),
-	DEV_CLK(153, 1, "usart_programmable_clock_divider_out2"),
-	DEV_CLK(153, 2, "hsdiv4_16fft_main_1_hsdivout1_clk"),
-	DEV_CLK(153, 5, "sam62_pll_ctrl_wrap_main_0_chip_div1_clk_clk"),
 	DEV_CLK(157, 54, "clkout0_ctrl_out0"),
 	DEV_CLK(157, 55, "hsdiv4_16fft_main_2_hsdivout1_clk"),
 	DEV_CLK(157, 56, "hsdiv4_16fft_main_2_hsdivout1_clk"),
