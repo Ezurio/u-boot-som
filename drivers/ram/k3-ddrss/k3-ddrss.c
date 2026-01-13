@@ -497,6 +497,11 @@ void populate_data_array_from_dt(struct k3_ddrss_desc *ddrss,
 		reginit_data->phy_regs_offs[i] = i;
 }
 
+__weak void k3_lpddr4_patch(u32* ctl_regs, u32* pi_regs, u32* phy_regs)
+{
+	/* Weak function, can be overridden by board specific function */
+}
+
 void k3_lpddr4_hardware_reg_init(struct k3_ddrss_desc *ddrss)
 {
 	u32 status = 0U;
@@ -505,6 +510,9 @@ void k3_lpddr4_hardware_reg_init(struct k3_ddrss_desc *ddrss)
 	lpddr4_privatedata *pd = &ddrss->pd;
 
 	populate_data_array_from_dt(ddrss, &reginitdata);
+
+	k3_lpddr4_patch(reginitdata.ctl_regs, reginitdata.pi_regs,
+		reginitdata.phy_regs);
 
 	status = driverdt->writectlconfig(pd, reginitdata.ctl_regs,
 					  reginitdata.ctl_regs_offs,

@@ -4,4 +4,3 @@
 #
 
 obj-y	+= carbon-am62.o ../common/k3-common.o
-obj-y	+= ../../ti/common/k3-ddr.o

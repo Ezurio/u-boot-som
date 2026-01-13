@@ -15,6 +15,4 @@ struct ddrss_patch {
 	const struct ddr_patch_record *phy_patch;
 };
 
-int setup_ram(const struct ddrss_patch *patches);
-
 #endif /* _K3_COMMON_H_ */

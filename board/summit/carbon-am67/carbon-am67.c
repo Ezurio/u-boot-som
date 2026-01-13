@@ -43,11 +43,9 @@ int board_late_init(void)
 
 #if defined(CONFIG_XPL_BUILD)
 #if IS_ENABLED(CONFIG_K3_DDRSS)
-int do_board_detect(void)
+const struct ddrss_patch* get_lpddr_patch_data(void)
 {
-	setup_ram(NULL);
-
-	return 0;
+	return lpddr4_data;
 }
 #endif /* CONFIG_K3_DDRSS */
 
