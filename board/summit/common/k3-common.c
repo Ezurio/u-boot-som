@@ -22,6 +22,9 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
+#define AM64_DDRSS_SS_BASE	0x0F300000
+#define DDRSS_V2A_CTL_REG	0x0020
+
 static int __maybe_unused emmc_get_boot_side(int dev)
 {
 	struct mmc *mmc;
@@ -153,125 +156,126 @@ void set_bootside(void)
 }
 
 #if defined(CONFIG_XPL_BUILD)
+static u64 __section(".data") ram_size = 0;
+static u16 __section(".data") ram_type = 0;
+
+int do_board_detect(void)
+{
+	int ret = nvmem_cell_rw("ram-type", false, &ram_type, sizeof(ram_type));
+	if (ret)
+		return 0;
+
+	switch (ram_type) {
+	case 1:
+		ram_size = SZ_1G;
+		break;
+	case 2:
+		ram_size = SZ_2G;
+		break;
+	case 3:
+		ram_size = SZ_4G;
+		break;
+	case 4:
+		ram_size = SZ_4G * 2;
+		break;
+	default:
+		return 0;
+	}
+
+#if !IS_ENABLED(CONFIG_PHYS_64BIT) || CONFIG_NR_DRAM_BANKS < 2
+	ram_size = ram_size > SZ_2G ? SZ_2G : ram_size;
+#endif
+
+	return 0;
+}
+
+int dram_init(void)
+{
+	if (!ram_size)
+		return fdtdec_setup_mem_size_base_lowest();
+
+	gd->ram_base = (phys_addr_t)CFG_SYS_SDRAM_BASE;
+	gd->ram_size = (phys_size_t)(ram_size > SZ_2G ? SZ_2G : ram_size);
+
+#if IS_ENABLED(CONFIG_K3_DDRSS) && IS_ENABLED(CONFIG_SOC_K3_AM625)
+	/*
+	 * HACK: ddrss driver support 2GB RAM by default
+	 * V2A_CTL_REG should be updated to support other RAM size
+	 */
+	if (ram_size > SZ_2G)
+		writel(0x00000210, AM64_DDRSS_SS_BASE + DDRSS_V2A_CTL_REG);
+#endif
+
+	return 0;
+}
+
+int dram_init_banksize(void)
+{
+	if (!ram_size)
+		return fdtdec_setup_memory_banksize();
+
+	gd->bd->bi_dram[0].start = (phys_addr_t)CFG_SYS_SDRAM_BASE;
+	gd->bd->bi_dram[0].size =
+		(phys_size_t)(ram_size > SZ_2G ? SZ_2G : ram_size);
+
+#if CONFIG_NR_DRAM_BANKS > 1
+	gd->bd->bi_dram[1].start = (phys_addr_t)0x880000000ULL;
+	gd->bd->bi_dram[1].size =
+		(phys_size_t)(ram_size - gd->bd->bi_dram[0].size);
+#endif
+
+	return 0;
+}
+
 #if IS_ENABLED(CONFIG_K3_DDRSS)
-static int fdt_patch_table(void *fdt, int mem_offset, const char *name,
-			   const struct ddr_patch_record *patch)
+const struct ddrss_patch* __weak get_lpddr_patch_data(void)
+{
+	return NULL;
+}
+
+static int ctl_reg_update(u32 *ctl_regs, const struct ddr_patch_record *patch)
 {
 	if (!patch)
 		return 0;
 
 	while (patch->off != UINT32_MAX) {
-		u32 val = cpu_to_fdt32(patch->val);
-
-		int ret = fdt_setprop_inplace_namelen_partial(fdt, mem_offset,
-			name, strlen(name), patch->off * sizeof(val), &val, sizeof(val));
-		if (ret)
-			return ret;
-
+		ctl_regs[patch->off] = patch->val;
 		patch++;
 	}
 
 	return 0;
 }
 
-static int fdt_update_ram_timings(void *fdt, const struct ddrss_patch *patch)
+void k3_lpddr4_patch(u32* ctl_regs, u32* pi_regs, u32* phy_regs)
 {
-	int ret;
-	int mem_offset;
+	const struct ddrss_patch *patch = get_lpddr_patch_data();
 
-	if (!patch)
-		return 0;
+	// Do nothing if no patch data or ram_type is not set
+	if (!patch || !ram_type)
+		return;
 
-	mem_offset = fdt_path_offset(fdt, "/memorycontroller@f300000");
-	if (mem_offset < 0)
-		return -ENODEV;
+	// Find the matching patch data for the detected ram_type
+	while (patch->id && patch->id != ram_type)
+		patch++;
 
-	ret = fdt_patch_table(fdt, mem_offset, "ti,ctl-data", patch->ctl_patch);
-	if (ret)
-		return ret;
+	// Exit if no matching patch found
+	if (!patch->id)
+		return;
 
-	ret = fdt_patch_table(fdt, mem_offset, "ti,pi-data", patch->pi_patch);
-	if (ret)
-		return ret;
-
-	ret = fdt_patch_table(fdt, mem_offset, "ti,phy-data", patch->phy_patch);
-	if (ret)
-		return ret;
-
-	return 0;
-}
-
-static const struct ddrss_patch *
-get_ddrss_patch(u16 id, const struct ddrss_patch *patches)
-{
-	if (!patches || !id)
-		return NULL;
-
-	while (patches->id) {
-		if (patches->id == id)
-			return patches;
-		patches++;
-	}
-
-	return NULL;
-}	
-
-int setup_ram(const struct ddrss_patch *patches)
-{
-	u64 start[CONFIG_NR_DRAM_BANKS] = { CFG_SYS_SDRAM_BASE, 0x880000000ULL };
-	u64 size[CONFIG_NR_DRAM_BANKS] = { 0, 0 };
-
-	u64 ram_size;
-	void *fdt = (void *)gd->fdt_blob;
-	int banks;
-	int ret;
-	u16 ram_type;
-
-	fdtdec_setup_mem_size_base_lowest();
-
-	ram_size = gd->ram_size;
-
-	ret = nvmem_cell_rw("ram-type", false, &ram_type, sizeof(ram_type));
-	if (!ret) {
-		switch (ram_type) {
-		case 1:
-			ram_size = SZ_1G;
-			break;
-		case 2:
-			ram_size = SZ_2G;
-			break;
-		case 3:
-			ram_size = SZ_4G;
-			break;
-		case 4:
-			ram_size = SZ_4G * 2;
-			break;
-		}
-	}
-
-	if (gd->ram_size != ram_size) {
-#if !CONFIG_IS_ENABLED(PHYS_64BIT) || CONFIG_NR_DRAM_BANKS < 2
-		if (ram_size > SZ_2G)
-			ram_size = SZ_2G;
-#endif
-
-		if (ram_size <= SZ_2G) {
-			banks = 1;
-			size[0] = ram_size;
-			size[1] = 0;
-		} else {
-			banks = 2;
-			size[0] = SZ_2G;
-			size[1] = ram_size - SZ_2G;
-		}
-		gd->ram_size = size[0];
-
-		ret = fdt_fixup_memory_banks(fdt, start, size, banks);
-		if (ret)
-			return ret;
-	}
-
-	return fdt_update_ram_timings(fdt, get_ddrss_patch(ram_type, patches));
+	// Apply the patches
+	ctl_reg_update(ctl_regs, patch->ctl_patch);
+	ctl_reg_update(pi_regs, patch->pi_patch);
+	ctl_reg_update(phy_regs, patch->phy_patch);
 }
 #endif /* CONFIG_K3_DDRSS */
+#else
+int dram_init(void)
+{
+	return fdtdec_setup_mem_size_base_lowest();
+}
+
+int dram_init_banksize(void)
+{
+	return fdtdec_setup_memory_banksize();
+}
 #endif /* CONFIG_XPL_BUILD */

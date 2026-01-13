@@ -21,9 +21,6 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#define AM64_DDRSS_SS_BASE	0x0F300000
-#define DDRSS_V2A_CTL_REG	0x0020
-
 int board_init(void)
 {
 	return 0;
@@ -44,22 +41,6 @@ int board_late_init(void)
 #endif
 
 #if defined(CONFIG_XPL_BUILD)
-#if IS_ENABLED(CONFIG_K3_DDRSS)
-int do_board_detect(void)
-{
-	setup_ram(NULL);
-
-	/*
-	 * HACK: ddrss driver support 2GB RAM by default
-	 * V2A_CTL_REG should be updated to support other RAM size
-	 */
-	if (gd->ram_size > SZ_2G)
-		writel(0x00000210, AM64_DDRSS_SS_BASE + DDRSS_V2A_CTL_REG);
-
-	return 0;
-}
-#endif /* CONFIG_K3_DDRSS */
-
 #if defined(CONFIG_SPL_BOARD_INIT)
 void spl_board_init(void)
 {
