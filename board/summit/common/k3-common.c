@@ -5,6 +5,7 @@
  * Copyright (C) 2024 Ezurio
  *
  */
+#include <init.h>
 #include <spl.h>
 #include <env.h>
 #include <mmc.h>
@@ -186,7 +187,25 @@ int do_board_detect(void)
 	ram_size = ram_size > SZ_2G ? SZ_2G : ram_size;
 #endif
 
+// DRSS driver retrieve memory info only from fdt, so we need to fixup fdt here
+#if IS_ENABLED(CONFIG_K3_DDRSS)
+	u64 start[CONFIG_NR_DRAM_BANKS];
+	u64 size[CONFIG_NR_DRAM_BANKS];
+	void *fdt = (void *)gd->fdt_blob;
+	int bank;
+
+	dram_init();
+	dram_init_banksize();
+
+	for (bank = 0; bank < CONFIG_NR_DRAM_BANKS; bank++) {
+		start[bank] = gd->bd->bi_dram[bank].start;
+		size[bank] = gd->bd->bi_dram[bank].size;
+	}
+
+	return fdt_fixup_memory_banks(fdt, start, size, CONFIG_NR_DRAM_BANKS);
+#else
 	return 0;
+#endif
 }
 
 int dram_init(void)
