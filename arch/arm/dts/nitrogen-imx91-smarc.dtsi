@@ -18,7 +18,7 @@
 	};
 
 	chosen {
-		stdout-path = &lpuart1;
+		stdout-path = "serial0:115200n8";
 	};
 
 	reserved-memory {
@@ -26,7 +26,7 @@
 		#size-cells = <2>;
 		ranges;
 
-		linux,cma {
+		linux_cma: linux,cma {
 			compatible = "shared-dma-pool";
 			reusable;
 			alloc-ranges = <0 0x80000000 0 0x40000000>;
