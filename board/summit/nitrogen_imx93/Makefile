@@ -1,5 +1,5 @@
 #
-# Copyright 2022 NXP
+# Copyright 2025 Ezurio LLC
 #
 # SPDX-License-Identifier:      GPL-2.0+
 #

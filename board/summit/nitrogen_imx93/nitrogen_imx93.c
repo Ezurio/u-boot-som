@@ -3,6 +3,9 @@
  * Copyright 2025 Ezurio
  */
 
+#include <init.h>
+#include <env.h>
+
 #include "../common/common.h"    
 
 int board_late_init(void)
