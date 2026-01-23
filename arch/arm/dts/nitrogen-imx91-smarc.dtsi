@@ -10,6 +10,9 @@
 #include "imx91.dtsi"
 
 / {
+	model = "Ezurio i.MX91 Nitrogen SMARC board";
+	compatible = "summit,imx91-nitrogen-smarc", "fsl,imx91";
+
 	aliases {
 		ethernet0 = &eqos;
 		ethernet1 = &fec;

@@ -1,0 +1,31 @@
+if TARGET_NITROGEN_IMX8MM
+
+config SYS_BOARD
+	default "nitrogen_imx8mm"
+
+config SYS_VENDOR
+	default "summit"
+
+config SYS_CONFIG_NAME
+	default "nitrogen_imx8mm"
+
+config IMX_CONFIG
+	default "board/summit/nitrogen_imx8mm/imximage-8mm-lpddr4.cfg"
+
+choice
+	prompt "Nitrogen iMX8MM RAM Variant"
+	default NITROGEN_IMX8MM_2GB
+
+config NITROGEN_IMX8MM_2GB
+	bool "2GB RAM"
+	help
+	  Enable support for Nitrogen iMX8MM 2GB RAM variant.
+
+config NITROGEN_IMX8MM_4GB
+	bool "4GB RAM"
+	help
+	  Enable support for Nitrogen iMX8MM 4GB RAM variant.
+
+endchoice
+
+endif

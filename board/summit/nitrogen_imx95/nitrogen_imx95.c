@@ -20,7 +20,7 @@ int board_early_init_f(void)
 int board_late_init(void)
 {
 #ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
-	env_set("board_name", "NITROGEN");
+	env_set("board_name", "Nitrogen");
 	env_set("board_rev", "iMX95");
 #endif
 
