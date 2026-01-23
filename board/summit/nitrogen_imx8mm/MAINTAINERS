@@ -1,0 +1,6 @@
+i.MX8MM Nitrogen BOARD
+M:	Ezurio <support@ezuro.com>
+S:	Maintained
+F:	board/summit/nitrogen_imx8mm/
+F:	include/configs/nitrogen_imx8mm.h
+F:	configs/nitrogen_imx8mm_defconfig

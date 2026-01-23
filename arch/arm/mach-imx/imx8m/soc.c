@@ -1194,6 +1194,7 @@ int disable_dsp_nodes(void *blob)
 	return disable_fdt_nodes(blob, nodes_path_8mp, ARRAY_SIZE(nodes_path_8mp));
 }
 
+#if IS_ENABLED(CONFIG_EFI_LOADER)
 static int cleanup_nodes_for_efi(void *blob)
 {
 	static const char * const path[][2] = {
@@ -1224,6 +1225,7 @@ static int cleanup_nodes_for_efi(void *blob)
 
 	return 0;
 }
+#endif
 
 #define OPTEE_SHM_SIZE 0x00400000
 static int ft_add_optee_node(void *fdt, struct bd_info *bd)
@@ -1443,7 +1445,9 @@ usb_modify_speed:
 		disable_cpu_nodes(blob, nodes_path, 2, 4);
 #endif
 
+#if IS_ENABLED(CONFIG_EFI_LOADER)
 	cleanup_nodes_for_efi(blob);
+#endif
 
 	if (fixup_thermal_trips(blob, "cpu-thermal"))
 		printf("Failed to update cpu-thermal trip(s)");

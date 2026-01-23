@@ -8,9 +8,6 @@
 #include "nitrogen-imx95-smarc.dtsi"
 
 / {
-	model = "Ezurio i.MX95 Nitrogen SMARC board";
-	compatible = "summit,imx95-nitrogen-smarc", "fsl,imx95";
-
 	aliases {
 		gpio0 = &gpio1;
 		gpio1 = &gpio2;
