@@ -400,6 +400,14 @@ config TARGET_SUMMITSOM_IMX8MP
 	select MISC
 	select ARCH_MISC_INIT
 
+config TARGET_NITROGEN_IMX8MP
+	bool "Nitrogen i.MX8MP"
+	select IMX8MP
+	select SUPPORT_SPL
+	select IMX8M_LPDDR4
+	select FSL_CAAM
+	select ARCH_MISC_INIT
+
 config TARGET_NITROGEN_IMX8MM
 	bool "Nitrogen i.MX8M Mini SMARC SoM"
 	select IMX8MM
@@ -448,5 +456,6 @@ source "board/toradex/verdin-imx8mp/Kconfig"
 source "board/summit/ctp_imx8mp/Kconfig"
 source "board/summit/summitsom_imx8mp/Kconfig"
 source "board/summit/nitrogen_imx8mm/Kconfig"
+source "board/summit/nitrogen_imx8mp/Kconfig"
 
 endif

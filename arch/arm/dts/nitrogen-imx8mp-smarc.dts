@@ -1,0 +1,16 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2026 Ezurio
+ */
+
+/dts-v1/;
+
+#include "nitrogen-imx8mp-smarc.dtsi"
+
+&usdhc2 { /* SDIO - SDCARD */
+	status = "okay";
+
+	// SD card power on the carrier board is not connected to control signal, 
+	// as such SD card cannot be reset, thus disabling 1.8V
+	no-1-8-v;
+};

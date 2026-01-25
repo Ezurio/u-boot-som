@@ -23,7 +23,7 @@ int ft_board_setup(void *blob, struct bd_info *bd)
 	if (gd->ram_size <= SZ_1G) {
 		int offs = fdt_path_offset(blob, "/mix_gpu_ml");
 		if (offs >= 0)
-			fdt_setprop_string(blob, offs, "status", "disabled");
+			fdt_status_disabled(blob, offs);
 		else
 			printf("Node /mix_gpu_ml not found.\n");
 	}
