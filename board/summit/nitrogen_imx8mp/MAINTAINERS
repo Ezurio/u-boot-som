@@ -1,0 +1,6 @@
+i.MX8MP NITROGEN BOARD
+M:	Ezurio LLC <support@ezuro.com>
+S:	Maintained
+F:  board/summit/nitrogen_imx8mp/
+F:  include/configs/nitrogen_imx8mp.h
+F:  configs/nitrogen_imx8mp_defconfig
