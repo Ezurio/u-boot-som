@@ -32,8 +32,11 @@ int spl_board_boot_device(enum boot_device boot_dev_spl)
 {
 	switch (boot_dev_spl) {
 	case USB_BOOT:
+#if !defined(CONFIG_SPL_USB_SDP_SUPPORT)
 		return BOOT_DEVICE_MMC2;
-		//return BOOT_DEVICE_BOARD;
+#else
+		return BOOT_DEVICE_BOARD;
+#endif
 	case SD1_BOOT:
 	case MMC1_BOOT:
 		return BOOT_DEVICE_MMC1;

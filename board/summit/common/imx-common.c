@@ -105,6 +105,12 @@ void set_bootside(void)
 	const char *side_str;
 
 	switch (bdev) {
+#if (CONFIG_BOOTDELAY <= 0)
+	case USB_BOOT:
+		bdev = SD2_BOOT;
+		fallthrough;
+#endif
+
 	case SD1_BOOT:
 	case SD2_BOOT:
 	case SD3_BOOT:
