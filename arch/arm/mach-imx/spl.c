@@ -206,6 +206,9 @@ u32 spl_mmc_boot_mode(struct mmc *mmc, const u32 boot_device)
 	case SD1_BOOT:
 	case SD2_BOOT:
 	case SD3_BOOT:
+#if !defined(CONFIG_SPL_USB_SDP_SUPPORT)
+	case USB_BOOT:
+#endif
 		if (IS_ENABLED(CONFIG_SPL_FS_FAT))
 			return MMCSD_MODE_FS;
 		else
