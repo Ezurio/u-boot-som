@@ -10,10 +10,11 @@
 #include <dm.h>
 #include <i2c.h>
 #include <fuse.h>
+#include <fdt_support.h>
 #include <linux/sizes.h>
 #include <asm/io.h>
 
- #include "../common/common.h"
+#include "../common/common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
