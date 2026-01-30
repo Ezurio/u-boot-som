@@ -25,19 +25,11 @@ int board_late_init(void)
 }
 
 #ifdef CONFIG_OF_BOARD_SETUP
-int ft_board_setup(void *blob, struct bd_info *bd)
+int ft_adjust_for_smarc_rev2(void *blob)
 {
 	struct udevice *bus, *dev;
 	const char *name;
 	int node, ret;
-
-	/* Check if board compatible is summit,imx8mm-nitrogen-smarc */
-	ret = fdt_node_check_compatible(blob, 0,
-					 "summit,imx8mm-nitrogen-smarc");
-	if (ret != 0) {
-		/* Compatible doesn't match, no action needed */
-		return 0;
-	}
 
 	/* Try to probe rv3028 on I2C to see if it's physically present */
 	ret = uclass_get_device_by_seq(UCLASS_I2C, 0, &bus);
@@ -110,6 +102,19 @@ int ft_board_setup(void *blob, struct bd_info *bd)
 
 	/* Delete rtc2 alias */
 	fdt_delprop(blob, aliases_node, "rtc2");
+
+	return 0;
+}
+
+int ft_board_setup(void *blob, struct bd_info *bd)
+{
+	int ret;
+
+	/* Check if board compatible is summit,imx8mm-nitrogen-smarc */
+	ret = fdt_node_check_compatible(blob, 0,
+					 "summit,imx8mm-nitrogen-smarc");
+	if (ret == 0)
+		return ft_adjust_for_smarc_rev2(blob);
 
 	return 0;
 }
