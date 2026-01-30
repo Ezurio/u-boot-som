@@ -81,13 +81,12 @@ static int power_init_board(void)
 	} cmds[] = {
 		{ SW2_VOLT,     0xff, 0x58 }, // DRAM/GPU 0.95V - (0.95 − 0.4) / 0.00625
 		{ SW3_VOLT,     0xff, 0x58 }, // ARM 0.95V - (0.95 − 0.4) / 0.00625
-		{ SW4_VOLT,     0xff, 0x50 }, // AUX 0.9V - (0.9 − 0.4) / 0.00625
+		{ SW4_VOLT,     0xff, 0x50 }, // AUX/GPU 0.9V - (0.9 − 0.4) / 0.00625
 		{ SW5_VOLT,     0xff, 0x58 }, // VPU 0.95V - (0.95 − 0.4) / 0.00625
 		{ LDO2_CONFIG2, 0x18, 0x18 }, // VSELECT On
 		{ SW1_CONFIG2,  0x1f, 0x1f }, // Phase 0, Max current
 		{ SW3_CONFIG2,  0x20, 0x20 }, // Fast Slew Rate
 		{ SW4_CONFIG2,  0x20, 0x20 }, // Fast Slew Rate
-		{ SW4_MODE1,    0x03, 0x00 }, // Set SW4 to Off mode
 		{ LDO3_CONFIG2, 0x02, 0x00 }, // LDO3 Off
 	};
 
