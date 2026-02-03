@@ -25,7 +25,7 @@
 
 #define CFG_SYS_SDRAM_BASE           0x40000000
 #define PHYS_SDRAM                   0x40000000
-//#define PHYS_SDRAM_2                 0x100000000
+#define PHYS_SDRAM_2                 0x100000000
 
 #if defined(CONFIG_NITROGEN_IMX8MM_2GB)
 #define PHYS_SDRAM_SIZE              SZ_2G
@@ -33,7 +33,6 @@
 #define PHYS_SDRAM_SIZE              SZ_2G
 #define PHYS_SDRAM_2_SIZE            SZ_2G
 #endif
-
 
 #ifdef CONFIG_ENV_WRITEABLE_LIST
 #ifdef CONFIG_BOOTCOUNT_ENV
