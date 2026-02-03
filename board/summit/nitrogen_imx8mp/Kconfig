@@ -12,4 +12,29 @@ config SYS_CONFIG_NAME
 config IMX_CONFIG
 	default "board/summit/nitrogen_imx8mp/imximage-8mp-lpddr4.cfg"
 
+choice
+	prompt "Nitrogen iMX8MP RAM Variant"
+	default NITROGEN_IMX8MP_2GB_R2
+
+config NITROGEN_IMX8MP_2GB_R2
+	bool "2GB RAM R2"
+	help
+	  Enable support for Nitrogen iMX8MP 2GB RAM variant Rev 2 PCB.
+
+config NITROGEN_IMX8MP_4GB_R2
+	bool "4GB RAM R2"
+	help
+	  Enable support for Nitrogen iMX8MP 4GB RAM variant Rev 2 PCB.
+
+config NITROGEN_IMX8MP_8GB_R2
+	bool "8GB RAM R2"
+	help
+	  Enable support for Nitrogen iMX8MP 8GB RAM variant Rev 2 PCB.
+
+config NITROGEN_IMX8MP_2GB_R1
+	bool "2GB RAM R1"
+	help
+	  Enable support for Nitrogen iMX8MP 2GB RAM variant Rev 1 PCB.
+
+endchoice
 endif

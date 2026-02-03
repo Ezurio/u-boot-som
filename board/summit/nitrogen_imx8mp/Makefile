@@ -8,5 +8,9 @@ obj-y += nitrogen_imx8mp.o
 obj-y += ../common/imx-common.o
 
 ifdef CONFIG_SPL_BUILD
-obj-y += spl.o lpddr4_timing.o
+obj-y += spl.o
+obj-$(CONFIG_NITROGEN_IMX8MP_2GB_R2) += lpddr4_2gb_r2_timing.o
+obj-$(CONFIG_NITROGEN_IMX8MP_4GB_R2) += lpddr4_4gb_r2_timing.o
+obj-$(CONFIG_NITROGEN_IMX8MP_8GB_R2) += lpddr4_8gb_r2_timing.o
+obj-$(CONFIG_NITROGEN_IMX8MP_2GB_R1) += lpddr4_2gb_r1_timing.o
 endif
