@@ -26,10 +26,10 @@
 #if defined(CONFIG_NITROGEN_IMX8MP_2GB_R2) || \
     defined(CONFIG_NITROGEN_IMX8MP_2GB_R1)
 #define PHYS_SDRAM_SIZE         (SZ_2G)
-#elif defined(CONFIG_NITROGEN_IMX8MP_4GB_R2)
+#elif defined(CONFIG_NITROGEN_IMX8MP_4GB)
 #define PHYS_SDRAM_SIZE         (SZ_2G)
 #define PHYS_SDRAM_2_SIZE       (SZ_2G)
-#elif defined(CONFIG_NITROGEN_IMX8MP_8GB_R2)
+#elif defined(CONFIG_NITROGEN_IMX8MP_8GB)
 #define PHYS_SDRAM_SIZE         (SZ_2G + SZ_1G)
 #define PHYS_SDRAM_2_SIZE       (SZ_4G + SZ_1G)
 #endif
