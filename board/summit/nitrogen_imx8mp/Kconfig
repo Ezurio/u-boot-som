@@ -21,15 +21,15 @@ config NITROGEN_IMX8MP_2GB_R2
 	help
 	  Enable support for Nitrogen iMX8MP 2GB RAM variant Rev 2 PCB.
 
-config NITROGEN_IMX8MP_4GB_R2
-	bool "4GB RAM R2"
+config NITROGEN_IMX8MP_4GB
+	bool "4GB RAM"
 	help
-	  Enable support for Nitrogen iMX8MP 4GB RAM variant Rev 2 PCB.
+	  Enable support for Nitrogen iMX8MP 4GB RAM.
 
-config NITROGEN_IMX8MP_8GB_R2
-	bool "8GB RAM R2"
+config NITROGEN_IMX8MP_8GB
+	bool "8GB RAM"
 	help
-	  Enable support for Nitrogen iMX8MP 8GB RAM variant Rev 2 PCB.
+	  Enable support for Nitrogen iMX8MP 8GB RAM.
 
 config NITROGEN_IMX8MP_2GB_R1
 	bool "2GB RAM R1"
