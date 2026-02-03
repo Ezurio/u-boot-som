@@ -1,0 +1,3 @@
+#include <configs/nitrogen_imx8mp_defconfig>
+
+CONFIG_NITROGEN_IMX8MP_2GB_R1=y
