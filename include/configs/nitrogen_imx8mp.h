@@ -17,7 +17,7 @@
 /* Link Definitions */
 
 #define CFG_SYS_INIT_RAM_ADDR        0x40000000
-#define CFG_SYS_INIT_RAM_SIZE        SZ_512K
+#define CFG_SYS_INIT_RAM_SIZE        0x80000
 
 #define CFG_SYS_SDRAM_BASE           0x40000000
 #define PHYS_SDRAM                   0x40000000
@@ -25,10 +25,10 @@
 
 #if defined(CONFIG_NITROGEN_IMX8MP_2GB_R2) || \
     defined(CONFIG_NITROGEN_IMX8MP_2GB_R1)
-#define PHYS_SDRAM_SIZE         (SZ_2G)
+#define PHYS_SDRAM_SIZE         SZ_2G
 #elif defined(CONFIG_NITROGEN_IMX8MP_4GB)
-#define PHYS_SDRAM_SIZE         (SZ_2G)
-#define PHYS_SDRAM_2_SIZE       (SZ_2G)
+#define PHYS_SDRAM_SIZE         SZ_2G
+#define PHYS_SDRAM_2_SIZE       SZ_2G
 #elif defined(CONFIG_NITROGEN_IMX8MP_8GB)
 #define PHYS_SDRAM_SIZE         (SZ_2G + SZ_1G)
 #define PHYS_SDRAM_2_SIZE       (SZ_4G + SZ_1G)
