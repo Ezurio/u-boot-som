@@ -17,7 +17,7 @@
 #include "k3-j722s.dtsi"
 
 / {
-	compatible = "summit,carbon-am67x-som", "ti,j722s";
+	compatible = "summit,carbon-am67x", "ti,j722s";
 	model = "Ezurio Carbon AM67x SOM";
 
 	aliases {
@@ -306,8 +306,8 @@
 		pinctrl-names = "default";
 		pinctrl-0 = <&wifi_32k_clk>;
 
-		assigned-clocks = <&k3_clks 157 158>;
-		assigned-clock-parents = <&k3_clks 157 160>;
+		assigned-clocks = <&k3_clks 157 174>;
+		assigned-clock-parents = <&k3_clks 157 175>;
 	};
 
 	reg_wifi_en: regulator-wifi-en {
@@ -341,9 +341,8 @@
 			linux,code = <KEY_WAKEUP>;
 			wakeup-source;
 
-			interrupts-extended = <&main_gpio0 20 IRQ_TYPE_EDGE_FALLING>,
-				<&main_pmx0 0x050>;
-			interrupt-names = "irq", "wakeup";
+			interrupts-extended = <&main_gpio0 20 IRQ_TYPE_EDGE_FALLING>;
+			interrupt-names = "irq";
 
 			//gpios = <&main_gpio0 20 GPIO_ACTIVE_LOW>;
 			//wakeup-event-action = <EV_ACT_ASSERTED>;
@@ -354,9 +353,8 @@
 			linux,code = <KEY_WAKEUP>;
 			wakeup-source;
 
-			interrupts-extended = <&main_gpio0 21 IRQ_TYPE_EDGE_FALLING>,
-				<&main_pmx0 0x054>;
-			interrupt-names = "irq", "wakeup";
+			interrupts-extended = <&main_gpio0 21 IRQ_TYPE_EDGE_FALLING>;
+			interrupt-names = "irq";
 
 			//gpios = <&main_gpio0 21 GPIO_ACTIVE_LOW>;
 			//wakeup-event-action = <EV_ACT_ASSERTED>;
@@ -511,7 +509,7 @@
 
 &main_gpio0 {
 	gpio-line-names =
-		"CAM_A_PWR","","","CAM_C_PWR","CAM_C_PWR", 				/* 0 - 4 */
+		"CAM_A_PWR","","","CAM_C_PWR","CAM_C_RST", 				/* 0 - 4 */
 		"CAM_D_PWR","CAM_A_RST","","","",
 		"","CAM_B_PWR","CAM_B_RST","","",					/* 10 - 14 */
 		"SDIO_A_PWR_EN","SDIO_A_VSEL","W_DISABLE1","W_DISABLE2","SDIO_RESET",
@@ -525,7 +523,7 @@
 		"","","","","",
 		"","","","","",					/* 60 - 64 */
 		"","","","","",
-		"","GPIO_A_0","CAM_C_RST","","",				/* 70 - 74 */
+		"","GPIO_A_0","CAM_D_RST","","",				/* 70 - 74 */
 		"","","","","",
 		"","","","","",					/* 80 - 84 */
 		"","","","","",
@@ -558,13 +556,10 @@
 		compatible = "microcrystal,rv3028";
 		reg = <0x52>;
 
-		backup-switchover-dsm;
-
 		pinctrl-names = "default";
 		pinctrl-0 = <&rtc_pins_default>;
-		interrupts-extended = <&main_gpio0 22 IRQ_TYPE_EDGE_FALLING>,
-			<&main_pmx0 0x058>;
-		interrupt-names = "irq", "wakeup";
+		interrupts-extended = <&main_gpio0 22 IRQ_TYPE_EDGE_FALLING>;
+		interrupt-names = "irq";
 		wakeup-source;
 
 		#clock-cells = <0>;
@@ -792,7 +787,7 @@
 			J722S_IOPAD(0x22c, PIN_INPUT_PULLUP, 0) /* SDIO_A_D1 (H20) MMC1_DAT1 */
 			J722S_IOPAD(0x228, PIN_INPUT_PULLUP, 0) /* SDIO_A_D2 (J23) MMC1_DAT2 */
 			J722S_IOPAD(0x224, PIN_INPUT_PULLUP, 0) /* SDIO_A_D3 (H25) MMC1_DAT3 */
-			J722S_IOPAD(0x240, PIN_INPUT_PULLUP, 0) /* SDIO_A_CD# (B24) MMC1_SDCD */
+			J722S_IOPAD(0x240, PIN_INPUT_PULLUP, 7) /* SDIO_A_CD# (B24) MMC1_SDCD.GPIO1_48 */
 			J722S_IOPAD(0x238, PIN_INPUT, 0) /* (#N/A) MMC1_CLKLB */
 		>;
 	};
@@ -995,18 +990,6 @@
 	pmic_irq_pins_default: pmic-irq-default-pins {
 		pinctrl-single,pins = <
 			J722S_IOPAD(0x1f4, PIN_INPUT, 0) /* (B26) EXTINTn */
-		>;
-	};
-
-	ospi0_pins_default: ospi0-default-pins {
-		pinctrl-single,pins = <
-			J722S_IOPAD(0x000, PIN_OUTPUT, 0) /* SPI_A_SCK (H24) OSPI0_CLK */
-			J722S_IOPAD(0x02c, PIN_OUTPUT, 0) /* SPI_A_CS0 (K26) OSPI0_CSN0 */
-			J722S_IOPAD(0x030, PIN_OUTPUT, 0) /* SPI_A_CS1 (K23) OSPI0_CSN1 */
-			J722S_IOPAD(0x00c, PIN_INPUT, 0) /* SPI_A_(SDI)IO0 (K27) OSPI0_D0 */
-			J722S_IOPAD(0x010, PIN_INPUT, 0) /* SPI_A_(SDO)IO1 (L27) OSPI0_D1 */
-			J722S_IOPAD(0x014, PIN_INPUT, 0) /* SPI_A_IO2 (L26) OSPI0_D2 */
-			J722S_IOPAD(0x018, PIN_INPUT, 0) /* SPI_A_IO3 (L25) OSPI0_D3 */
 		>;
 	};
 
@@ -1440,12 +1423,6 @@
 	pinctrl-0 = <&mcu_spi0_pins_default>;
 };
 
-&ospi0 {
-	/* SPI_A Only 4 bits are routed out */
-	pinctrl-names = "default";
-	pinctrl-0 = <&ospi0_pins_default>;
-};
-
 &sdhci0 { /* eMMC */
 	status = "okay";
 
@@ -1462,6 +1439,9 @@
 
 	vmmc-supply = <&vdd_mmc1>; /* SDIO_A_PWR_EN */
 	vqmmc-supply = <&vsel_mmc1>; /* VSEL_SDI0_A */
+
+	cd-gpios = <&main_gpio1 48 GPIO_ACTIVE_LOW>;
+	ti,fails-without-test-cd;
 
 	disable-wp;
 	ti,driver-strength-ohm = <50>;

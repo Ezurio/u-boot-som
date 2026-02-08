@@ -7,10 +7,6 @@
 #include "k3-am625-carbon-som-binman.dtsi"
 
 / {
-	chosen {
-		tick-timer = &main_timer0;
-	};
-
 	memory@80000000 {
 		bootph-pre-ram;
 	};
