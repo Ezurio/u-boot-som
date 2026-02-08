@@ -22,6 +22,8 @@ DECLARE_GLOBAL_DATA_PTR;
 
 #include "carbon-ddr-tables.h"
 
+void mmr_unlock(uintptr_t base, u32 partition);
+
 int board_init(void)
 {
 	return 0;
@@ -67,9 +69,17 @@ void spl_board_init(void)
 	writel(MCU_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
 		MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
 
-	/* Set WKUP CLKOUT SEL to LFOSC0 */
+	/* Unlock WKUP MMRs, so we can write there */
+	mmr_unlock(WKUP_CTRL_MMR0_BASE, 2);
+
+	/* Set WKUP CLKOUT0_SEL to LFOSC0 */
 	writel(WKUP_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
 		WKUP_CTRL_DEVICE_CLKOUT_CTRL);
+
+	/* Verify CLKOUT0 is set to LFOSC */
+	if (readl(WKUP_CTRL_DEVICE_CLKOUT_CTRL) !=
+		WKUP_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL)
+		printf("Failed to set WKUP_CLKOUT0 to LFOSC\n");
 
 	/*
 	 * Setup debounce time registers.
