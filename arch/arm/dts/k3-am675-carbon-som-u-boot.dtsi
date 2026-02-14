@@ -62,7 +62,7 @@
 	bootph-all;
 };
 
-&vsel_mmc1_pins_default {
+&main_vsel_mmc1_pins_default {
 	bootph-all;
 };
 
@@ -94,12 +94,12 @@
 	bootph-all;
 };
 
-&vdd_mmc1 {
+&reg_mmc1 {
 	bootph-all;
 	startup-delay-us = <5000>;
 };
 
-&vsel_mmc1 {
+&reg_vsel_mmc1 {
 	bootph-all;
 };
 

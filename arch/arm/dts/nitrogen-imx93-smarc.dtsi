@@ -7,7 +7,7 @@
 
 #include <dt-bindings/usb/pd.h>
 #include <dt-bindings/leds/common.h>
-#include <imx93.dtsi>
+#include "imx93.dtsi"
 
 / {
 	model = "Ezurio i.MX93 Nitrogen SMARC board";
@@ -20,6 +20,7 @@
 		ethernet1 = &fec;
 		spi0 = &lpspi3;
 		spi1 = &lpspi1;
+		gpio4 = &pcal6534;
 	};
 
 	chosen {
@@ -425,10 +426,8 @@
 
 &usbotg2 { /* USB1 */
 	vbus-supply = <&reg_usb_2_vbus>;
-	disable-over-current;
 	samsung,picophy-pre-emp-curr-control = <3>;
 	samsung,picophy-dc-vol-level-adjust = <7>;
-	status = "disabled";
 };
 
 &usdhc1 { /* eMMC */

@@ -636,7 +636,7 @@
 		>;
 	};
 
-	pinctrl_reg_usb_otg_vbus: reg-usb-otg-vbus-rp {
+	pinctrl_reg_usb_otg_vbus: reg-usb-otg-vbus-grp {
 		fsl,pins = <
 			MX8MP_IOMUXC_GPIO1_IO13__GPIO1_IO13	0x100
 		>;

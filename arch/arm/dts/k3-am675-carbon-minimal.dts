@@ -13,11 +13,11 @@
 	compatible = "summit,am675-min", "ti,j722s";
 };
 
-&vsel_mmc1 {
+&reg_vsel_mmc1 {
 	status = "okay";
 };
 
-&vdd_mmc1 {
+&reg_mmc1 {
 	status = "okay";
 };
 

@@ -23,33 +23,26 @@
 			content-sysfw-data = <&combined_tifs_cfg>;
 			content-sysfw-inner-cert = <&sysfw_inner_cert>;
 			content-dm-data = <&combined_dm_cfg>;
-			load = <0x43c00000>;
+			load = <CONFIG_SPL_TEXT_BASE>;
 			load-sysfw = <0x40000>;
 			load-sysfw-data = <0x67000>;
 			load-dm-data = <0x43c3a800>;
 		};
-
 		u_boot_spl: u-boot-spl {
 			no-expanded;
 		};
-
 		ti_fs_enc: ti-fs-enc.bin {
 			filename = "ti-sysfw/ti-fs-firmware-am62x-hs-enc.bin";
 			type = "blob-ext";
-			optional;
 		};
-
 		combined_tifs_cfg: combined-tifs-cfg.bin {
 			filename = "combined-tifs-cfg.bin";
 			type = "blob-ext";
 		};
-
 		sysfw_inner_cert: sysfw-inner-cert {
 			filename = "ti-sysfw/ti-fs-firmware-am62x-hs-cert.bin";
 			type = "blob-ext";
-			optional;
 		};
-
 		combined_dm_cfg: combined-dm-cfg.bin {
 			filename = "combined-dm-cfg.bin";
 			type = "blob-ext";
@@ -61,7 +54,6 @@
 	tiboot3-am62x-hs-fs-carbon.bin {
 		filename = "tiboot3-am62x-hs-fs-carbon.bin";
 		symlink = "tiboot3.bin";
-
 		ti-secure-rom {
 			content = <&u_boot_spl_fs>, <&ti_fs_enc_fs>, <&combined_tifs_cfg_fs>,
 				<&combined_dm_cfg_fs>, <&sysfw_inner_cert_fs>;
@@ -75,33 +67,26 @@
 			content-sysfw-data = <&combined_tifs_cfg_fs>;
 			content-sysfw-inner-cert = <&sysfw_inner_cert_fs>;
 			content-dm-data = <&combined_dm_cfg_fs>;
-			load = <0x43c00000>;
+			load = <CONFIG_SPL_TEXT_BASE>;
 			load-sysfw = <0x40000>;
 			load-sysfw-data = <0x67000>;
 			load-dm-data = <0x43c3a800>;
 		};
-
 		u_boot_spl_fs: u-boot-spl {
 			no-expanded;
 		};
-
 		ti_fs_enc_fs: ti-fs-enc.bin {
 			filename = "ti-sysfw/ti-fs-firmware-am62x-hs-fs-enc.bin";
 			type = "blob-ext";
-			optional;
 		};
-
 		combined_tifs_cfg_fs: combined-tifs-cfg.bin {
 			filename = "combined-tifs-cfg.bin";
 			type = "blob-ext";
 		};
-
 		sysfw_inner_cert_fs: sysfw-inner-cert {
 			filename = "ti-sysfw/ti-fs-firmware-am62x-hs-fs-cert.bin";
 			type = "blob-ext";
-			optional;
 		};
-
 		combined_dm_cfg_fs: combined-dm-cfg.bin {
 			filename = "combined-dm-cfg.bin";
 			type = "blob-ext";
@@ -118,7 +103,7 @@
 			combined;
 			dm-data;
 			content-sbl = <&u_boot_spl_unsigned>;
-			load = <0x43c00000>;
+			load = <CONFIG_SPL_TEXT_BASE>;
 			content-sysfw = <&ti_fs_gp>;
 			load-sysfw = <0x40000>;
 			content-sysfw-data = <&combined_tifs_cfg_gp>;
@@ -134,7 +119,6 @@
 		ti_fs_gp: ti-fs-gp.bin {
 			filename = "ti-sysfw/ti-fs-firmware-am62x-gp.bin";
 			type = "blob-ext";
-			optional;
 		};
 		combined_tifs_cfg_gp: combined-tifs-cfg-gp.bin {
 			filename = "combined-tifs-cfg.bin";
@@ -159,15 +143,6 @@
 #define AM625_CARBON_DTB "u-boot.dtb"
 
 &binman {
-	ti-dm {
-		filename = "ti-dm.bin";
-
-		blob-ext {
-			filename = "ti-dm/am62xx/ipc_echo_testb_mcu1_0_release_strip.xer5f";
-			optional;
-		};
-	};
-
 	tifsstub-hs {
 		filename = "tifsstub.bin_hs";
 		ti-secure-rom {
@@ -273,9 +248,9 @@
 						content = <&dm>;
 						keyfile = "custMpk.pem";
 					};
-
 					dm: ti-dm {
 						filename = "ti-dm.bin";
+						optional;
 					};
 				};
 
@@ -284,12 +259,10 @@
 					type = "flat_dt";
 					arch = "arm";
 					compression = "none";
-
 					ti-secure {
 						content = <&spl_am625_carbon_dtb>;
 						keyfile = "custMpk.pem";
 					};
-
 					spl_am625_carbon_dtb: blob-ext {
 						filename = SPL_AM625_CARBON_DTB;
 					};
@@ -328,18 +301,15 @@
 					type = "flat_dt";
 					arch = "arm";
 					compression = "none";
-
 					ti-secure {
 						content = <&am625_carbon_dtb>;
 						keyfile = "custMpk.pem";
 					};
-
 					am625_carbon_dtb: blob-ext {
 						filename = AM625_CARBON_DTB;
 					};
-
 					hash {
-						algo = "sha256";
+						algo = "crc32";
 					};
 				};
 			};
@@ -408,6 +378,7 @@
 				dm {
 					ti-dm {
 						filename = "ti-dm.bin";
+						optional;
 					};
 				};
 
@@ -456,7 +427,7 @@
 						filename = AM625_CARBON_DTB;
 					};
 					hash {
-						algo = "sha256";
+						algo = "crc32";
 					};
 				};
 			};
