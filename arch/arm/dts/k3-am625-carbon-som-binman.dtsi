@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * Copyright (C) 2024 Ezurio
+ * Copyright (C) 2024 Ezurio LLC
  */
 
 #include "k3-binman.dtsi"
@@ -249,8 +249,7 @@
 						keyfile = "custMpk.pem";
 					};
 					dm: ti-dm {
-						filename = "ti-dm.bin";
-						optional;
+						filename = "ti-dm/am62xx/ipc_echo_testb_mcu1_0_release_strip.xer5f";
 					};
 				};
 
@@ -377,8 +376,7 @@
 
 				dm {
 					ti-dm {
-						filename = "ti-dm.bin";
-						optional;
+						filename = "ti-dm/am62xx/ipc_echo_testb_mcu1_0_release_strip.xer5f";
 					};
 				};
 
