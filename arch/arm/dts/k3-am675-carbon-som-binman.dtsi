@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: GPL-2.0
 /*
- * Copyright (C) 2025 Ezurio
+ * Copyright (C) 2025 Ezurio LLC
  */
 
 #include "k3-binman.dtsi"
@@ -128,8 +128,7 @@
 					};
 
 					dm: ti-dm {
-						filename = "ti-dm.bin";
-						optional;
+						filename = "ti-dm/j722s/ipc_echo_testb_mcu1_0_release_strip.xer5f";
 					};
 				};
 
