@@ -4,7 +4,6 @@
  */
 
 #include <dt-bindings/net/ti-dp83867.h>
-#include <dt-bindings/phy/phy-imx8-pcie.h>
 #include <dt-bindings/usb/pd.h>
 
 #include "imx95.dtsi"
@@ -62,6 +61,10 @@
 		 memory-region = <&mali_protected>;
 	};
 
+	reset_ctrl {
+		compatible = "nxp,imx95-resetctrl";
+	};
+
 	reg_vdd_5v0: regulator-vdd-5v0 {
 		compatible = "regulator-fixed";
 		regulator-name = "reg_vdd_5v0";
@@ -115,6 +118,16 @@
 		enable-active-high;
 	};
 
+	reg_usb_otg_vbus: regulator-usb-otg-vbus {
+		compatible = "regulator-fixed";
+
+		regulator-name = "reg_usb_otg_vbus";
+		regulator-min-microvolt = <5000000>;
+		regulator-max-microvolt = <5000000>;
+		gpio = <&pcal6524 21 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+	};
+
 	reg_usb_hub_vbus: regulator-usb-hub-vbus {
 		compatible = "regulator-fixed";
 
@@ -156,6 +169,16 @@
 
 		compatible = "mmc-pwrseq-emmc";
 		reset-gpios = <&gpio5 8 GPIO_ACTIVE_LOW>;
+	};
+
+	mdio_gpio_fanout: mdio-gpio-fanout {
+		compatible = "gpio-fanout";
+		gpio-controller;
+		#gpio-cells = <2>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ethphy0_reset>, <&pinctrl_ethphy1_reset>;
+		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>, <&gpio2 18 GPIO_ACTIVE_HIGH>;
 	};
 };
 
@@ -293,7 +316,7 @@
 		// Put CLKREQ into low state to disable PCIE clock output
 		pcie-clk-req-hog {
 			gpio-hog;
-			gpios = <13 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
+			gpios = <16 (GPIO_ACTIVE_HIGH | GPIO_PULL_DOWN)>;
 			input;
 		};
 	};
@@ -333,12 +356,17 @@
 	pinctrl-0 = <&pinctrl_emdio>;
 	status = "okay";
 
+	reset-gpios = <&mdio_gpio_fanout 0 GPIO_ACTIVE_LOW>;
+	reset-delay-us = <150>;
+	reset-post-delay-us = <300>;
+
 	ethphy0: ethernet-phy@7 {
 		reg = <7>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ethphy0_irq>;
 		interrupts-extended = <&gpio4 28 IRQ_TYPE_LEVEL_LOW>;
-		reset-gpios = <&gpio5 1 GPIO_ACTIVE_LOW>;
-		reset-assert-us = <150>;
-		reset-deassert-us = <300>;
+
 		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_25_NS>;
 		ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
 		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
@@ -347,10 +375,11 @@
 
 	ethphy1: ethernet-phy@3 {
 		reg = <3>;
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_ethphy1_irq>;
 		interrupts-extended = <&gpio5 2 IRQ_TYPE_LEVEL_LOW>;
-		reset-gpios = <&gpio2 18 GPIO_ACTIVE_LOW>;
-		reset-assert-us = <150>;
-		reset-deassert-us = <300>;
+
 		ti,rx-internal-delay = <DP83867_RGMIIDCTL_2_25_NS>;
 		ti,tx-internal-delay = <DP83867_RGMIIDCTL_2_00_NS>;
 		ti,fifo-depth = <DP83867_PHYCR_FIFO_DEPTH_4_B_NIB>;
@@ -359,12 +388,10 @@
 };
 
 &pcie0 {
-	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_OUTPUT>;
 	reset-gpio = <&pcal6524 13 GPIO_ACTIVE_LOW>;
 };
 
 &pcie1 {
-	fsl,refclk-pad-mode = <IMX8_PCIE_REFCLK_PAD_INPUT>;
 	reset-gpio = <&pcal6524 14 GPIO_ACTIVE_LOW>;
 };
 
@@ -453,7 +480,13 @@
 	pinctrl-0 = <&pinctrl_tpm4>;
 };
 
-&usb3 {
+&usb2 { /* USB0 */
+	vbus-supply = <&reg_usb_otg_vbus>;
+	samsung,picophy-pre-emp-curr-control = <3>;
+	samsung,picophy-dc-vol-level-adjust = <7>;
+};
+
+&usb3 { /* USB1 */
 	status = "okay";
 };
 
@@ -469,7 +502,6 @@
 	adp-disable;
 	snps,dis-u1-entry-quirk;
 	snps,dis-u2-entry-quirk;
-	status = "okay";
 };
 
 &usdhc1 {
@@ -519,14 +551,26 @@
 };
 
 &scmi_iomuxc {
+	pinctrl_ethphy0_reset: ethphy0-reset {
+		fsl,pins = <IMX95_PAD_XSPI1_DATA1__GPIO5_IO_BIT1 0x31e>;
+	};
+
+	pinctrl_ethphy1_reset: ethphy1-reset {
+		fsl,pins = <IMX95_PAD_GPIO_IO18__GPIO2_IO_BIT18 0x31e>;
+	};
+
+	pinctrl_ethphy0_irq: ethphy0-irq {
+		fsl,pins = <IMX95_PAD_CCM_CLKO3__GPIO4_IO_BIT28 0x131e>;
+	};
+
+	pinctrl_ethphy1_irq: ethphy1-irq {
+		fsl,pins = <IMX95_PAD_XSPI1_DATA2__GPIO5_IO_BIT2 0x131e>;
+	};
+
 	pinctrl_emdio: emdiogrp {
 		fsl,pins = <
 			IMX95_PAD_ENET1_MDC__NETCMIX_TOP_NETC_MDC	0x57e
 			IMX95_PAD_ENET1_MDIO__NETCMIX_TOP_NETC_MDIO	0x97e
-			IMX95_PAD_CCM_CLKO3__GPIO4_IO_BIT28			0x131e
-			IMX95_PAD_XSPI1_DATA2__GPIO5_IO_BIT2		0x131e
-			IMX95_PAD_XSPI1_DATA1__GPIO5_IO_BIT1		0x31e
-			IMX95_PAD_GPIO_IO18__GPIO2_IO_BIT18			0x31e
 		>;
 	};
 
