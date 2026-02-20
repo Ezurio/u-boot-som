@@ -81,7 +81,7 @@
 	bootph-all;
 };
 
-&main_mmc1_power_en_default {
+&main_mmc1_power_en_pins_default {
 	bootph-all;
 };
 

@@ -56,7 +56,7 @@
 		symlink = "tiboot3.bin";
 		ti-secure-rom {
 			content = <&u_boot_spl_fs>, <&ti_fs_enc_fs>, <&combined_tifs_cfg_fs>,
-				<&combined_dm_cfg_fs>, <&sysfw_inner_cert_fs>;
+				  <&combined_dm_cfg_fs>, <&sysfw_inner_cert_fs>;
 			combined;
 			dm-data;
 			sysfw-inner-cert;
