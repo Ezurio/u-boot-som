@@ -16,6 +16,11 @@ choice
 	prompt "Nitrogen iMX8MM RAM Variant"
 	default NITROGEN_IMX8MM_2GB
 
+config NITROGEN_IMX8MM_1GB
+	bool "1GB RAM"
+	help
+	  Enable support for Nitrogen iMX8MM 1GB RAM variant.
+
 config NITROGEN_IMX8MM_2GB
 	bool "2GB RAM"
 	help
