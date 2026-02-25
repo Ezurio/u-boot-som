@@ -27,7 +27,9 @@
 #define PHYS_SDRAM                   0x40000000
 #define PHYS_SDRAM_2                 0x100000000
 
-#if defined(CONFIG_NITROGEN_IMX8MM_2GB)
+#if defined(CONFIG_NITROGEN_IMX8MM_1GB)
+#define PHYS_SDRAM_SIZE              SZ_1G
+#elif defined(CONFIG_NITROGEN_IMX8MM_2GB)
 #define PHYS_SDRAM_SIZE              SZ_2G
 #elif defined(CONFIG_NITROGEN_IMX8MM_4GB)
 #define PHYS_SDRAM_SIZE              SZ_2G
