@@ -3,6 +3,11 @@
 
 #include <linux/types.h>
 
+struct ddr_patch_record {
+       const u32 reg;
+       const u32 val;
+};
+
 struct ddrss_patch {
     const u32 id;
 	const struct ddr_patch_record *ctl_patch;
