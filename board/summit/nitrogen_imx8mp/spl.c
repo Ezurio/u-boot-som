@@ -14,6 +14,8 @@
 #include <power/pmic.h>
 #include <power/pca9450.h>
 
+void nitrogen_imx8mp_ddr_patch(void);
+
 int spl_board_boot_device(enum boot_device boot_dev_spl)
 {
 	return BOOT_DEVICE_BOOTROM;
@@ -21,6 +23,7 @@ int spl_board_boot_device(enum boot_device boot_dev_spl)
 
 void spl_dram_init(void)
 {
+	nitrogen_imx8mp_ddr_patch();
 	ddr_init(&dram_timing);
 }
 

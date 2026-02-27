@@ -102,7 +102,7 @@ enum env_location env_get_location(enum env_operation op, int prio)
 #endif
 
 #if CONFIG_IS_ENABLED(ENV_IS_IN_NAND)
-	case BOOT_DEVICE_GPMC_NAND:
+	case BOOT_DEVICE_NAND:
 		return ENVL_NAND;
 #endif
 
@@ -115,9 +115,10 @@ void set_bootside(void)
 {
 	u32 bdev = get_boot_device();
 	int devno, side;
-	const char *side_str;
+	const char __maybe_unused *side_str;
 
 	switch (bdev) {
+#if CONFIG_IS_ENABLED(MMC)
 	case BOOT_DEVICE_MMC:
 		devno = 1;
 		env_set_ulong("mmcdev", devno);
@@ -134,8 +135,10 @@ void set_bootside(void)
 		env_set("bootside", side == 2 ? "b" : "a");
 		printf("Booting from eMMC, side %s\n", side == 2 ? "b" : "a");
 		break;
+#endif
 
-	case BOOT_DEVICE_GPMC_NAND:
+#if CONFIG_IS_ENABLED(MTD_RAW_NAND)
+	case BOOT_DEVICE_NAND:
 		env_set("mmcdev", NULL);
 		env_set("boot_src", "nand");
 		side_str = env_get("bootside");
@@ -145,6 +148,7 @@ void set_bootside(void)
 		}
 		printf("Booting from NAND, side %s\n", side_str);
 		break;
+#endif
 
 	default:
 		break;
@@ -257,8 +261,8 @@ static int ctl_reg_update(u32 *ctl_regs, const struct ddr_patch_record *patch)
 	if (!patch)
 		return 0;
 
-	while (patch->off != UINT32_MAX) {
-		ctl_regs[patch->off] = patch->val;
+	while (patch->reg != UINT32_MAX) {
+		ctl_regs[patch->reg] = patch->val;
 		patch++;
 	}
 

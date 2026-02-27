@@ -16,6 +16,8 @@
 #include <dm/device.h>
 #include <i2c.h>
 
+void nitrogen_imx8mm_ddr_patch(void);
+
 #define PF8100	0x08
 #define SW1_CONFIG2 0x4e
 #define SW2_VOLT	0x59
@@ -50,6 +52,7 @@ int spl_board_boot_device(enum boot_device boot_dev_spl)
 
 static void spl_dram_init(void)
 {
+	nitrogen_imx8mm_ddr_patch();
 	ddr_init(&dram_timing);
 }
 
