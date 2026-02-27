@@ -22,17 +22,8 @@
 #define CFG_SYS_SDRAM_BASE           0x40000000
 #define PHYS_SDRAM                   0x40000000
 #define PHYS_SDRAM_2                 0x100000000
-
-#if defined(CONFIG_NITROGEN_IMX8MP_2GB_R2) || \
-    defined(CONFIG_NITROGEN_IMX8MP_2GB_R1)
 #define PHYS_SDRAM_SIZE         SZ_2G
-#elif defined(CONFIG_NITROGEN_IMX8MP_4GB)
-#define PHYS_SDRAM_SIZE         SZ_2G
-#define PHYS_SDRAM_2_SIZE       SZ_2G
-#elif defined(CONFIG_NITROGEN_IMX8MP_8GB)
-#define PHYS_SDRAM_SIZE         (SZ_2G + SZ_1G)
-#define PHYS_SDRAM_2_SIZE       (SZ_4G + SZ_1G)
-#endif
+#define PHYS_SDRAM_2_SIZE       (SZ_4G + SZ_2G)
 
 #ifdef CONFIG_ENV_WRITEABLE_LIST
 #ifdef CONFIG_BOOTCOUNT_ENV
