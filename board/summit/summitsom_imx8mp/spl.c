@@ -13,12 +13,9 @@
 #include <asm/arch/ddr.h>
 #include <power/pmic.h>
 #include <power/pca9450.h>
-#include <fuse.h>
 
-extern struct dram_timing_info dram_timing_4g;
-extern struct dram_timing_info dram_timing_2g;
-extern struct dram_timing_info dram_timing_1g;
-extern struct dram_timing_info dram_timing_512m;
+extern struct dram_timing_info dram_timing;
+extern void summitsom_imx8mp_ddr_patch(void);
 
 int spl_board_boot_device(enum boot_device boot_dev_spl)
 {
@@ -27,35 +24,11 @@ int spl_board_boot_device(enum boot_device boot_dev_spl)
 
 void spl_dram_init(void)
 {
-	u32 gp1 = 0;
-	int rc;
+	/* Apply patches on top of 4GB base configuration */
+	summitsom_imx8mp_ddr_patch();
 
-	fuse_read(14, 0, &gp1);
-
-	switch (gp1 & 0xff) {
-	case 1:
-		ddr_init(&dram_timing_1g);
-		break;
-	case 2:
-	case 5:
-		ddr_init(&dram_timing_2g);
-		break;
-	case 3:
-		ddr_init(&dram_timing_4g);
-		break;
-	case 4:
-		ddr_init(&dram_timing_512m);
-		break;
-	default:
-		rc = ddr_init(&dram_timing_4g);
-		if (rc)
-			rc = ddr_init(&dram_timing_2g);
-		if (rc)
-			rc = ddr_init(&dram_timing_1g);
-		if (rc)
-			rc = ddr_init(&dram_timing_512m);
-		break;
-	}
+	/* Initialize DDR with patched configuration */
+	ddr_init(&dram_timing);
 }
 
 void spl_board_init(void)

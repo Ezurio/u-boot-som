@@ -33,37 +33,6 @@ int ft_board_setup(void *blob, struct bd_info *bd)
 }
 #endif
 
-int board_phys_sdram_size(phys_size_t *memsize)
-{
-	u32 gp1 = 0;
-
-	fuse_read(14, 0, &gp1);
-
-	switch (gp1 & 0xff) {
-	case 1:
-		*memsize = SZ_1G;
-		break;
-	case 2:
-	case 5:
-		*memsize = SZ_2G;
-		break;
-	case 3:
-		*memsize = SZ_4G;
-		break;
-	case 4:
-		*memsize = SZ_512M;	
-		break;
-	default:
-		if ((readl(0x3d400000) & 0xf000000) == 0x3000000)
-			*memsize = SZ_4G;
-		else
-			*memsize = get_ram_size((void *)PHYS_SDRAM, SZ_2G);
-		break;
-	}
-
-	return 0;
-}
-
 static int __maybe_unused setup_charger(uint8_t i2c_bus, uint8_t addr)
 {
 	struct udevice *bus;
