@@ -10,8 +10,12 @@
 #include <env_internal.h>
 #include <linux/sizes.h>
 #include <asm/mach-imx/boot_mode.h>
+#include <asm/arch/ddr.h>
 #include <asm/arch/sys_proto.h>
-#include <asm/global_data.h> 
+#include <asm/global_data.h>
+#include <stdbool.h>
+
+#include "imx-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -152,3 +156,60 @@ void set_bootside(void)
 		env_save();
 	}
 }
+
+void patch_ddr(struct dram_cfg_param *data, int data_size, 
+	struct dram_cfg_param *patch, int patch_size)
+{
+	int i, j;
+	int start_pos = 0;
+	bool found;
+
+	for (i = 0; i < patch_size; i++) {
+		found = false;
+		/* Start search from last found position since registers are in order */
+		for (j = start_pos; j < data_size; j++) {
+			if (data[j].reg == patch[i].reg) {
+				data[j].val = patch[i].val;
+				start_pos = j + 1;
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			printf("DDR patch error: register 0x%x not found in data\n", 
+			       patch[i].reg);
+		}
+	}
+}
+
+int erase_ddr(struct dram_cfg_param *data, int data_size,
+	u32 *regs_to_erase, int erase_size)
+{
+	int i, j, k;
+	int end_pos = data_size - 1;
+	bool found;
+
+	/* Iterate backwards to erase from end */
+	for (i = erase_size - 1; i >= 0; i--) {
+		found = false;
+		/* Search backwards from last found position since registers are in order */
+		for (j = end_pos; j >= 0; j--) {
+			if (data[j].reg == regs_to_erase[i]) {
+				/* Shift remaining elements down */
+				for (k = j; k < data_size - 1; k++) {
+					data[k] = data[k + 1];
+				}
+				data_size--;
+				end_pos = j - 1;  /* Next search ends before current position */
+				found = true;
+				break;
+			}
+		}
+		if (!found) {
+			printf("DDR erase warning: register 0x%x not found in data\n", 
+			       regs_to_erase[i]);
+		}
+	}
+	
+	return data_size;
+};

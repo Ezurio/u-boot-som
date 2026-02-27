@@ -10,7 +10,7 @@
 #include <i2c.h>
 #include <dm/uclass.h>
 
-#include "../common/common.h"    
+#include "../common/common.h"
 
 int board_late_init(void)
 {

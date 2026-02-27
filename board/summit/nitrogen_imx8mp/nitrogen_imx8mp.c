@@ -1,10 +1,12 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * Board specific initialization for i.MX8MP Common Test Platform 
+ * Board specific initialization for Nitrogen i.MX8MP SMARC
  *
  * Copyright (C) 2025 Ezurio
  *
  */
+
+#include <env.h>
 
 #include "../common/common.h"
 

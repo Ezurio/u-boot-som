@@ -37,4 +37,5 @@ config NITROGEN_IMX8MP_2GB_R1
 	  Enable support for Nitrogen iMX8MP 2GB RAM variant Rev 1 PCB.
 
 endchoice
+
 endif
