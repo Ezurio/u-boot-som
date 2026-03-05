@@ -16,8 +16,8 @@ enum nitrogen_imx8mp_ddr_patch_control {
 	DDR_PATCH_8GB = 4,
 };
 
-#define MEMORY_FUSE_BANK 15
-#define MEMORY_FUSE_WORD 0
+#define MEMORY_FUSE_BANK 14
+#define MEMORY_FUSE_WORD 3
 
 #if defined(CONFIG_XPL_BUILD)
 
