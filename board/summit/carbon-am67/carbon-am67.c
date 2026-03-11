@@ -16,13 +16,8 @@
 #include <asm/arch/k3-ddr.h>
 
 #include "../common/common.h"
-#include "../common/k3-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
-
-#include "carbon-ddr-tables.h"
-
-void mmr_unlock(uintptr_t base, u32 partition);
 
 int board_init(void)
 {
@@ -44,17 +39,12 @@ int board_late_init(void)
 #endif
 
 #if defined(CONFIG_XPL_BUILD)
-#if IS_ENABLED(CONFIG_K3_DDRSS)
-const struct ddrss_patch* get_lpddr_patch_data(void)
-{
-	return lpddr4_data;
-}
-#endif /* CONFIG_K3_DDRSS */
-
 #if defined(CONFIG_SPL_BOARD_INIT)
 
 #define WKUP_CTRL_DEVICE_CLKOUT_CTRL		(WKUP_CTRL_MMR0_BASE + 0x8020)
 #define WKUP_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL	(0x1)
+
+void mmr_unlock(uintptr_t base, u32 partition);
 
 void spl_board_init(void)
 {
@@ -102,8 +92,6 @@ void spl_board_init(void)
 
 void spl_perform_fixups(struct spl_image_info *spl_image)
 {
-#if !IS_ENABLED(CONFIG_K3_DDRSS)
 	fixup_memory_node(spl_image);
-#endif
 }
 #endif /* CONFIG_XPL_BUILD */
