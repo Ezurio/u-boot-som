@@ -13,20 +13,24 @@
 const static struct ddr_patch_record lpddr4_ctl_1gb[] = {
 	{ 317, 0x00000101 },
 	{ 318, 0x1FFF0000 },
+	{ U32_MAX, 0 },
 };
 
 const static struct ddr_patch_record lpddr4_pi_1gb[] = {
 	{ 77, 0x08010100 },
+	{ U32_MAX, 0 },
 };
 
 /* Micron, 4 GB */
 const static struct ddr_patch_record lpddr4_ctl_4gb[] = {
 	{ 317, 0xFFFFFEFF },
 	{ 318, 0x7FFF0000 },
+	{ U32_MAX, 0 },
 };
 
 const static struct ddr_patch_record lpddr4_pi_4gb[] = {
 	{ 77, 0x07FF0100 },
+	{ U32_MAX, 0 },
 };
 
 const static struct ddrss_patch lpddr4_data[] = {
@@ -34,15 +38,11 @@ const static struct ddrss_patch lpddr4_data[] = {
 		.id = 1,
 		.ctl_patch = lpddr4_ctl_1gb,
 		.pi_patch = lpddr4_pi_1gb,
-		.ctl_patch_size = ARRAY_SIZE(lpddr4_ctl_1gb),
-		.pi_patch_size = ARRAY_SIZE(lpddr4_pi_1gb),
 	},
 	{
 		.id = 3, 
 		.ctl_patch = lpddr4_ctl_4gb,
 		.pi_patch = lpddr4_pi_4gb,
-		.ctl_patch_size = ARRAY_SIZE(lpddr4_ctl_4gb),
-		.pi_patch_size = ARRAY_SIZE(lpddr4_pi_4gb),
 	},
 	{ 0 },
 };
