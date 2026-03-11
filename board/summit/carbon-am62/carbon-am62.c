@@ -14,10 +14,8 @@
 #include <asm/io.h>
 #include <asm/arch/hardware.h>
 #include <asm/arch/k3-ddr.h>
-#include <linux/sizes.h>
 
 #include "../common/common.h"
-#include "../common/k3-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -26,10 +24,10 @@ int board_init(void)
 	return 0;
 }
 
-#ifdef CONFIG_BOARD_LATE_INIT
+#if IS_ENABLED(CONFIG_BOARD_LATE_INIT)
 int board_late_init(void)
 {
-#ifdef CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
+#if IS_ENABLED(CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG)
 	env_set("board_name", "Carbon AM62x");
 	env_set("board_rev", "AM62x");
 #endif
@@ -53,7 +51,7 @@ void spl_board_init(void)
 	/* Add any TRIM needed for the crystal here.. */
 	/* Make sure to mux up to take the SoC 32k from the crystal */
 	writel(MCU_CTRL_DEVICE_CLKOUT_LFOSC_SELECT_VAL,
-	       MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
+		MCU_CTRL_DEVICE_CLKOUT_32K_CTRL);
 
 	/*
 	 * Setup debounce time registers.
@@ -76,8 +74,6 @@ void spl_board_init(void)
 
 void spl_perform_fixups(struct spl_image_info *spl_image)
 {
-#if !IS_ENABLED(CONFIG_K3_DDRSS)
 	fixup_memory_node(spl_image);
-#endif
 }
 #endif /* CONFIG_XPL_BUILD */

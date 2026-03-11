@@ -3,10 +3,7 @@
  * Copyright (C) 2025 Ezurio
  */
 
-#ifndef CARBON_DDR_TABLES_H
-#define CARBON_DDR_TABLES_H
-
-#include <linux/kernel.h>
+#include <init.h>
 
 #include "../common/k3-common.h"
 
@@ -35,4 +32,7 @@ const static struct ddrss_patch lpddr4_data[] = {
 	{ 0 },
 };
 
-#endif /* CARBON_DDR_TABLES_H */
+const struct ddrss_patch* get_lpddr_patch_data(void)
+{
+	return lpddr4_data;
+}
