@@ -3,4 +3,10 @@
 # Copyright 2024 Ezurio
 #
 
-obj-y	+= carbon-am62.o ../common/k3-common.o
+obj-y	+= carbon-am62.o
+
+ifeq ($(CONFIG_K3_DDRSS),y)
+obj-y	+= ../common/k3-common-r5.o lpddr4_patches.o
+else
+obj-y	+= ../common/k3-common.o
+endif
