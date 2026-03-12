@@ -18,9 +18,6 @@
 
 DECLARE_GLOBAL_DATA_PTR;
 
-#define AM64_DDRSS_SS_BASE	0x0F300000
-#define DDRSS_V2A_CTL_REG	0x0020
-
 static __section(".data") u16 ram_type = 0;
 static __section(".data") u64 ram_size = 0;
 
@@ -53,15 +50,6 @@ int do_board_detect(void)
 
 #if !IS_ENABLED(CONFIG_PHYS_64BIT) || CONFIG_NR_DRAM_BANKS < 2
 	ram_size = ram_size > SZ_2G ? SZ_2G : ram_size;
-#endif
-
-#if IS_ENABLED(CONFIG_SOC_K3_AM625)
-	/*
-	 * HACK: ddrss driver support 2GB RAM by default
-	 * V2A_CTL_REG should be updated to support other RAM size
-	 */
-	if (ram_size > SZ_2G)
-		writel(0x00000210, AM64_DDRSS_SS_BASE + DDRSS_V2A_CTL_REG);
 #endif
 
 	dram_init();
