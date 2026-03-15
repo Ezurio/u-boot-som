@@ -106,7 +106,7 @@ void k3_lpddr4_patch(u32* ctl_regs, u32* pi_regs, u32* phy_regs)
 }
 
 int dram_init(void)
-{	
+{
 	if (!ram_size)
 		return fdtdec_setup_mem_size_base();
 
