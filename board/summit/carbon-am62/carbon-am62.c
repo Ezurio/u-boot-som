@@ -6,12 +6,10 @@
  *
  */
 
-#include <env.h>
-#include <spl.h>
 #include <init.h>
-#include <k3-ddrss.h>
+#include <spl.h>
 #include <fdt_support.h>
-#include <asm/io.h>
+#include <env.h>
 #include <asm/arch/hardware.h>
 #include <asm/arch/k3-ddr.h>
 
@@ -40,6 +38,7 @@ int board_late_init(void)
 
 #if defined(CONFIG_XPL_BUILD)
 #if defined(CONFIG_SPL_BOARD_INIT)
+#if defined(CONFIG_CPU_V7R)
 void spl_board_init(void)
 {
 	u32 val;
@@ -70,6 +69,12 @@ void spl_board_init(void)
 	/* 156ms debounce @ 32k */
 	writel(0x1f, CTRLMMR_DBOUNCE_CFG(6));
 }
+#else
+void spl_board_init(void)
+{
+	enable_caches();
+}
+#endif /* CONFIG_CPU_V7R */
 #endif /* CONFIG_SPL_BOARD_INIT */
 
 void spl_perform_fixups(struct spl_image_info *spl_image)
