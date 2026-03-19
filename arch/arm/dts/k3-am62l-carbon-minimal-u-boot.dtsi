@@ -1,0 +1,229 @@
+// SPDX-License-Identifier: GPL-2.0-only or MIT
+/*
+ * Copyright (C) 2026 Ezurio LLC
+ */
+ 
+#include "k3-am62l-carbon-binman.dtsi"
+
+/ {
+	aliases {
+		mmc0 = &sdhci0;
+		mmc1 = &sdhci1;
+	};
+};
+
+&scmi {
+	bootph-all;
+};
+
+&memory {
+	bootph-all;
+};
+
+&main_gpio0 {
+	bootph-all;
+};
+
+&main_gpio2 {
+	bootph-all;
+};
+
+&reg_mmc1 {
+	bootph-all;
+};
+
+&main_uart0 {
+	bootph-all;
+};
+
+&sdhci0 {
+	bootph-all;
+	mmc-hs200-1_8v;
+	mmc-ddr-1_8v;
+};
+
+&sdhci1 {
+	bootph-all;
+	sd-uhs-sdr104;
+	sd-uhs-ddr50;
+};
+
+&gpmc0 {
+	bootph-all;
+};
+
+&wkup_i2c0 {
+	bootph-all;
+};
+
+&exp0 {
+	bootph-all;
+	compatible = "ti,tca6416";
+
+	wifi_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <0 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <1 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	carrier_pwr_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <2 GPIO_ACTIVE_HIGH>;
+		output-high;
+	};
+
+	gpio3 {
+		bootph-all;
+		gpio-hog;
+		gpios = <3 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio4 {
+		bootph-all;
+		gpio-hog;
+		gpios = <4 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio5 {
+		bootph-all;
+		gpio-hog;
+		gpios = <5 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio6 {
+		bootph-all;
+		gpio-hog;
+		gpios = <6 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio7 {
+		bootph-all;
+		gpio-hog;
+		gpios = <7 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio8 {
+		bootph-all;
+		gpio-hog;
+		gpios = <8 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio9 {
+		gpio-hog;
+		gpios = <9 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio10 {
+		bootph-all;
+		gpio-hog;
+		gpios = <10 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio11 {
+		bootph-all;
+		gpio-hog;
+		gpios = <11 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio12 {
+		bootph-all;
+		gpio-hog;
+		gpios = <12 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio13 {
+		bootph-all;
+		gpio-hog;
+		gpios = <13 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio14 {
+		bootph-all;
+		gpio-hog;
+		gpios = <14 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+	gpio15 {
+		bootph-all;
+		gpio-hog;
+		gpios = <15 GPIO_ACTIVE_HIGH>;
+		input;
+	};
+};
+
+&rv3028 {
+	bootph-all;
+
+	eeprom {
+		bootph-all;
+	};
+};
+
+&eth_mac0 {
+	bootph-all;
+};
+
+&eth_mac1 {
+	bootph-all;
+};
+
+&ram_type {
+	bootph-all;
+};
+
+&radio_type {
+	bootph-all;
+};
+
+&main_uart0_tx_pins_default {
+	bootph-all;
+};
+
+&main_uart0_rx_pins_default {
+	bootph-all;
+};
+
+&wkup_i2c0_pins_default {
+	bootph-all;
+};
+
+&main_mmc0_pins_default {
+	bootph-all;
+};
+
+&main_mmc1_pins_default {
+	bootph-all;
+};
+
+&main_gpmc0_pins_default {
+	bootph-all;
+};
+
+&main_mmc1_power_en_pins_default {
+	bootph-all;
+};
+
+&usb0 {
+	/delete-property/ bootph-all;
+};
+
+&dphy_tx0 {
+	/delete-property/ bootph-all;
+};
+
+&dss {
+	/delete-property/ bootph-all;
+};
+
+&dsi0 {
+	/delete-property/ bootph-all;
+};

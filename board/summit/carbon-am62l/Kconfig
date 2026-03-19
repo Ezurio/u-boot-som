@@ -1,0 +1,17 @@
+# SPDX-License-Identifier: GPL-2.0+
+#
+# Copyright (C) 2026 Ezurio LLC
+#
+
+if TARGET_CARBON_AM62L
+
+config SYS_BOARD
+       default "carbon-am62l"
+
+config SYS_VENDOR
+       default "summit"
+
+config SYS_CONFIG_NAME
+       default "carbon-am62l"
+
+endif
