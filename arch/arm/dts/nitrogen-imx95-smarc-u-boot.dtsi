@@ -1,9 +1,18 @@
 // SPDX-License-Identifier: GPL-2.0+
 /*
- * Copyright 2025 Ezurio
+ * Copyright 2025 Ezurio LLC
  */
 
 #include "imx95-u-boot.dtsi"
+
+/ {
+	firmware {
+		optee {
+			compatible = "linaro,optee-tz";
+			method = "smc";
+		};
+	};
+};
 
 &lpuart1 {
 	bootph-pre-ram;
