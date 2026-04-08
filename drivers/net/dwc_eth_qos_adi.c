@@ -2,14 +2,14 @@
 /**
  * (C) Copyright 2024 - Analog Devices, Inc.
  *
- * Written and/or maintained by Timesys Corporation
+ * Written by Timesys Corporation
  *
  * Author: Greg Malysa <greg.malysa@timesys.com>
- * Additional Contact: Nathan Barrett-Morrison <nathan.morrison@timesys.com>
  */
 
 #include <clk.h>
 #include <dm.h>
+#include <env.h>
 #include <net.h>
 #include <phy.h>
 #include <reset.h>

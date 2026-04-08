@@ -20,6 +20,8 @@ obj-$(CONFIG_OPTEE_LIB) += optee/
 
 obj-$(CONFIG_$(PHASE_)BINMAN_FDT) += binman.o
 
+obj-$(CONFIG_FW_LOADER) += fw_loader.o
+
 ifndef API_BUILD
 ifneq ($(CONFIG_CHARSET),)
 obj-y += charset.o
@@ -80,6 +82,7 @@ obj-$(CONFIG_$(PHASE_)SHA1_LEGACY) += sha1.o
 obj-$(CONFIG_$(PHASE_)SHA256) += sha256_common.o
 obj-$(CONFIG_$(PHASE_)SHA256_LEGACY) += sha256.o
 obj-$(CONFIG_$(PHASE_)SHA512_LEGACY) += sha512.o
+obj-$(CONFIG_$(PHASE_)SM3) += sm3.o
 
 obj-$(CONFIG_CRYPT_PW) += crypt/
 obj-$(CONFIG_$(PHASE_)ASN1_DECODER_LEGACY) += asn1_decoder.o
@@ -160,7 +163,7 @@ obj-$(CONFIG_LIB_ELF) += elf.o
 
 obj-$(CONFIG_$(PHASE_)SEMIHOSTING) += semihosting.o
 
-obj-$(CONFIG_UTHREAD) += uthread.o
+obj-$(CONFIG_$(PHASE_)UTHREAD) += uthread.o
 
 #
 # Build a fast OID lookup registry from include/linux/oid_registry.h

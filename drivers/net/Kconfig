@@ -125,7 +125,9 @@ config AIROHA_ETH
 	bool "Airoha Ethernet QDMA Driver"
 	depends on ARCH_AIROHA
 	select PHYLIB
+	select DEVRES
 	select DM_RESET
+	select MDIO_MT7531_MMIO
 	help
 	  This Driver support Airoha Ethernet QDMA Driver
 	  Say Y to enable support for the Airoha Ethernet QDMA.
@@ -179,7 +181,7 @@ config CALXEDA_XGMAC
 	  machines.
 
 config DWC_ETH_XGMAC
-        bool "Synopsys DWC Ethernet XGMAC device support"
+        bool
 	select PHYLIB
         help
           This driver supports the Synopsys Designware Ethernet XGMAC (10G
@@ -190,7 +192,8 @@ config DWC_ETH_XGMAC_SOCFPGA
 	bool "Synopsys DWC Ethernet XGMAC device support for SOCFPGA"
 	select REGMAP
 	select SYSCON
-	depends on DWC_ETH_XGMAC
+	select DWC_ETH_XGMAC
+	depends on ARCH_SOCFPGA
 	default y if TARGET_SOCFPGA_AGILEX5
 	help
 	  The Synopsys Designware Ethernet XGMAC IP block with specific
@@ -357,6 +360,7 @@ config ETH_SANDBOX_RAW
 
 config ETH_DESIGNWARE
 	bool "Synopsys Designware Ethernet MAC"
+	select DEVRES
 	select PHYLIB
 	imply ETH_DESIGNWARE_SOCFPGA if ARCH_SOCFPGA
 	help
@@ -376,7 +380,7 @@ config ETH_DESIGNWARE_SOCFPGA
 	select SYSCON
 	select DW_ALTDESCRIPTOR
 	bool "Altera SoCFPGA extras for Synopsys Designware Ethernet MAC"
-	depends on ETH_DESIGNWARE
+	depends on ARCH_SOCFPGA && ETH_DESIGNWARE
 	help
 	  The Altera SoCFPGA requires additional configuration of the
 	  Altera system manager to correctly interface with the PHY.
@@ -419,7 +423,7 @@ config FEC_MXC_MDIO_BASE
 
 config FEC_MXC
 	bool "FEC Ethernet controller"
-	depends on MX28 || MX5 || MX6 || MX7 || IMX8 || IMX8M || IMX8ULP || IMX93 || VF610
+	depends on MX28 || MX5 || MX6 || MX7 || IMX8 || IMX8M || IMX8ULP || IMX91 || IMX93 || VF610
 	help
 	  This driver supports the 10/100 Fast Ethernet controller for
 	  NXP i.MX processors.
@@ -535,7 +539,7 @@ config MV88E6XXX
 
 config MVGBE
 	bool "Marvell Orion5x/Kirkwood network interface support"
-	depends on ARCH_KIRKWOOD || ARCH_ORION5X
+	depends on ARCH_KIRKWOOD
 	select PHYLIB
 	help
 	  This driver supports the network interface units in the
@@ -553,6 +557,7 @@ config MVNETA
 config MVPP2
 	bool "Marvell Armada 375/7K/8K network interface support"
 	depends on ARMADA_375 || ARMADA_8K
+	select DEVRES
 	select PHYLIB
 	select MVMDIO
 	select DM_MDIO
@@ -841,11 +846,12 @@ config GMAC_ROCKCHIP
 
 config RENESAS_ETHER_SWITCH
 	bool "Renesas Ethernet Switch support"
-	depends on DM_ETH && R8A779F0
+	depends on DM_ETH && (R8A779F0 || R8A78000)
 	select PHYLIB
 	help
 	  This driver implements support for the Renesas Ethernet Switch
-	  which is available on R-Car S4 SoC (r8a779f0).
+	  which is available on R-Car S4 SoC (R8A779F0) and newer version
+	  on R-Car X5H SoC (R8A78000).
 
 config RENESAS_RAVB
 	bool "Renesas Ethernet AVB MAC"
@@ -966,6 +972,9 @@ config TSEC_ENET
 	  This driver implements support for the (Enhanced) Three-Speed
 	  Ethernet Controller found on Freescale SoCs.
 
+config MDIO_MT7531_MMIO
+	bool
+
 source "drivers/net/mtk_eth/Kconfig"
 
 config HIFEMAC_ETH
@@ -1002,8 +1011,9 @@ config FSL_ENETC
 
 config FSL_ENETC_NETC_BLK_CTRL
 	bool "NXP ENETC NETC blocks control driver"
-	depends on FSL_ENETC && IMX95
-	default y if IMX95
+	depends on FSL_ENETC
+	depends on IMX95 || IMX94
+	default y if IMX95 || IMX94
 	help
 	  This driver configures Integrated Endpoint Register Block (IERB) and
 	  Privileged Register Block (PRB) of NETC. For i.MX platforms, it also
@@ -1058,6 +1068,14 @@ config ASPEED_MDIO
 	help
 	  This driver supports the MDIO bus of Aspeed AST2600 SOC.  The driver
 	  currently supports Clause 22.
+
+config MDIO_MSCC_MIIM
+	bool "Microsemi MIIM interface support"
+	depends on DM_MDIO
+	select REGMAP
+	help
+		This driver supports MDIO interface found in Microsemi and Microchip
+		network switches.
 
 config MDIO_MUX_MMIOREG
 	bool "MDIO MUX accessed as a MMIO register access"

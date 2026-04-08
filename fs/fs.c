@@ -316,8 +316,7 @@ static struct fstype_info fstypes[] = {
 	},
 #endif
 #endif
-#ifndef CONFIG_XPL_BUILD
-#ifdef CONFIG_FS_BTRFS
+#if CONFIG_IS_ENABLED(FS_BTRFS)
 	{
 		.fstype = FS_TYPE_BTRFS,
 		.name = "btrfs",
@@ -336,7 +335,6 @@ static struct fstype_info fstypes[] = {
 		.ln = fs_ln_unsupported,
 		.rename = fs_rename_unsupported,
 	},
-#endif
 #endif
 #if CONFIG_IS_ENABLED(FS_SQUASHFS)
 	{
@@ -360,7 +358,7 @@ static struct fstype_info fstypes[] = {
 		.rename = fs_rename_unsupported,
 	},
 #endif
-#if IS_ENABLED(CONFIG_FS_EROFS)
+#if CONFIG_IS_ENABLED(FS_EROFS)
 	{
 		.fstype = FS_TYPE_EROFS,
 		.name = "erofs",
@@ -382,7 +380,7 @@ static struct fstype_info fstypes[] = {
 		.rename = fs_rename_unsupported,
 	},
 #endif
-#if IS_ENABLED(CONFIG_FS_EXFAT)
+#if CONFIG_IS_ENABLED(FS_EXFAT)
 	{
 		.fstype = FS_TYPE_EXFAT,
 		.name = "exfat",
@@ -1061,15 +1059,25 @@ int do_mv(struct cmd_tbl *cmdtp, int flag, int argc, char *const argv[],
 	 */
 	if (dirs) {
 		char *src_name = strrchr(src, '/');
-		int dst_len;
 
 		if (src_name)
 			src_name += 1;
 		else
 			src_name = src;
 
-		dst_len = strlen(dst);
-		new_dst = calloc(1, dst_len + strlen(src_name) + 2);
+		size_t dst_len = strlen(dst);
+		size_t src_len = strlen(src_name);
+		size_t total;
+
+		if (__builtin_add_overflow(dst_len, src_len, &total) ||
+		    __builtin_add_overflow(total, 2, &total)) {
+			return 0;
+		}
+
+		new_dst = calloc(1, total);
+		if (!new_dst)
+			return 0;
+
 		strcpy(new_dst, dst);
 
 		/* If there is already a trailing slash, don't add another */

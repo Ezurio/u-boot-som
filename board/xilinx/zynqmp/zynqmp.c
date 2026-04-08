@@ -293,7 +293,7 @@ void reset_cpu(void)
 	 * will send command over IPI and requires pmufw to be present.
 	 */
 	xilinx_pm_request(PM_RESET_ASSERT, ZYNQMP_PM_RESET_SOFT,
-			  PM_RESET_ACTION_ASSERT, 0, 0, NULL);
+			  PM_RESET_ACTION_ASSERT, 0, 0, 0, 0, NULL);
 }
 #endif
 
@@ -628,6 +628,10 @@ enum env_location env_get_location(enum env_operation op, int prio)
 	case QSPI_MODE_32BIT:
 		if (IS_ENABLED(CONFIG_ENV_IS_IN_SPI_FLASH))
 			return ENVL_SPI_FLASH;
+		if (IS_ENABLED(CONFIG_ENV_IS_IN_FAT))
+			return ENVL_FAT;
+		if (IS_ENABLED(CONFIG_ENV_IS_IN_EXT4))
+			return ENVL_EXT4;
 		return ENVL_NOWHERE;
 	case JTAG_MODE:
 	default:

@@ -578,7 +578,6 @@
 		clocks = <&k3_clks 57 5>, <&k3_clks 57 6>;
 		clock-names = "clk_ahb", "clk_xin";
 		bus-width = <8>;
-		mmc-ddr-1_8v;
 		mmc-hs200-1_8v;
 		ti,clkbuf-sel = <0x7>;
 		ti,otap-del-sel-legacy = <0x0>;
@@ -874,6 +873,7 @@
 		#mbox-cells = <1>;
 		ti,mbox-num-users = <4>;
 		ti,mbox-num-fifos = <16>;
+		status = "disabled";
 	};
 
 	ecap0: pwm@23100000 {
@@ -1085,9 +1085,8 @@
 
 	ti_csi2rx0: ticsi2rx@30102000 {
 		compatible = "ti,j721e-csi2rx-shim";
-		dmas = <&main_bcdma 0 0x4700 0>, <&main_bcdma 0 0x4701 0>,
-		       <&main_bcdma 0 0x4702 0>, <&main_bcdma 0 0x4703 0>;
-		dma-names = "rx0", "rx1", "rx2", "rx3";
+		dmas = <&main_bcdma 0 0x4700 0>;
+		dma-names = "rx0";
 		reg = <0x00 0x30102000 0x00 0x1000>;
 		power-domains = <&k3_pds 182 TI_SCI_PD_EXCLUSIVE>;
 		#address-cells = <2>;
@@ -1098,8 +1097,8 @@
 		cdns_csi2rx0: csi-bridge@30101000 {
 			compatible = "ti,j721e-csi2rx", "cdns,csi2rx";
 			reg = <0x00 0x30101000 0x00 0x1000>;
-			interrupts = <GIC_SPI 158 IRQ_TYPE_LEVEL_HIGH>,
-				     <GIC_SPI 156 IRQ_TYPE_LEVEL_HIGH>;
+			interrupts = <GIC_SPI 143 IRQ_TYPE_LEVEL_HIGH>,
+				     <GIC_SPI 141 IRQ_TYPE_LEVEL_HIGH>;
 			interrupt-names = "error_irq", "irq";
 			clocks = <&k3_clks 182 0>, <&k3_clks 182 3>, <&k3_clks 182 0>,
 				<&k3_clks 182 0>, <&k3_clks 182 4>, <&k3_clks 182 4>;

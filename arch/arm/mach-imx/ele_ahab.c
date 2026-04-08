@@ -12,6 +12,7 @@
 #include <asm/mach-imx/ele_api.h>
 #include <asm/mach-imx/sys_proto.h>
 #include <asm/arch-imx/cpu.h>
+#include <asm/arch/imx-regs.h>
 #include <asm/arch/sys_proto.h>
 #include <console.h>
 #include <cpu_func.h>
@@ -414,7 +415,7 @@ static int do_authenticate(struct cmd_tbl *cmdtp, int flag, int argc,
 	return CMD_RET_SUCCESS;
 }
 
-#ifdef CONFIG_IMX95
+#if IS_ENABLED(CONFIG_IMX95) || IS_ENABLED(CONFIG_IMX94)
 #define FSB_LC_OFFSET 0x414
 #define LC_OEM_OPEN 0x10
 #define LC_OEM_CLOSED 0x40

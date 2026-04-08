@@ -20,7 +20,6 @@
 #include <linux/time.h>
 #include <zynqmp_firmware.h>
 #include "cadence_qspi.h"
-#include <dt-bindings/power/xlnx-versal-power.h>
 
 #define CQSPI_STIG_READ			0
 #define CQSPI_STIG_WRITE		1
@@ -29,6 +28,7 @@
 
 /* Quirks */
 #define CQSPI_DISABLE_STIG_MODE		BIT(0)
+#define CQSPI_DMA_MODE			BIT(1)
 
 __weak int cadence_qspi_apb_dma_read(struct cadence_spi_priv *priv,
 				     const struct spi_mem_op *op)
@@ -142,7 +142,7 @@ static int spi_calibration(struct udevice *bus, uint hz)
 
 	if (range_lo == -1) {
 		puts("SF: Calibration failed (low range)\n");
-		return err;
+		return -EIO;
 	}
 
 	/* Disable QSPI for subsequent initialization */
@@ -210,7 +210,6 @@ static int cadence_spi_probe(struct udevice *bus)
 
 	priv->regbase		= plat->regbase;
 	priv->ahbbase		= plat->ahbbase;
-	priv->is_dma		= plat->is_dma;
 	priv->is_decoded_cs	= plat->is_decoded_cs;
 	priv->fifo_depth	= plat->fifo_depth;
 	priv->fifo_width	= plat->fifo_width;
@@ -227,10 +226,15 @@ static int cadence_spi_probe(struct udevice *bus)
 	priv->tslch_ns		= plat->tslch_ns;
 	priv->quirks		= plat->quirks;
 
+	if (priv->quirks & CQSPI_DMA_MODE) {
+		priv->is_dma = true;
+		debug("Cadence QSPI: DMA mode enabled\n");
+	}
+
 	if (IS_ENABLED(CONFIG_ZYNQMP_FIRMWARE))
 		xilinx_pm_request(PM_REQUEST_NODE, PM_DEV_OSPI,
 				  ZYNQMP_PM_CAPABILITY_ACCESS, ZYNQMP_PM_MAX_QOS,
-				  ZYNQMP_PM_REQUEST_ACK_NO, NULL);
+				  ZYNQMP_PM_REQUEST_ACK_NO, 0, 0, NULL);
 
 	if (priv->ref_clk_hz == 0) {
 		ret = clk_get_by_index(bus, 0, &clk);
@@ -265,8 +269,6 @@ static int cadence_spi_probe(struct udevice *bus)
 
 	/* Reset ospi flash device */
 	return cadence_qspi_flash_reset(bus);
-
-	return 0;
 }
 
 static int cadence_spi_remove(struct udevice *dev)
@@ -412,8 +414,6 @@ static int cadence_spi_of_to_plat(struct udevice *bus)
 	if (plat->ahbsize >= SZ_8M)
 		priv->use_dac_mode = true;
 
-	plat->is_dma = dev_read_bool(bus, "cdns,is-dma");
-
 	/* All other parameters are embedded in the child node */
 	subnode = cadence_qspi_get_subnode(bus);
 	if (!ofnode_valid(subnode)) {
@@ -473,6 +473,10 @@ static const struct cqspi_driver_platdata cdns_qspi = {
 	.quirks = CQSPI_DISABLE_STIG_MODE,
 };
 
+static const struct cqspi_driver_platdata cdns_xilinx_qspi = {
+	.quirks = CQSPI_DMA_MODE,
+};
+
 static const struct udevice_id cadence_spi_ids[] = {
 	{
 		.compatible = "cdns,qspi-nor",
@@ -482,7 +486,12 @@ static const struct udevice_id cadence_spi_ids[] = {
 		.compatible = "ti,am654-ospi"
 	},
 	{
-		.compatible = "amd,versal2-ospi"
+		.compatible = "amd,versal2-ospi",
+		.data = (ulong)&cdns_xilinx_qspi,
+	},
+	{
+		.compatible = "xlnx,versal-ospi-1.0",
+		.data = (ulong)&cdns_xilinx_qspi,
 	},
 	{ }
 };

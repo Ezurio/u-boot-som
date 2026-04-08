@@ -35,6 +35,7 @@ config DM_SPI
 
 config SPI_MEM
 	bool "SPI memory extension"
+	select DEVRES
 	help
 	  Enable this option if you want to enable the SPI memory extension.
 	  This extension is meant to simplify interaction with SPI memories
@@ -61,7 +62,7 @@ config ADI_SPI3
 
 config AIROHA_SNFI_SPI
 	bool "Airoha SPI memory controller driver"
-	depends on SPI_MEM
+	depends on SPI_MEM && ARCH_AIROHA
 	help
 	  Enable the Airoha SPI memory controller driver. This driver is
 	  originally based on the Airoha SNFI IP core. It can only be
@@ -179,6 +180,21 @@ config CADENCE_OSPI_VERSAL
 	help
 	  This option is used to enable Versal OSPI DMA operations which
 	  are used for ospi flash read using cadence qspi controller.
+
+config CADENCE_XSPI
+	bool "Cadence XSPI driver (Experimental feature)"
+	help
+	  Important: this feature is experimental so far and tested only
+	  on simulated environment.
+
+	  Enable the Cadence eXpanded Serial Periheral Interface (xSPI) flash
+	  driver. This driver can be used to access the SPI NOR flash on
+	  platforms embedding this Cadence IP core up to 8 bit wide bus.
+	  xSPI flash controller IP offers three work mode, Auto Command (ACMD)
+	  work mode, Software Triggered Instruction Generator (STIG) work mode
+	  and Direct work mode. This flash controller able to coomunicate
+	  with Flash Memory Devices supporting JESD216 and JESD251 stadards
+	  by using the Auto Command work mode.
 
 config CF_SPI
         bool "ColdFire SPI driver"
@@ -328,6 +344,7 @@ config MT7621_SPI
 config MTK_SNOR
 	bool "Mediatek SPI-NOR controller driver"
 	depends on SPI_MEM
+	select DEVRES
 	help
 	  Enable the Mediatek SPINOR controller driver. This driver has
           better read/write performance with NOR.
@@ -452,6 +469,7 @@ config ROCKCHIP_SFC
 
 config ROCKCHIP_SPI
 	bool "Rockchip SPI driver"
+	depends on ARCH_ROCKCHIP
 	help
 	  Enable the Rockchip SPI driver, used to access SPI NOR flash and
 	  other SPI peripherals (such as the Chrome OS EC) on Rockchip SoCs.
@@ -495,7 +513,7 @@ config SANDBOX_SPI_MAX_CS
 
 config SPI_ASPEED_SMC
 	bool "ASPEED SPI flash controller driver"
-	depends on DM_SPI && SPI_MEM
+	depends on DM_SPI && SPI_MEM && ARCH_ASPEED
 	help
 	  Enable ASPEED SPI flash controller driver for AST2500
 	  and AST2600 SoCs.
@@ -529,6 +547,14 @@ config SPI_SUNXI
 	  Enable the Allwinner SoC SPi controller driver.
 
 	  Same controller driver can reuse in all Allwinner SoC variants.
+
+config STM32_OSPI
+	bool "STM32MP2 OSPI driver"
+	depends on STM32MP25X && STM32_OMM
+	help
+	  Enable the STM32MP2 Octo-SPI (OSPI) driver. This driver can be
+	  used to access the SPI NOR flash chips on platforms embedding
+	  this ST IP core.
 
 config STM32_QSPI
 	bool "STM32F7 QSPI driver"
@@ -614,6 +640,7 @@ config ZYNQ_SPI
 
 config ZYNQ_QSPI
 	bool "Zynq QSPI driver"
+	depends on ARCH_VERSAL || ARCH_VERSAL_NET || ARCH_VERSAL2 || ARCH_ZYNQ || ARCH_ZYNQMP
 	imply SPI_FLASH_BAR
 	help
 	  Enable the Zynq Quad-SPI (QSPI) driver. This driver can be
@@ -623,6 +650,7 @@ config ZYNQ_QSPI
 
 config ZYNQMP_GQSPI
 	bool "Configure ZynqMP Generic QSPI"
+	depends on ARCH_VERSAL || ARCH_VERSAL_NET || ARCH_VERSAL2 || ARCH_ZYNQ || ARCH_ZYNQMP
 	help
 	  This option is used to enable ZynqMP QSPI controller driver which
 	  is used to communicate with qspi flash devices.
@@ -650,6 +678,14 @@ config SH_QSPI
 	help
 	  Enable the Renesas Quad SPI controller driver. This driver can be
 	  used on Renesas SoCs.
+
+config SPL_DESIGNWARE_SPI
+	bool "Designware SPI driver in SPL"
+	depends on SPL_DM_SPI
+	default y if DESIGNWARE_SPI
+	help
+	  Enable the Designware SPI driver during SPL.
+	  See the help of DESIGNWARE_SPI for details.
 
 config MXC_SPI
 	bool "MXC SPI Driver"

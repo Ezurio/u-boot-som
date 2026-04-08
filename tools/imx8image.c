@@ -23,7 +23,7 @@ static uint8_t cntr_version;
 static uint32_t custom_partition;
 static uint32_t scfw_flags;
 
-int imx8image_check_params(struct image_tool_params *params)
+static int imx8image_check_params(struct image_tool_params *params)
 {
 	return 0;
 }
@@ -815,7 +815,7 @@ static int get_container_image_start_pos(image_t *image_stack, uint32_t align, u
 
 	p = calloc(1, size);
 	if (!p) {
-		fprintf(stderr, "Fail to alloc %lx memory\n", size);
+		fprintf(stderr, "Fail to alloc %zx memory\n", size);
 		exit(EXIT_FAILURE);
 	}
 

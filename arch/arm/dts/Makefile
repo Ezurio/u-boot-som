@@ -451,6 +451,7 @@ dtb-$(CONFIG_TARGET_THUNDERX_88XX) += thunderx-88xx.dtb
 
 dtb-$(CONFIG_ARCH_SOCFPGA) +=				\
 	socfpga_agilex5_socdk.dtb			\
+	socfpga_agilex5_socdk_emmc.dtb		\
 	socfpga_arria5_secu1.dtb			\
 	socfpga_arria5_socdk.dtb			\
 	socfpga_arria10_chameleonv3_270_2.dtb		\
@@ -650,8 +651,6 @@ dtb-$(CONFIG_MACH_SUN8I_R40) += \
 	sun8i-r40-oka40i-c.dtb \
 	sun8i-t3-cqa3t-bv3.dtb \
 	sun8i-v40-bananapi-m2-berry.dtb
-dtb-$(CONFIG_MACH_SUN8I_R528) += \
-	sun8i-t113s-mangopi-mq-r-t113.dtb
 dtb-$(CONFIG_MACH_SUN50I_H5) += \
 	sun50i-h5-bananapi-m2-plus.dtb \
 	sun50i-h5-emlid-neutis-n5-devboard.dtb \
@@ -693,8 +692,6 @@ dtb-$(CONFIG_MACH_SUN50I) += \
 	sun50i-a64-sopine-baseboard.dtb \
 	sun50i-a64-teres-i.dtb
 dtb-$(CONFIG_MACH_SUN9I) += \
-	sun9i-a80-optimus.dtb \
-	sun9i-a80-cubieboard4.dtb \
 	sun9i-a80-cx-a99.dtb
 
 dtb-$(CONFIG_VF610) += vf610-colibri-eval-v3.dtb \
@@ -835,9 +832,7 @@ dtb-$(CONFIG_MX6UL) += \
 	imx6ul-liteboard.dtb \
 	imx6ul-phytec-segin-ff-rdk-nand.dtb \
 	imx6ul-pico-hobbit.dtb \
-	imx6ul-pico-pi.dtb \
-	imx6ul-kontron-bl.dtb \
-	imx6ull-kontron-bl.dtb
+	imx6ul-pico-pi.dtb
 
 dtb-$(CONFIG_MX6ULL) += \
 	imx6ull-14x14-evk.dtb \
@@ -886,19 +881,13 @@ dtb-$(CONFIG_ARCH_IMX8) += \
 	fsl-imx8qxp-mek.dtb \
 	imx8-capricorn-cxg3.dtb \
 
-dtb-$(CONFIG_ARCH_IMX8ULP) += \
-	imx8ulp-evk.dtb
-
 dtb-$(CONFIG_ARCH_IMX8M) += \
 	imx8mm-data-modul-edm-sbc.dtb \
 	imx8mm-icore-mx8mm-ctouch2.dtb \
 	imx8mm-icore-mx8mm-edimm2.2.dtb \
-	imx8mm-kontron-bl.dtb \
-	imx8mm-kontron-bl-osm-s.dtb \
 	imx8mm-mx8menlo.dtb \
 	imx8mm-phg.dtb \
 	imx8mq-cm.dtb \
-	imx8mn-var-som-symphony.dtb \
 	imx8mq-mnt-reform2.dtb \
 	imx8mq-phanbell.dtb \
 	imx8mp-data-modul-edm-sbc.dtb \
@@ -925,6 +914,13 @@ dtb-$(CONFIG_ARCH_IMXRT) += imxrt1020-evk.dtb \
 dtb-$(CONFIG_RZA1) += \
 	r7s72100-genmai.dtb \
 	r7s72100-gr-peach.dtb
+
+dtb-$(CONFIG_RCAR_GEN5) += \
+	r8a78000-ironhide.dtb
+
+ifdef CONFIG_RCAR_GEN5
+DTC_FLAGS += -R 4 -p 0x1000
+endif
 
 dtb-$(CONFIG_TARGET_AT91SAM9261EK) += at91sam9261ek.dtb
 
@@ -1092,7 +1088,9 @@ dtb-$(CONFIG_SOC_K3_J7200) += k3-j7200-r5-common-proc-board.dtb
 dtb-$(CONFIG_SOC_K3_J721S2) += k3-am68-sk-r5-base-board.dtb\
 			       k3-j721s2-r5-common-proc-board.dtb
 
-dtb-$(CONFIG_SOC_K3_J784S4) += k3-am69-r5-sk.dtb \
+dtb-$(CONFIG_SOC_K3_J784S4) += k3-am69-aquila-dev.dtb \
+			       k3-am69-r5-aquila-dev.dtb \
+			       k3-am69-r5-sk.dtb \
 			       k3-j784s4-r5-evm.dtb
 
 dtb-$(CONFIG_SOC_K3_J722S) += k3-j722s-r5-evm.dtb \
@@ -1111,9 +1109,10 @@ dtb-$(CONFIG_SOC_K3_AM62A7) += \
 	k3-am62a7-r5-sk.dtb \
 	k3-am62a7-r5-phycore-som-2gb.dtb
 
+dtb-$(CONFIG_SOC_K3_AM62D2) += k3-am62d2-r5-evm.dtb
+
 dtb-$(CONFIG_SOC_K3_AM62P5) += k3-am62p5-r5-sk.dtb \
-			       k3-am62p5-verdin-r5.dtb \
-			       k3-am62p5-verdin-wifi-dev.dtb
+			       k3-am62p5-verdin-r5.dtb
 
 dtb-$(CONFIG_ARCH_MEDIATEK) += \
 	mt7622-rfb.dtb \
