@@ -3,14 +3,16 @@
  * Copyright 2025 NXP
  */
 
-#include <asm/arch/clock.h>
-#include <asm/arch/mu.h>
-#include <asm/mach-imx/boot_mode.h>
-#include <asm/mach-imx/ele_api.h>
-#include <asm/sections.h>
 #include <hang.h>
 #include <init.h>
 #include <spl.h>
+#include <asm/global_data.h>
+#include <asm/sections.h>
+#include <asm/arch/clock.h>
+#include <asm/arch/mu.h>
+#include <asm/arch/sys_proto.h>
+#include <asm/mach-imx/boot_mode.h>
+#include <asm/mach-imx/ele_api.h>
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -65,12 +67,16 @@ void board_init_f(ulong dummy)
 
 	arch_cpu_init();
 
+#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)	
 	board_early_init_f();
+#endif
 
 	preloader_console_init();
 
 	debug("SOC: 0x%x\n", gd->arch.soc_rev);
 	debug("LC: 0x%x\n", gd->arch.lifecycle);
+
+	get_reset_reason(true, false);
 
 	board_init_r(NULL, 0);
 }

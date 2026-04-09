@@ -3,37 +3,40 @@
  * Copyright 2024 NXP
  */
 
-#include <command.h>
-#include <cpu_func.h>
-#include <hang.h>
-#include <image.h>
+#include "lpddr4_timing.h"
+
 #include <init.h>
-#include <log.h>
 #include <spl.h>
-#include <asm/global_data.h>
-#include <asm/io.h>
-#include <asm/arch/mu.h>
 #include <asm/arch/clock.h>
-#include <asm/arch/sys_proto.h>
-#include <asm/mach-imx/boot_mode.h>
-#include <asm/mach-imx/mxc_i2c.h>
-#include <asm/arch-mx7ulp/gpio.h>
-#include <asm/mach-imx/ele_api.h>
-#include <asm/mach-imx/syscounter.h>
-#include <asm/sections.h>
-#include <dm/uclass.h>
-#include <dm/device.h>
-#include <dm/uclass-internal.h>
-#include <dm/device-internal.h>
-#include <linux/delay.h>
-#include <asm/arch/clock.h>
-#include <asm/arch/ccm_regs.h>
 #include <asm/arch/ddr.h>
-#include <power/pmic.h>
-#include <power/pca9450.h>
+#include <asm/arch/mu.h>
+#include <asm/arch/sys_proto.h>
 #include <asm/arch/trdc.h>
+#include <asm/mach-imx/boot_mode.h>
+#include <asm/mach-imx/ele_api.h>
+#include <asm/global_data.h>
+#include <asm/sections.h>
+#include <dm/device.h>
+#include <dm/device-internal.h>
+#include <dm/uclass.h>
+#include <dm/uclass-internal.h>
+#include <linux/delay.h>
+#include <power/pca9450.h>
+#include <power/pmic.h>
 
 DECLARE_GLOBAL_DATA_PTR;
+
+#define SRC_DDRC_SW_CTRL		(0x44461020)
+#define SRC_DDRPHY_SINGLE_RESET_SW_CTRL	(0x44461424)
+
+static struct _drams {
+	u8 mr8;
+	struct dram_timing_info *pdram_timing;
+	char *name;
+} frdm_drams[2] = {
+	{0x10, &dram_timing_1GB, "1GB DRAM" },
+	{0x18, &dram_timing_2GB, "2GB DRAM" },
+};
 
 int spl_board_boot_device(enum boot_device boot_dev_spl)
 {
@@ -51,16 +54,39 @@ void spl_board_init(void)
 	puts("Normal Boot\n");
 }
 
-extern struct dram_timing_info dram_timing_1600mts;
 void spl_dram_init(void)
 {
-	struct dram_timing_info *ptiming = &dram_timing;
+	int i;
+	int ret;
 
-	if (is_voltage_mode(VOLT_LOW_DRIVE))
-		ptiming = &dram_timing_1600mts;
+	for (i = 0; i < ARRAY_SIZE(frdm_drams); i++) {
+		struct dram_timing_info *ptiming = frdm_drams[i].pdram_timing;
 
-	printf("DDR: %uMTS\n", ptiming->fsp_msg[0].drate);
-	ddr_init(ptiming);
+		printf("DDR: %uMTS\n", ptiming->fsp_msg[0].drate);
+		ret = ddr_init(ptiming);
+		if (ret == 0) {
+			if (lpddr4_mr_read(1, 8) == frdm_drams[i].mr8) {
+				printf("found DRAM %s matched\n", frdm_drams[i].name);
+				break;
+			}
+
+			/* Power down and Power up DDR Mixer */
+
+			/* Clear PwrOkIn via DDRMIX register */
+			setbits_32(SRC_DDRPHY_SINGLE_RESET_SW_CTRL, BIT(0));
+			/* Power off the DDRMIX */
+			setbits_32(SRC_DDRC_SW_CTRL, BIT(31));
+
+			udelay(50);
+
+			/* Power up the DDRMIX */
+			clrbits_32(SRC_DDRC_SW_CTRL, BIT(31));
+			setbits_32(SRC_DDRC_SW_CTRL, BIT(0));
+			udelay(10);
+			clrbits_32(SRC_DDRC_SW_CTRL, BIT(0));
+			udelay(10);
+		}
+	}
 }
 
 #if CONFIG_IS_ENABLED(DM_PMIC_PCA9450)

@@ -6,13 +6,14 @@
 
 #include <hang.h>
 #include <init.h>
-#include <spl.h>
-#include <asm/arch/clock.h>
-#include <asm/arch/sys_proto.h>
-#include <asm/mach-imx/boot_mode.h>
-#include <asm/arch/ddr.h>
+#include <log.h>
 #include <power/pmic.h>
 #include <power/pca9450.h>
+#include <spl.h>
+#include <asm/arch/clock.h>
+#include <asm/arch/ddr.h>
+#include <asm/arch/sys_proto.h>
+#include <asm/mach-imx/boot_mode.h>
 
 void nitrogen_imx8mp_ddr_patch(void);
 

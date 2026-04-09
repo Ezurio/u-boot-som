@@ -1,8 +1,8 @@
 // SPDX-License-Identifier: BSD-3-Clause
 /*
- * Copyright 2024 NXP
+ * Copyright 2025 NXP
  *
- * Code generated with DDR Tool v3.3.0_1.9-d1cdb7d3.
+ * Code generated with DDR Tool v3.3.0_1.8-d1cdb7d3.
  * DDR PHY FW2022.01
  */
 
@@ -12,9 +12,9 @@
 /* Initialize DDRC registers */
 static struct dram_cfg_param ddr_ddrc_cfg[] = {
 	{0x4e300110, 0x44100001},
-	{0x4e300000, 0x8000ff},
+	{0x4e300000, 0x8000bf},
 	{0x4e300008, 0x0},
-	{0x4e300080, 0x80000512},
+	{0x4e300080, 0x80000412},
 	{0x4e300084, 0x0},
 	{0x4e300114, 0x1002},
 	{0x4e300260, 0x80},
@@ -36,21 +36,21 @@ static struct dram_cfg_param ddr_ddrc_cfg[] = {
 static struct dram_fsp_cfg ddr_dram_fsp_cfg[] = {
 	{
 		{
-			{0x4e300100, 0x135C2110},
+			{0x4e300100, 0x13542110},
 			{0x4e300104, 0xF8990011},
-			{0x4e300108, 0x636E08CC},
-			{0x4e30010C, 0x0061E070},
+			{0x4e300108, 0x636E88CC},
+			{0x4e30010C, 0x00614070},
 			{0x4e300124, 0x124E0000},
 			{0x4e300160, 0x00009102},
 			{0x4e30016C, 0x31D00000},
 			{0x4e300170, 0x8B0B0608},
 			{0x4e300250, 0x0000001A},
-			{0x4e300254, 0x00DC00DC},
+			{0x4e300254, 0x00A000A0},
 			{0x4e300258, 0x00000008},
 			{0x4e30025C, 0x00000400},
 			{0x4e300300, 0x1633160D},
-			{0x4e300304, 0x00DC180C},
-			{0x4e300308, 0x0C3C0927},
+			{0x4e300304, 0x00A0180C},
+			{0x4e300308, 0x0C280927},
 		},
 		{
 			{0x01, 0xC4},
@@ -65,16 +65,16 @@ static struct dram_fsp_cfg ddr_dram_fsp_cfg[] = {
 	},
 	{
 		{
-			{0x4e300100, 0x010D1100},
+			{0x4e300100, 0x010A1100},
 			{0x4e300104, 0xF855000A},
-			{0x4e300108, 0xBABAC068},
+			{0x4e300108, 0xBABA0068},
 			{0x4e30010C, 0x00610158},
 			{0x4e300124, 0x09270000},
 			{0x4e300160, 0x00009102},
 			{0x4e30016C, 0x30400000},
 			{0x4e300170, 0x8A0A0508},
 			{0x4e300250, 0x0000000D},
-			{0x4e300254, 0x006A006A},
+			{0x4e300254, 0x004C004C},
 			{0x4e300258, 0x00000008},
 			{0x4e30025C, 0x00000400},
 		},
@@ -91,16 +91,16 @@ static struct dram_fsp_cfg ddr_dram_fsp_cfg[] = {
 	},
 	{
 		{
-			{0x4e300100, 0x00061000},
+			{0x4e300100, 0x00051000},
 			{0x4e300104, 0xF855000A},
-			{0x4e300108, 0x6E62FA48},
+			{0x4e300108, 0x6E620A48},
 			{0x4e30010C, 0x0031010D},
 			{0x4e300124, 0x04C50000},
 			{0x4e300160, 0x00009102},
 			{0x4e30016C, 0x30000000},
 			{0x4e300170, 0x89090408},
 			{0x4e300250, 0x00000007},
-			{0x4e300254, 0x00340034},
+			{0x4e300254, 0x00240024},
 			{0x4e300258, 0x00000008},
 			{0x4e30025C, 0x00000400},
 		},
@@ -115,6 +115,7 @@ static struct dram_fsp_cfg ddr_dram_fsp_cfg[] = {
 		},
 		1,
 	},
+
 };
 
 /* PHY Initialize Configuration */
@@ -1978,7 +1979,7 @@ static struct dram_fsp_msg ddr_dram_fsp_msg[] = {
 };
 
 /* ddr timing config params */
-struct dram_timing_info dram_timing = {
+struct dram_timing_info dram_timing_1GB = {
 	.ddrc_cfg = ddr_ddrc_cfg,
 	.ddrc_cfg_num = ARRAY_SIZE(ddr_ddrc_cfg),
 	.ddrphy_cfg = ddr_ddrphy_cfg,

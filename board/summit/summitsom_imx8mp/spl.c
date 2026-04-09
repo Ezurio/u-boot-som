@@ -6,13 +6,14 @@
 
 #include <hang.h>
 #include <init.h>
-#include <spl.h>
-#include <asm/arch/clock.h>
-#include <asm/arch/sys_proto.h>
-#include <asm/mach-imx/boot_mode.h>
-#include <asm/arch/ddr.h>
+#include <log.h>
 #include <power/pmic.h>
 #include <power/pca9450.h>
+#include <spl.h>
+#include <asm/arch/clock.h>
+#include <asm/arch/ddr.h>
+#include <asm/arch/sys_proto.h>
+#include <asm/mach-imx/boot_mode.h>
 
 extern struct dram_timing_info dram_timing;
 extern void summitsom_imx8mp_ddr_patch(void);
