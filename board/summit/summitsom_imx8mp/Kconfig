@@ -10,7 +10,7 @@ config SYS_CONFIG_NAME
 	default "summitsom_imx8mp"
 
 config IMX_CONFIG
-	default "board/freescale/imx8mp_evk/imximage-8mp-lpddr4.cfg"
+	default "board/summit/summitsom_imx8mp/imximage-8mp-lpddr4.cfg"
 
 config SUMMIT_SOM_DVK
 	bool "Summit SOM 8MP DVK support"
