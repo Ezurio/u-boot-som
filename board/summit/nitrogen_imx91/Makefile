@@ -4,7 +4,7 @@
 # SPDX-License-Identifier:      GPL-2.0+
 #
 
-obj-y += imx91_frdm.o
+obj-y += nitrogen_imx91.o ../common/imx-common.o
 
 ifdef CONFIG_SPL_BUILD
 obj-y += spl.o

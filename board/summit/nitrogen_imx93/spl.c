@@ -158,7 +158,7 @@ void board_init_f(ulong dummy)
 
 	arch_cpu_init();
 
-#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)	
+#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)
 	board_early_init_f();
 #endif
 
