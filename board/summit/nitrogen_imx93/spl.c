@@ -127,6 +127,8 @@ int power_init_board(void)
 		printf("PMIC: Over Drive Voltage Mode\n");
 	}
 
+	ele_volt_change_start_req();
+
 	if (val & PCA9450_REG_PWRCTRL_TOFF_DEB) {
 		pmic_reg_write(dev, PCA9450_BUCK1OUT_DVS0, buck_val);
 		pmic_reg_write(dev, PCA9450_BUCK3OUT_DVS0, buck_val);
@@ -134,6 +136,8 @@ int power_init_board(void)
 		pmic_reg_write(dev, PCA9450_BUCK1OUT_DVS0, buck_val + 0x4);
 		pmic_reg_write(dev, PCA9450_BUCK3OUT_DVS0, buck_val + 0x4);
 	}
+
+	ele_volt_change_finish_req();
 
 	/* Set standby voltage to 0.65V */
 	if (val & PCA9450_REG_PWRCTRL_TOFF_DEB)

@@ -151,7 +151,6 @@ static const struct clk_data clk_list[] = {
 	CLK_FIXED_RATE("board_0_cp_gemac_cpts0_rft_clk_out", 0, 0),
 	CLK_FIXED_RATE("board_0_ext_refclk1_out", 0, 0),
 	CLK_FIXED_RATE("board_0_i2c0_scl_out", 0, 0),
-	CLK_FIXED_RATE("board_0_wkup_i2c0_scl_out", 0, 0),
 	CLK_FIXED_RATE("board_0_mcu_ext_refclk0_out", 0, 0),
 	CLK_FIXED_RATE("board_0_mmc1_clklb_out", 0, 0),
 	CLK_FIXED_RATE("board_0_mmc1_clk_out", 0, 0),
