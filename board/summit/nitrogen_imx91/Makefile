@@ -6,7 +6,12 @@
 
 obj-y += nitrogen_imx91.o ../common/imx-common.o
 
-ifdef CONFIG_SPL_BUILD
+ifdef CONFIG_XPL_BUILD
 obj-y += spl.o
-obj-y += lpddr4_2400mts_1gb_timing.o lpddr4_2400mts_2gb_timing.o
+
+ifdef CONFIG_NITROGEN_IMX91_OSM_S
+obj-y += lpddr4_osm_s_1gb_timing.o lpddr4_osm_s_2gb_timing.o
+else
+obj-y += lpddr4_smarc_1gb_timing.o lpddr4_smarc_2gb_timing.o
+endif
 endif

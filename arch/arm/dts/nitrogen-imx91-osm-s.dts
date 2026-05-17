@@ -1,0 +1,12 @@
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+/*
+ * Copyright 2026 Ezurio
+ */
+
+/dts-v1/;
+
+#include "nitrogen-imx91-osm-s.dtsi"
+
+&usdhc2 { /* SDIO - SDCARD */
+	status = "okay";
+};

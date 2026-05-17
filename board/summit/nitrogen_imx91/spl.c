@@ -21,8 +21,13 @@
 #include <dm/uclass.h>
 #include <dm/uclass-internal.h>
 #include <linux/delay.h>
-#include <power/pca9450.h>
 #include <power/pmic.h>
+
+#if CONFIG_IS_ENABLED(DM_PMIC_PCA9450)
+#include <power/pca9450.h>
+#elif CONFIG_IS_ENABLED(DM_PMIC_PF9453)
+#include <power/pf9453.h>
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -46,6 +51,8 @@ int spl_board_boot_device(enum boot_device boot_dev_spl)
 void spl_board_init(void)
 {
 	int ret;
+
+	puts("Normal Boot\n");
 
 	ret = ele_start_rng();
 	if (ret)
@@ -107,7 +114,7 @@ int power_init_board(void)
 	/* BUCKxOUT_DVS0/1 control BUCK123 output */
 	pmic_reg_write(dev, PCA9450_BUCK123_DVS, 0x29);
 
-	/* enable DVS control through PMIC_STBY_REQ */
+	/* Enable DVS control through PMIC_STBY_REQ */
 	pmic_reg_write(dev, PCA9450_BUCK1CTRL, 0x59);
 
 	ret = pmic_reg_read(dev, PCA9450_PWR_CTRL);
@@ -127,6 +134,8 @@ int power_init_board(void)
 		printf("PMIC: Over Drive Voltage Mode\n");
 	}
 
+	ele_volt_change_start_req();
+
 	if (val & PCA9450_REG_PWRCTRL_TOFF_DEB) {
 		pmic_reg_write(dev, PCA9450_BUCK1OUT_DVS0, buck_val);
 		pmic_reg_write(dev, PCA9450_BUCK3OUT_DVS0, buck_val);
@@ -135,10 +144,9 @@ int power_init_board(void)
 		pmic_reg_write(dev, PCA9450_BUCK3OUT_DVS0, buck_val + 0x4);
 	}
 
-	/* Set VDDQ to 1.1V from buck2 (buck2 not used for iMX91 EVK) */
-	pmic_reg_write(dev, PCA9450_BUCK2OUT_DVS0, 0x28);
+	ele_volt_change_finish_req();
 
-	/* set standby voltage to 0.65V */
+	/* Set standby voltage to 0.65V */
 	if (val & PCA9450_REG_PWRCTRL_TOFF_DEB)
 		pmic_reg_write(dev, PCA9450_BUCK1OUT_DVS1, 0x0);
 	else
@@ -146,6 +154,54 @@ int power_init_board(void)
 
 	/* I2C_LT_EN*/
 	pmic_reg_write(dev, 0xa, 0x3);
+	return 0;
+}
+#elif CONFIG_IS_ENABLED(DM_PMIC_PF9453)
+int power_init_board(void)
+{
+	struct udevice *dev;
+	int ret;
+	unsigned int buck_val;
+
+	ret = pmic_get("pmic@32", &dev);
+	if (ret == -ENODEV) {
+		puts("No pf9453@32\n");
+		return 0;
+	}
+	if (ret != 0)
+		return ret;
+
+	/* enable DVS control through PMIC_STBY_REQ */
+	pmic_reg_write(dev, PF9453_BUCK2CTRL, 0x59);
+
+	if (is_voltage_mode(VOLT_LOW_DRIVE)) {
+		buck_val = 0x10; /* 0.8v for Low drive mode */
+		printf("PMIC: Low Drive Voltage Mode\n");
+	} else if (is_voltage_mode(VOLT_NOMINAL_DRIVE)) {
+		buck_val = 0x14; /* 0.85v for Nominal drive mode */
+		printf("PMIC: Nominal Voltage Mode\n");
+	} else {
+		buck_val = 0x18; /* 0.9v for Over drive mode */
+		printf("PMIC: Over Drive Voltage Mode\n");
+	}
+
+	pmic_reg_write(dev, PF9453_BUCK2OUT, buck_val);
+
+	/* set standby voltage to 0.65v */
+	pmic_reg_write(dev, PF9453_BUCK2OUT_STBY, 0x4);
+
+	/* 1.1v for LPDDR4 */
+	pmic_reg_write(dev, PF9453_BUCK1OUT, 0x14);
+
+	ret = pmic_reg_read(dev, PF9453_CONFIG1);
+	if (ret < 0)
+		return ret;
+
+	/*The timer default is 8sec and too long, so change to 100ms.*/
+	pmic_reg_write(dev, PF9453_CONFIG1, ~PF9453_RESETKEY_TIMER_MASK & ret);
+
+	/* set WDOG_B_CFG to cold reset */
+	pmic_reg_write(dev, PF9453_RESET_CTRL, 0xA0);
 	return 0;
 }
 #endif
@@ -160,6 +216,10 @@ void board_init_f(ulong dummy)
 	timer_init();
 
 	arch_cpu_init();
+
+#if CONFIG_IS_ENABLED(BOARD_EARLY_INIT_F)
+	board_early_init_f();
+#endif
 
 	spl_early_init();
 

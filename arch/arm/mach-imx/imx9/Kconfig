@@ -157,12 +157,14 @@ config TARGET_NITROGEN_IMX91
 	bool "nitrogen_imx91"
 	select IMX91
 	select IMX9_LPDDR4X
+	select OF_BOARD_FIXUP
 	select ARCH_MISC_INIT
 
 config TARGET_NITROGEN_IMX93
 	bool "nitrogen_imx93"
 	select IMX93
 	select IMX9_LPDDR4X
+	select OF_BOARD_FIXUP
 	select ARCH_MISC_INIT
 
 config TARGET_NITROGEN_IMX95

@@ -21,8 +21,13 @@
 #include <dm/uclass.h>
 #include <dm/uclass-internal.h>
 #include <linux/delay.h>
-#include <power/pca9450.h>
 #include <power/pmic.h>
+
+#if CONFIG_IS_ENABLED(DM_PMIC_PCA9450)
+#include <power/pca9450.h>
+#elif CONFIG_IS_ENABLED(DM_PMIC_PF9453)
+#include <power/pf9453.h>
+#endif
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -46,6 +51,8 @@ int spl_board_boot_device(enum boot_device boot_dev_spl)
 void spl_board_init(void)
 {
 	int ret;
+
+	puts("Normal Boot\n");
 
 	ret = ele_start_rng();
 	if (ret)
@@ -98,8 +105,8 @@ int power_init_board(void)
 
 	ret = pmic_get("pmic@25", &dev);
 	if (ret == -ENODEV) {
-		puts("No pca9450@25\n");
-		return 0;
+		puts("ERROR: Get PMIC PCA9451A failed!\n");
+		return ret;
 	}
 	if (ret != 0)
 		return ret;
@@ -149,6 +156,54 @@ int power_init_board(void)
 	pmic_reg_write(dev, 0xa, 0x3);
 	return 0;
 }
+#elif CONFIG_IS_ENABLED(DM_PMIC_PF9453)
+int power_init_board(void)
+{
+	struct udevice *dev;
+	int ret;
+	unsigned int buck_val;
+
+	ret = pmic_get("pmic@32", &dev);
+	if (ret == -ENODEV) {
+		puts("No pf9453@32\n");
+		return 0;
+	}
+	if (ret != 0)
+		return ret;
+
+	/* enable DVS control through PMIC_STBY_REQ */
+	pmic_reg_write(dev, PF9453_BUCK2CTRL, 0x59);
+
+	if (is_voltage_mode(VOLT_LOW_DRIVE)) {
+		buck_val = 0x10; /* 0.8v for Low drive mode */
+		printf("PMIC: Low Drive Voltage Mode\n");
+	} else if (is_voltage_mode(VOLT_NOMINAL_DRIVE)) {
+		buck_val = 0x14; /* 0.85v for Nominal drive mode */
+		printf("PMIC: Nominal Voltage Mode\n");
+	} else {
+		buck_val = 0x18; /* 0.9v for Over drive mode */
+		printf("PMIC: Over Drive Voltage Mode\n");
+	}
+
+	pmic_reg_write(dev, PF9453_BUCK2OUT, buck_val);
+
+	/* set standby voltage to 0.65v */
+	pmic_reg_write(dev, PF9453_BUCK2OUT_STBY, 0x4);
+
+	/* 1.1v for LPDDR4 */
+	pmic_reg_write(dev, PF9453_BUCK1OUT, 0x14);
+
+	ret = pmic_reg_read(dev, PF9453_CONFIG1);
+	if (ret < 0)
+		return ret;
+
+	/*The timer default is 8sec and too long, so change to 100ms.*/
+	pmic_reg_write(dev, PF9453_CONFIG1, ~PF9453_RESETKEY_TIMER_MASK & ret);
+
+	/* set WDOG_B_CFG to cold reset */
+	pmic_reg_write(dev, PF9453_RESET_CTRL, 0xA0);
+	return 0;
+}
 #endif
 
 void board_init_f(ulong dummy)
@@ -172,7 +227,7 @@ void board_init_f(ulong dummy)
 
 	ret = imx9_probe_mu();
 	if (ret) {
-		printf("Fail to init Sentinel API\n");
+		printf("Fail to init ELE API\n");
 	} else {
 		debug("SOC: 0x%x\n", gd->arch.soc_rev);
 		debug("LC: 0x%x\n", gd->arch.lifecycle);

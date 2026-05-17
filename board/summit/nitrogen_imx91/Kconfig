@@ -9,4 +9,21 @@ config SYS_VENDOR
 config SYS_CONFIG_NAME
 	default "nitrogen_imx91"
 
+choice
+	prompt "Nitrogen iMX91 Module Variant"
+	default NITROGEN_IMX91_SMARC
+
+config NITROGEN_IMX91_SMARC
+	bool "SMARC"
+	help
+	  SMARC and OSM-M Module.
+
+config NITROGEN_IMX91_OSM_S
+	bool "OSM-S"
+	help
+	  OSM-S Module.
+
+endchoice
+
+
 endif

@@ -175,24 +175,31 @@
 	bootph-pre-ram;
 };
 
-&pinctrl_pcal6534 {
+&pinctrl_exp0 {
 	bootph-all;
 };
 
-&pcal6534 {
+&exp0 {
 	bootph-all;
 
 	wifi_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <0 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
 		bootph-all;
 		gpio-hog;
 		gpios = <2 GPIO_ACTIVE_HIGH>;
 		output-low;
 	};
 
-	bt_en {
-		bootph-pre-ram;
+	carrier_power_en {
+		bootph-all;
 		gpio-hog;
-		gpios = <4 GPIO_ACTIVE_HIGH>;
-		output-low;
+		gpios = <32 GPIO_ACTIVE_HIGH>;
+		output-high;
 	};
 };

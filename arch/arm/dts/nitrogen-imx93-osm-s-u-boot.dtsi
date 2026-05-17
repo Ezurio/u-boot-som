@@ -57,6 +57,7 @@
 &reg_usdhc2_vmmc {
 	u-boot,off-on-delay-us = <20000>;
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_reg_usdhc2_vmmc {
@@ -70,30 +71,37 @@
 
 &pinctrl_usdhc1 {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_usdhc1_100mhz {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_usdhc1_200mhz {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_usdhc2_gpio {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_usdhc2 {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_usdhc2_100mhz {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &pinctrl_usdhc2_200mhz {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &gpio1 {
@@ -104,6 +112,27 @@
 &gpio2 {
 	bootph-pre-ram;
 	bootph-some-ram;
+
+	wifi_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <3 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	bt_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <1 GPIO_ACTIVE_HIGH>;
+		output-low;
+	};
+
+	carrier_pwr_en {
+		bootph-all;
+		gpio-hog;
+		gpios = <0 GPIO_ACTIVE_HIGH>;
+		output-high;
+	};
 };
 
 &gpio3 {
@@ -123,27 +152,33 @@
 
 &usdhc1 {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &usdhc2 {
 	bootph-pre-ram;
+	bootph-some-ram;
 	fsl,signal-voltage-switch-extra-delay-ms = <8>;
 };
 
-&lpi2c2 {
+&lpi2c1 {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
-&{/soc@0/bus@44000000/i2c@44350000/pmic@25} {
+&{/soc@0/bus@44000000/i2c@44340000/pmic@32} {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
-&{/soc@0/bus@44000000/i2c@44350000/pmic@25/regulators} {
+&{/soc@0/bus@44000000/i2c@44340000/pmic@32/regulators} {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
-&pinctrl_lpi2c2 {
+&pinctrl_lpi2c1 {
 	bootph-pre-ram;
+	bootph-some-ram;
 };
 
 &s4muap {
@@ -173,26 +208,4 @@
 &clk_ext1 {
 	bootph-all;
 	bootph-pre-ram;
-};
-
-&pinctrl_pcal6534 {
-	bootph-all;
-};
-
-&pcal6534 {
-	bootph-all;
-
-	wifi_en {
-		bootph-all;
-		gpio-hog;
-		gpios = <2 GPIO_ACTIVE_HIGH>;
-		output-low;
-	};
-
-	bt_en {
-		bootph-pre-ram;
-		gpio-hog;
-		gpios = <4 GPIO_ACTIVE_HIGH>;
-		output-low;
-	};
 };
