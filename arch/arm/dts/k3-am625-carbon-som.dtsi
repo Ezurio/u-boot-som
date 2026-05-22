@@ -47,15 +47,6 @@
 		stdout-path = "serial2:115200n8";
 	};
 
-	opp-table {
-		/* Add 1.4GHz OPP for am625-carbon board. Requires VDD_CORE to be at 0.85V */
-		opp-1400000000 {
-			opp-hz = /bits/ 64 <1400000000>;
-			opp-supported-hw = <0x01 0x0004>;
-			clock-latency-ns = <6000000>;
-		};
-	};
-
 	memory: memory@80000000 {
 		device_type = "memory";
 		/* 2G RAM */
@@ -157,9 +148,11 @@
 		/* output of U4 */
 		compatible = "regulator-fixed";
 		regulator-name = "reg_3v3";
+
 		vin-supply = <&reg_5v0>;
 		regulator-min-microvolt = <3300000>;
 		regulator-max-microvolt = <3300000>;
+
 		regulator-always-on;
 		regulator-boot-on;
 	};
@@ -168,6 +161,7 @@
 		/* TCK107AG,LF U5 */
 		compatible = "regulator-fixed";
 		regulator-name = "reg_vpp";
+
 		vin-supply = <&reg_1v8>;
 		regulator-min-microvolt = <1800000>;
 		regulator-max-microvolt = <1800000>;
@@ -214,12 +208,12 @@
 		status = "disabled";
 	};
 
-	clk_cam_a_hw: clk-cam-a-hw {
+	clk_csi_a_hw: clk-csi-a-hw {
 		compatible = "pwm-clock";
 		status = "disabled";
 		#clock-cells = <0>;
 		clock-frequency = <24000000>;
-		clock-output-names = "clk_cam_a_hw";
+		clock-output-names = "clk_csi_a_hw";
 		pwms = <&ecap2 0 42 0>; /* 1 / 42 ns = 24 MHz */
 	};
 
@@ -304,20 +298,58 @@
 	};
 };
 
+&a53_opp_table {
+	opp-200000000 {
+		opp-microvolt = <750000>;
+	};
+
+	opp-400000000 {
+		opp-microvolt = <750000>;
+	};
+
+	opp-600000000 {
+		opp-microvolt = <750000>;
+	};
+
+	opp-800000000 {
+		opp-microvolt = <750000>;
+	};
+
+	opp-1000000000 {
+		opp-microvolt = <750000>;
+	};
+
+	opp-1250000000 {
+		opp-microvolt = <750000>;
+	};
+
+	/* Add 1.4GHz OPP, requires VDD_CORE to be at 0.85V */
+	opp-1400000000 {
+		opp-hz = /bits/ 64 <1400000000>;
+		opp-supported-hw = <0x01 0x0004>;
+		clock-latency-ns = <6000000>;
+		opp-microvolt = <850000>;
+	};
+};
+
 &cpu0 {
 	cpu-idle-states = <&CPU_SLEEP_0>;
+	cpu-supply = <&reg_core>;
 };
 
 &cpu1 {
 	cpu-idle-states = <&CPU_SLEEP_0>;
+	cpu-supply = <&reg_core>;
 };
 
 &cpu2 {
 	cpu-idle-states = <&CPU_SLEEP_0>;
+	cpu-supply = <&reg_core>;
 };
 
 &cpu3 {
 	cpu-idle-states = <&CPU_SLEEP_0>;
+	cpu-supply = <&reg_core>;
 };
 
 &cpsw3g {
@@ -515,7 +547,7 @@
 		regulators {
 			reg_core: buck1 {
 				regulator-name = "reg_core";
-				regulator-min-microvolt = <850000>;
+				regulator-min-microvolt = <750000>;
 				regulator-max-microvolt = <850000>;
 				regulator-boot-on;
 				regulator-always-on;
@@ -812,40 +844,21 @@
 
 	main_usb0_id_pins_default: main-usb0-id-default-pins {
 		pinctrl-single,pins = <
-			AM62X_IOPAD(0x258, PIN_INPUT_PULLUP, 7) /* USB_A_ID (F18) USB1_DRVVBUS.GPIO1_51 */
+			AM62X_IOPAD(0x1f0, PIN_INPUT_PULLUP, 7) /* USB_A_ID (A18) EXT_REFCLK1.GPIO1_30 */
 		>;
 	};
 
 	main_usb1_en_pins_default: main-usb1-en-default-pins {
 		pinctrl-single,pins = <
-			AM62X_IOPAD(0x044, PIN_INPUT, 7) /* USB_B_EN (N24) GPMC0_AD2.GPIO0_17 */
+			AM62X_IOPAD(0x258, PIN_OUTPUT, 0) /* USB_B_EN (F18) USB1_DRVVBUS */
 		>;
 	};
 
 	main_usb1_id_pins_default: main-usb1-id-default-pins {
 		pinctrl-single,pins = <
-			AM62X_IOPAD(0x1f0, PIN_INPUT_PULLUP, 7) /* USB_B_ID (A18) EXT_REFCLK1.GPIO1_30 */
+			AM62X_IOPAD(0x044, PIN_INPUT_PULLUP, 7) /* USB_B_ID (N24) GPMC0_AD2.GPIO0_17 */
 		>;
 	};
-
-	// Rev 4 SOM definitions
-	//main_usb0_id_pins_default: main-usb0-id-default-pins {
-	//	pinctrl-single,pins = <
-	//		AM62X_IOPAD(0x1f0, PIN_INPUT_PULLUP, 7) /* USB_A_ID (A18) EXT_REFCLK1.GPIO1_30 */
-	//	>;
-	//};
-
-	//main_usb1_en_pins_default: main-usb1-en-default-pins {
-	//	pinctrl-single,pins = <
-	//		AM62X_IOPAD(0x258, PIN_OUTPUT, 0) /* USB_B_EN (F18) USB1_DRVVBUS */
-	//	>;
-	//};
-
-	//main_usb1_id_pins_default: main-usb1-id-default-pins {
-	//	pinctrl-single,pins = <
-	//		AM62X_IOPAD(0x044, PIN_INPUT_PULLUP, 7) /* USB_B_ID (N24) GPMC0_AD2.GPIO0_17 */
-	//	>;
-	//};
 
 	main_mcasp1_pins_default: main-mcasp1-default-pins {
 		pinctrl-single,pins = <
@@ -986,7 +999,7 @@
 		>;
 	};
 
-	main_cam_a_pins_default: main-cam-a-default-pins {
+	main_csi_a_pins_default: main-csi-a-default-pins {
 		pinctrl-single,pins = <
 			AM62X_IOPAD(0x128, PIN_INPUT, 7) /* CAM_A_PWR (B23) MMC2_SDWP.GPIO0_72 */
 			AM62X_IOPAD(0x074, PIN_INPUT, 7) /* CAM_A_RST# (U25) GPMC0_AD14.GPIO0_29 */
