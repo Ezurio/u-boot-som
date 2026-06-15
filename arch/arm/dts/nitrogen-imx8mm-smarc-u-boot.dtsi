@@ -18,6 +18,7 @@
 };
 
 &reg_usdhc2_vmmc {
+	bootph-pre-ram;
 	u-boot,off-on-delay-us = <20000>;
 };
 
