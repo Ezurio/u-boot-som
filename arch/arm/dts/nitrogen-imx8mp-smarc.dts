@@ -14,3 +14,11 @@
 	// as such SD card cannot be reset, thus disabling 1.8V
 	no-1-8-v;
 };
+
+&usb3_phy0 {
+	status = "okay";
+};
+
+&usb3_0 {
+	status = "okay";
+};
