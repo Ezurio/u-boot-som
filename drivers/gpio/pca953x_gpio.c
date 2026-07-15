@@ -111,7 +111,7 @@ static int pca953x_write_single(struct udevice *dev, int reg, u8 val,
 	int ret = 0;
 
 	if (info->gpio_count == 34)
-		ret = dm_i2c_write(dev, reg + bank_shift + off, &val, 1);
+		ret = dm_i2c_write(dev, reg * info->bank_count + off, &val, 1);
 	else
 		ret = dm_i2c_write(dev, (reg << bank_shift) + off, &val, 1);
 
@@ -133,7 +133,7 @@ static int pca953x_read_single(struct udevice *dev, int reg, u8 *val,
 	u8 byte;
 
 	if (info->gpio_count == 34)
-		ret = dm_i2c_read(dev, (reg + bank_shift) + off, &byte, 1);
+		ret = dm_i2c_read(dev, reg * info->bank_count + off, &byte, 1);
 	else
 		ret = dm_i2c_read(dev, (reg << bank_shift) + off, &byte, 1);
 
