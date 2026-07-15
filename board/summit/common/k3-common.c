@@ -14,8 +14,6 @@
 #include <asm/global_data.h> 
 
 #include "common.h"
-#include "k3-common.h"
-#include "eeprom-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 

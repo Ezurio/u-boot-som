@@ -18,34 +18,52 @@
 		};
 	};
 
+	custMpk-crt {
+		filename = "custMpk.crt";
+
+		custmpk_crt: blob-ext {
+			filename = "arch/arm/mach-k3/keys/custMpk.crt";
+		};
+	};
+
+	custMpk-key {
+		filename = "custMpk.key";
+
+		custmpk_key: blob-ext {
+			filename = "arch/arm/mach-k3/keys/custMpk.key";
+		};
+	};
+
 	board-cfg {
 		filename = "board-cfg.bin";
+
 		bcfg_yaml: ti-board-config {
 			config = "board-cfg.yaml";
-			schema = "arch/arm/mach-k3/am62l-schema.yaml";
+			schema = "arch/arm/mach-k3/am62lx/schema.yaml";
 		};
 	};
 
 	sec-cfg {
 		filename = "sec-cfg.bin";
+
 		sec_yaml: ti-board-config {
 			config = "sec-cfg.yaml";
-			schema = "arch/arm/mach-k3/am62l-schema.yaml";
+			schema = "arch/arm/mach-k3/am62lx/schema.yaml";
 		};
 	};
-
+	
 	combined-tifs-cfg {
 		filename = "combined-tifs-cfg.bin";
 
 		ti-board-config {
 			bcfg_yaml_tifs: board-cfg {
 				config = "board-cfg.yaml";
-				schema = "arch/arm/mach-k3/am62l-schema.yaml";
+				schema = "arch/arm/mach-k3/am62lx/schema.yaml";
 			};
 
 			sec_yaml_tifs: sec-cfg {
 				config = "sec-cfg.yaml";
-				schema = "arch/arm/mach-k3/am62l-schema.yaml";
+				schema = "arch/arm/mach-k3/am62lx/schema.yaml";
 			};
 		};
 	};
@@ -77,9 +95,6 @@
 			type = "blob-ext";
 		};
 
-		/*
-		 * TODO: this doesn't need to be here
-		 */
 		tifs_data: sysfw-data.bin {
 			filename = "combined-tifs-cfg.bin";
 			type = "blob-ext";
@@ -103,16 +118,16 @@
 			keyfile = "custMpk.pem";
 			sw-rev = <1>;
 			content-sbl = <&atf>;
+			content-tee = <&tee>;
 			content-sysfw = <&tifs_enc2>;
 			content-sysfw-data = <&tifs_data2>;
 			content-sysfw-inner-cert = <&tifs_cert2>;
-			content-tee = <&tee>;
 			content-dm-data = <&spl>;
 			load = <CONFIG_K3_ATF_LOAD_ADDR>;
-			load-tee = <CONFIG_K3_OPTEE_LOAD_ADDR>;
 			load-sysfw = <CONFIG_K3_TIFS_LOAD_ADDR>;
 			load-sysfw-data = <CONFIG_K3_TIFS_DATA_LOAD_ADDR>;
 			load-dm-data = <CONFIG_SPL_TEXT_BASE>;
+			load-tee = <CONFIG_K3_OPTEE_LOAD_ADDR>;
 		};
 
 		atf: atf-bl31 {
@@ -136,9 +151,17 @@
 		tee: tee-os {
 		};
 
-		spl: u-boot-spl {
-			no-expanded;
+		spl: section {
+			u-boot-spl-nodtb {
+			};
+
+			u-boot-spl-pubkey-dtb {
+				algo = "sha512,rsa4096";
+				required = "conf";
+				key-name-hint = "custMpk";
+			};
 		};
+
 	};
 
 	u-boot.img {
@@ -147,6 +170,7 @@
 
 		fit {
 			description = "U-Boot fitImage for AM62Lx Carbon";
+			fit,sign;
 
 			images {
 				uboot {
@@ -162,7 +186,7 @@
 					};
 
 					hash {
-						algo = "crc32";
+						algo = "sha256";
 					};
 				};
 
@@ -177,7 +201,7 @@
 					};
 
 					hash {
-						algo = "crc32";
+						algo = "sha256";
 					};
 				};
 			};
@@ -190,6 +214,12 @@
 					firmware = "uboot";
 					loadables = "uboot";
 					fdt = "fdt-0";
+
+					signature {
+						algo = "sha512,rsa4096";
+						key-name-hint = "custMpk";
+						sign-images = "firmware", "loadables", "fdt";
+					};
 				};
 
 			};

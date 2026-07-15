@@ -50,6 +50,10 @@
 
 &gpmc0 {
 	bootph-all;
+
+	nand@0,0 {
+		bootph-all;
+	};
 };
 
 &wkup_i2c0 {
@@ -157,14 +161,6 @@
 		gpio-hog;
 		gpios = <15 GPIO_ACTIVE_HIGH>;
 		input;
-	};
-};
-
-&rv3028 {
-	bootph-all;
-
-	eeprom {
-		bootph-all;
 	};
 };
 
