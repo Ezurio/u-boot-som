@@ -12,6 +12,8 @@
 	compatible = "summit,imx8mp-nitrogen-smarc", "fsl,imx8mp";
 
 	aliases {
+		can0 = &flexcan1;
+		can1 = &flexcan2;
 		ethernet0 = &eqos;
 		ethernet1 = &fec;
 	};
@@ -105,7 +107,7 @@
 
 		clocks = <&clk IMX8MP_CLK_CLKOUT1>;
 
-		startup-delay-us = <1000>;
+		startup-delay-us = <10000>;
 	};
 
 	reg_wifi_en: regulator-wifi-en {
@@ -870,6 +872,9 @@
 &sai3 {
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_sai3>;
+	assigned-clocks = <&clk IMX8MP_CLK_SAI3>;
+	assigned-clock-parents = <&clk IMX8MP_AUDIO_PLL1_OUT>;
+	assigned-clock-rates = <12288000>;
 	fsl,sai-mclk-direction-output;
 };
 
@@ -989,4 +994,36 @@
 	fsl,ext-reset-output;
 
 	status = "okay";
+};
+
+&gpu3d {
+	status = "disabled";
+};
+
+&gpu2d {
+	status = "disabled";
+};
+
+&npu {
+	status = "disabled";
+};
+
+&mix_gpu_ml {
+	status = "disabled";
+};
+
+&vpu_g1 {
+	status = "disabled";
+};
+
+&vpu_g2 {
+	status = "disabled";
+};
+
+&vpu_vc8000e {
+	status = "disabled";
+};
+
+&vpu_v4l2 {
+	status = "disabled";
 };

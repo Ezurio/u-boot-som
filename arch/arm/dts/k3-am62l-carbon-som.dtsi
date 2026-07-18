@@ -55,6 +55,22 @@
 		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
 	};
 
+	thermal-zones {
+		wkup0-thermal {
+			polling-delay-passive = <250>;	/* milliSeconds */
+			polling-delay = <500>;		/* milliSeconds */
+			thermal-sensors = <&vtm0 0>;
+
+			trips {
+				crit0 {
+					temperature = <125000>;
+					hysteresis = <2000>;
+					type = "critical";
+				};
+			};
+		};
+	};
+
 	reserved_memory: reserved-memory {
 		#address-cells = <2>;
 		#size-cells = <2>;
@@ -519,7 +535,7 @@
 
 &cpsw_port1 {
 	status = "disabled";
-	phy-mode = "rgmii-rxid";
+	phy-mode = "rgmii-id";
 
 	//nvmem-cells = <&eth_mac0>;
 	//nvmem-cell-names = "mac-address";
@@ -527,7 +543,7 @@
 
 &cpsw_port2 {
 	status = "disabled";
-	phy-mode = "rgmii-rxid";
+	phy-mode = "rgmii-id";
 
 	//nvmem-cells = <&eth_mac1>;
 	//nvmem-cell-names = "mac-address";

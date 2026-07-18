@@ -14,6 +14,7 @@
 	aliases {
 		rtc0 = &rv3028;
 		rtc1 = &snvs_rtc;
+		ethernet0 = &fec1;
 	};
 
 	chosen {
@@ -815,6 +816,19 @@
 	};
 };
 
+&pgc_gpu {
+	assigned-clocks = <&clk IMX8MM_CLK_GPU_AXI>,
+			 <&clk IMX8MM_CLK_GPU_AHB>;
+	assigned-clock-parents = <&clk IMX8MM_SYS_PLL1_800M>,
+				 <&clk IMX8MM_SYS_PLL1_800M>;
+	assigned-clock-rates = <800000000>, <400000000>;
+	/delete-property/ power-domains;
+};
+
+&pgc_gpumix {
+	status = "disabled";
+};
+
 &pcie0 {
 	assigned-clocks = <&clk IMX8MM_CLK_PCIE1_AUX>,
 			  <&clk IMX8MM_CLK_PCIE1_CTRL>;
@@ -965,5 +979,33 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_wdog>;
 	fsl,ext-reset-output;
+
 	status = "okay";
+};
+
+&imx8_gpu_ss {
+	status = "disabled";
+};
+&gpu_3d {
+	status = "disabled";
+};
+
+&gpu_2d {
+	status = "disabled";
+};
+
+&vpu_g1 {
+	status = "disabled";
+};
+
+&vpu_g2 {
+	status = "disabled";
+};
+
+&vpu_h1 {
+	status = "disabled";
+};
+
+&vpu_v4l2 {
+	status = "disabled";
 };
