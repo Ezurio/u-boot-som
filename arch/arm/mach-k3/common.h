@@ -62,9 +62,12 @@ void ti_secure_image_check_binary(void **p_image, size_t *p_size);
 void wkup_ctrl_remove_can_io_isolation_if_set(void);
 int shutdown_mcu_r5_core1(void);
 
-#if IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE) && !IS_ENABLED(CONFIG_ARM64)
+#if IS_ENABLED(CONFIG_SPL_OS_BOOT_SECURE)
+int k3_falcon_fdt_fixup(void *fdt);
+#if !IS_ENABLED(CONFIG_ARM64)
 int k3_r5_falcon_bootmode(void);
 int k3_r5_falcon_prep(void);
+#endif
 #endif
 
 #if (IS_ENABLED(CONFIG_K3_QOS))
