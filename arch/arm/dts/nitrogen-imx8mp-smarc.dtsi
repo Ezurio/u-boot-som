@@ -1008,9 +1008,9 @@
 	status = "disabled";
 };
 
-&mix_gpu_ml {
-	status = "disabled";
-};
+//&mix_gpu_ml {
+//	status = "disabled";
+//};
 
 &vpu_g1 {
 	status = "disabled";
@@ -1020,10 +1020,10 @@
 	status = "disabled";
 };
 
-&vpu_vc8000e {
-	status = "disabled";
-};
+//&vpu_vc8000e {
+//	status = "disabled";
+//};
 
-&vpu_v4l2 {
-	status = "disabled";
-};
+//&vpu_v4l2 {
+//	status = "disabled";
+//};

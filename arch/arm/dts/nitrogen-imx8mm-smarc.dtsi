@@ -983,9 +983,10 @@
 	status = "okay";
 };
 
-&imx8_gpu_ss {
-	status = "disabled";
-};
+//&imx8_gpu_ss {
+//	status = "disabled";
+//};
+
 &gpu_3d {
 	status = "disabled";
 };
@@ -1002,10 +1003,10 @@
 	status = "disabled";
 };
 
-&vpu_h1 {
-	status = "disabled";
-};
+//&vpu_h1 {
+//	status = "disabled";
+//};
 
-&vpu_v4l2 {
-	status = "disabled";
-};
+//&vpu_v4l2 {
+//	status = "disabled";
+//};
