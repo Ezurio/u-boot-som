@@ -89,7 +89,7 @@ void spl_board_init(void)
 #endif /* CONFIG_CPU_V7R */
 #endif /* CONFIG_SPL_BOARD_INIT */
 
-void spl_perform_fixups(struct spl_image_info *spl_image)
+void spl_perform_board_fixups(struct spl_image_info *spl_image)
 {
 	fixup_memory_node(spl_image);
 }
