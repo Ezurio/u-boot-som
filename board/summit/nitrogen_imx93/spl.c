@@ -38,7 +38,7 @@ static struct _drams {
 	u8 mr8;
 	struct dram_timing_info *pdram_timing;
 	char *name;
-} frdm_drams[2] = {
+} frdm_drams[] = {
 	{0x10, &dram_timing_1GB, "1GB DRAM" },
 	{0x18, &dram_timing_2GB, "2GB DRAM" },
 };
@@ -72,7 +72,7 @@ void spl_dram_init(void)
 		printf("DDR: %uMTS\n", ptiming->fsp_msg[0].drate);
 		ret = ddr_init(ptiming);
 		if (ret == 0) {
-			if (lpddr4_mr_read(1, 8) == frdm_drams[i].mr8) {
+			if ((lpddr4_mr_read(1, 8) & 0xfc) == frdm_drams[i].mr8) {
 				printf("found DRAM %s matched\n", frdm_drams[i].name);
 				break;
 			}
@@ -94,6 +94,9 @@ void spl_dram_init(void)
 			udelay(10);
 		}
 	}
+
+	if (i == ARRAY_SIZE(frdm_drams))
+		puts("DDR: No suitable DRAM found\n");
 }
 
 #if CONFIG_IS_ENABLED(DM_PMIC_PCA9450)
