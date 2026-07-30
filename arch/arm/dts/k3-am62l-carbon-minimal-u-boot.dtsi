@@ -10,6 +10,10 @@
 		mmc0 = &sdhci0;
 		mmc1 = &sdhci1;
 	};
+
+	config {
+		u-boot,mmc-env-offset = <0x380000>;
+	};
 };
 
 &scmi {
@@ -20,11 +24,11 @@
 	bootph-all;
 };
 
-&main_gpio0 {
+&gpio0 {
 	bootph-all;
 };
 
-&main_gpio2 {
+&gpio2 {
 	bootph-all;
 };
 
@@ -32,7 +36,7 @@
 	bootph-all;
 };
 
-&main_uart0 {
+&uart0 {
 	bootph-all;
 };
 
@@ -46,6 +50,10 @@
 	bootph-all;
 	sd-uhs-sdr104;
 	sd-uhs-ddr50;
+};
+
+&elm0 {
+	bootph-all;
 };
 
 &gpmc0 {
@@ -180,11 +188,11 @@
 	bootph-all;
 };
 
-&main_uart0_tx_pins_default {
+&uart0_tx_pins_default {
 	bootph-all;
 };
 
-&main_uart0_rx_pins_default {
+&uart0_rx_pins_default {
 	bootph-all;
 };
 
@@ -192,19 +200,19 @@
 	bootph-all;
 };
 
-&main_mmc0_pins_default {
+&mmc0_pins_default {
 	bootph-all;
 };
 
-&main_mmc1_pins_default {
+&mmc1_pins_default {
 	bootph-all;
 };
 
-&main_gpmc0_pins_default {
+&gpmc0_pins_default {
 	bootph-all;
 };
 
-&main_mmc1_power_en_pins_default {
+&mmc1_power_en_pins_default {
 	bootph-all;
 };
 

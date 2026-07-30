@@ -1,0 +1,4 @@
+#include <configs/carbon_am62l_defconfig>
+
+CONFIG_ENV_REDUNDANT=n
+CONFIG_ENV_OFFSET=0x380000
