@@ -21,6 +21,7 @@
 #include <mapmem.h>
 #include <rtc.h>
 #include <watchdog.h>
+#include <linux/libfdt.h>
 #include <asm/cache.h>
 #include <asm/global_data.h>
 
@@ -756,6 +757,12 @@ int boot_get_loadable(struct bootm_headers *images)
 	int conf_noffset;
 	int fit_img_result;
 	const char *uname;
+	const char *cores;
+	char core_name[32];
+	char core_list[128];
+	const fdt32_t *core_id_prop;
+	ulong core_id;
+	int core_id_len;
 	u8 img_type;
 
 	/* Check to see if the images struct has a FIT configuration */
@@ -776,6 +783,8 @@ int boot_get_loadable(struct bootm_headers *images)
 	switch (genimg_get_format(buf)) {
 	case IMAGE_FORMAT_FIT:
 		conf_noffset = fit_conf_get_node(buf, images->fit_uname_cfg);
+		env_set("mcu_firmware_available", "0");
+		env_set("mcu_firmware_cores", "");
 
 		for (loadables_index = 0;
 		     uname = fdt_stringlist_get(buf, conf_noffset,
@@ -800,6 +809,27 @@ int boot_get_loadable(struct bootm_headers *images)
 				/* Something went wrong! */
 				return fit_img_result;
 			}
+
+			core_id_prop = fdt_getprop(buf, fit_img_result, "core-id",
+						   &core_id_len);
+			if (core_id_prop && core_id_len == sizeof(*core_id_prop)) {
+				core_id = fdt32_to_cpu(*core_id_prop);
+				cores = env_get("mcu_firmware_cores");
+				snprintf(core_name, sizeof(core_name), "%lu", core_id);
+				snprintf(core_list, sizeof(core_list), "%s%s%s",
+					 cores ? cores : "",
+					 cores && *cores ? " " : "",
+					 core_name);
+				env_set("mcu_firmware_cores", core_list);
+				snprintf(core_name, sizeof(core_name),
+					 "mcu_firmware_addr_%lu", core_id);
+				env_set_hex(core_name, img_data);
+				snprintf(core_name, sizeof(core_name),
+					 "mcu_firmware_size_%lu", core_id);
+				env_set_hex(core_name, img_len);
+				env_set("mcu_firmware_available", "1");
+			}
+
 			fit_img_result = fit_image_get_type(buf,
 							    fit_img_result,
 							    &img_type);
