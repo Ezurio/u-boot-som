@@ -45,6 +45,8 @@ config TARGET_CARBON_AM62_A53
 	select ARM64
 	select BINMAN
 	select OF_SYSTEM_SETUP
+	select CMD_REMOTEPROC
+	select REMOTEPROC_TI_K3_M4F
 
 config TARGET_PHYCORE_AM62X_A53
 	bool "PHYTEC phyCORE-AM62x running on A53"

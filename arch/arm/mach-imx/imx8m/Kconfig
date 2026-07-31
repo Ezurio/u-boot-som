@@ -443,6 +443,8 @@ config TARGET_SUMMITSOM_IMX8MP
 	select FSL_CAAM
 	select MISC
 	select ARCH_MISC_INIT
+	select CMD_REMOTEPROC
+	select REMOTEPROC_IMX
 
 config TARGET_NITROGEN_IMX8MP
 	bool "Nitrogen i.MX8MP"
@@ -451,6 +453,8 @@ config TARGET_NITROGEN_IMX8MP
 	select IMX8M_LPDDR4
 	select FSL_CAAM
 	select ARCH_MISC_INIT
+	select CMD_REMOTEPROC
+	select REMOTEPROC_IMX
 
 config TARGET_NITROGEN_IMX8MM
 	bool "Nitrogen i.MX8M Mini SMARC SoM"
@@ -460,6 +464,8 @@ config TARGET_NITROGEN_IMX8MM
 	select FSL_CAAM
 	select ARCH_MISC_INIT
 	select SPL_CRYPTO if SPL
+	select CMD_REMOTEPROC
+	select REMOTEPROC_IMX
 
 endchoice
 

@@ -48,6 +48,9 @@ config TARGET_CARBON_AM67_A53
 	select ARM64
 	select BINMAN
 	select OF_SYSTEM_SETUP
+	select CMD_REMOTEPROC
+	select REMOTEPROC_TI_K3_DSP
+	select REMOTEPROC_TI_K3_R5F
 
 config TARGET_CARBON_AM67_R5
 	bool "CARBON AM67 running on R5"

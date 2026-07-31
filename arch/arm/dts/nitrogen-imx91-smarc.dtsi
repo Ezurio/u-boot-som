@@ -910,12 +910,6 @@
 		>;
 	};
 
-	pinctrl_tpm5_pwm_out: pinctrl-tpm5-pwm-outgrp {
-		fsl,pins = <
-			MX91_PAD_GPIO_IO06__TPM5_CH0		0x02
-		>;
-	};
-
 	pinctrl_tpm6: pinctrl-tpm6grp {
 		fsl,pins = <
 			MX91_PAD_GPIO_IO23__TPM6_CH1		0x02

@@ -198,11 +198,15 @@ config TARGET_NITROGEN_IMX93
 	select IMX9_LPDDR4X
 	select OF_BOARD_FIXUP
 	select ARCH_MISC_INIT
+	select CMD_REMOTEPROC
+	select REMOTEPROC_IMX
 
 config TARGET_NITROGEN_IMX95
 	bool "nitrogen_imx95"
 	select IMX95
 	select ARCH_MISC_INIT
+	select CMD_REMOTEPROC
+	select REMOTEPROC_IMX
 
 endchoice
 

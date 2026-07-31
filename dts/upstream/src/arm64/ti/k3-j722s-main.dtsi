@@ -406,9 +406,9 @@
 		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
 	};
 
-	main_i2c4: i2c@0fe80000 {
+	main_i2c4: i2c@fe80000 {
 		compatible = "ti,am64-i2c", "ti,omap4-i2c";
-		reg = <0x00 0x0fe80000 0x00 0x100>;
+		reg = <0x00 0xfe80000 0x00 0x100>;
 		interrupt-parent = <&main_gpio_intr>;
 		interrupts = <178 IRQ_TYPE_EDGE_RISING>;
 		#address-cells = <1>;

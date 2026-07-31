@@ -24,3 +24,19 @@
 &sdhci1 { /* SDIO_A uSD / M.2_SDIO */
 	status = "okay";
 };
+
+&mcu_r5fss0 {
+	status = "okay";
+};
+
+&main_r5fss0 {
+	status = "okay";
+};
+
+&c7x_0 {
+	status = "okay";
+};
+
+&c7x_1 {
+	status = "okay";
+};

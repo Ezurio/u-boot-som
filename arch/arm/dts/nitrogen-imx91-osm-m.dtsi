@@ -383,6 +383,7 @@
 		compatible = "microcrystal,rv3028";
 		reg = <0x52>;
 
+		backup-switchover-dsm;
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_rtc>;
 		interrupts-extended = <&gpio3 27 IRQ_TYPE_LEVEL_LOW>;	/* CCM_CLKO1 -> RTC_INT */
@@ -413,7 +414,6 @@
 			};
 		};
 	};
-
 };
 
 &lpi2c3 {
@@ -525,14 +525,6 @@
 
 #if 0
 &tempsense0 {
-	status = "okay";
-};
-
-&mu1 {
-	status = "okay";
-};
-
-&mu2 {
 	status = "okay";
 };
 #endif
