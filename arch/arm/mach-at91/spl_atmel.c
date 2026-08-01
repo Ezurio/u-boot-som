@@ -144,6 +144,8 @@ void board_init_f(ulong dummy)
 	if (IS_ENABLED(CONFIG_BOARD_EARLY_INIT_F))
 		board_early_init_f();
 
+	preloader_console_init();
+
 	at91_mem_init();
 
 	ret = spl_init();
@@ -151,7 +153,4 @@ void board_init_f(ulong dummy)
 		debug("spl_init() failed: %d\n", ret);
 		hang();
 	}
-
-	preloader_console_init();
-
 }

@@ -6,6 +6,7 @@
 #include <config.h>
 #include <asm/global_data.h>
 #include <wdt.h>
+#include <serial.h>
 #include <linux/ctype.h>
 #include <linux/errno.h>
 
@@ -80,6 +81,7 @@ void spl_display_print(void)
 #if CONFIG_IS_ENABLED(WATCHDOG) && CONFIG_IS_ENABLED(WDT)
 	initr_watchdog();
 #endif
+
 	for(;;) {
 		puts("\nmini spl menu\n");
 		puts("0. hw id set\n");

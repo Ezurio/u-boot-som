@@ -345,6 +345,7 @@ config TARGET_WB50N
 
 config TARGET_SOM60
 	bool "Support Ezurio SOM60"
+	select BOARD_EARLY_INIT_F
 	select BOARD_LATE_INIT
 	select SAMA5D3
 	select OF_BOARD_SETUP
