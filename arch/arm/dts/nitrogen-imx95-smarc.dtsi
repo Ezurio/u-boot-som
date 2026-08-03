@@ -8,6 +8,10 @@
 
 #include "imx95.dtsi"
 
+//&ele_if0 {
+//	memory-region = <&ele_reserved>;
+//};
+
 / {
 	model = "Ezurio i.MX95 Nitrogen SMARC board";
 	compatible = "summit,imx95-nitrogen-smarc", "fsl,imx95";
@@ -206,6 +210,14 @@
 		gpios = <&gpio5 1 GPIO_ACTIVE_HIGH>, <&gpio2 18 GPIO_ACTIVE_HIGH>;
 	};
 };
+
+//&neutron_core {
+//	status = "disabled";
+//};
+
+//&neutron {
+//	status = "disabled";
+//};
 
 &adc1 {
 	vref-supply = <&reg_vdd_1v8>;
@@ -582,6 +594,11 @@
 &gpu {
 	protected-memory-allocator = <&mali_pma>;
 };
+
+//&vpuctrl {
+//	boot = <&vpu_boot>;
+//	sram = <&sram1>;
+//};
 
 &wdog3 {
 	status = "okay";

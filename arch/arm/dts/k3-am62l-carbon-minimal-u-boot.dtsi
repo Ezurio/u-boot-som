@@ -2,7 +2,7 @@
 /*
  * Copyright (C) 2026 Ezurio LLC
  */
- 
+
 #include "k3-am62l-carbon-binman.dtsi"
 
 / {
@@ -68,6 +68,8 @@
 	bootph-all;
 };
 
+// Workaround for incorrect IC used,
+// to be removed on the next revision of the board
 &exp0 {
 	bootph-all;
 	compatible = "ti,tca6416";
@@ -172,22 +174,6 @@
 	};
 };
 
-&eth_mac0 {
-	bootph-all;
-};
-
-&eth_mac1 {
-	bootph-all;
-};
-
-&ram_type {
-	bootph-all;
-};
-
-&radio_type {
-	bootph-all;
-};
-
 &uart0_tx_pins_default {
 	bootph-all;
 };
@@ -216,9 +202,21 @@
 	bootph-all;
 };
 
-&usb0 {
-	/delete-property/ bootph-all;
+#ifdef CONFIG_SPL_DFU
+/* Required for USB DFU Boot */
+&usbss0 {
+	bootph-all;
 };
+
+&usb0 {
+	dr_mode = "peripheral";
+	bootph-all;
+};
+
+&usb0_phy_ctrl {
+	bootph-all;
+};
+#endif
 
 &dphy_tx0 {
 	/delete-property/ bootph-all;

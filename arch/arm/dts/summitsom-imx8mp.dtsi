@@ -1,6 +1,6 @@
-// SPDX-License-Identifier: LicenseRef-Ezurio-Clause
+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 /*
- * Copyright 2021 Ezurio
+ * Copyright 2021 Ezurio LLC
  */
 
 #include <dt-bindings/phy/phy-imx8-pcie.h>
@@ -13,7 +13,14 @@
 	compatible = "summit,imx8mp-summitsom", "fsl,imx8mp";
 
 	chosen {
-		stdout-path = &uart2;
+		stdout-path = "serial1:115200n8";
+	};
+
+	aliases {
+		can0 = &flexcan1;
+		can1 = &flexcan2;
+		ethernet0 = &fec;
+		ethernet1 = &eqos;
 	};
 
 	reserved-memory {
@@ -37,6 +44,23 @@
 		enable-active-high;
 
 		startup-delay-us = <5000>;
+	};
+
+	reg_pmu_enable: regulator-pmu-enable {
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_wifi_pmu>;
+
+		compatible = "regulator-fixed";
+
+		regulator-name = "wifi_pmu_enable";
+		regulator-min-microvolt = <3300000>;
+		regulator-max-microvolt = <3300000>;
+
+		gpios = <&gpio2 10 GPIO_ACTIVE_HIGH>;
+		enable-active-high;
+
+		startup-delay-us = <1000>;
+		off-on-delay-us = <100000>;
 	};
 
 	radio_wake {
@@ -495,3 +519,39 @@
 		>;
 	};
 };
+
+&sec_jr2 {
+    status = "reserved";  // Job Ring 2 is used by OPTEE
+};
+
+&gpu3d {
+	status = "disabled";
+};
+
+&gpu2d {
+	status = "disabled";
+};
+
+&npu {
+	status = "disabled";
+};
+
+//&mix_gpu_ml {
+//	status = "disabled";
+//};
+
+&vpu_g1 {
+	status = "disabled";
+};
+
+&vpu_g2 {
+	status = "disabled";
+};
+
+//&vpu_vc8000e {
+//	status = "disabled";
+//};
+
+//&vpu_v4l2 {
+//	status = "disabled";
+//};

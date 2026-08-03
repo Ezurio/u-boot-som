@@ -148,11 +148,19 @@
 		gpio = <&pcal6534 32 GPIO_ACTIVE_HIGH>; /* P4_0 -> I2C_HUB_RESET */
 		enable-active-high;
 	};
+
+	display-subsystem {
+		status = "disabled";
+	};
 };
 
 &adc1 {
 	vref-supply = <&reg_vdd_1v8>;
 };
+
+//&ele_fw2 {
+//	memory-region = <&ele_reserved>;
+//};
 
 &eqos {
 	pinctrl-names = "default", "sleep";
@@ -396,6 +404,11 @@
 	#size-cells = <0>;
 };
 
+//&lpm {
+//	soc-supply = <&buck1>;
+//	status = "okay";
+//};
+
 &lpspi1 { /* SPI1 */
 	pinctrl-names = "default", "sleep";
 	pinctrl-0 = <&pinctrl_lpspi1>;
@@ -527,6 +540,15 @@
 	pinctrl-names = "default";
 	pinctrl-0 = <&pinctrl_tpm6>;
 };
+
+//&dsi {
+//	ports {
+//		port@1 {
+//			dsi_out_ep: endpoint {
+//			};
+//		};
+//	};
+//};
 
 &iomuxc {
 	pinctrl_eqos: eqosgrp {
