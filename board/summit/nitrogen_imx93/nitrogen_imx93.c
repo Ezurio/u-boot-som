@@ -15,6 +15,7 @@ int board_late_init(void)
 	env_set("board_rev", "iMX93");
 #endif
 
+	set_serial_number();
 	set_bootside();
 
 	return 0;

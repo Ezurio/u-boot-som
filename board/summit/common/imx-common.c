@@ -9,15 +9,41 @@
 #include <mmc.h>
 #include <env_internal.h>
 #include <linux/sizes.h>
+#include <net-common.h> 
+
 #include <asm/mach-imx/boot_mode.h>
 #include <asm/arch/ddr.h>
 #include <asm/arch/sys_proto.h>
 #include <asm/global_data.h>
-#include <stdbool.h>
 
 #include "imx-common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
+
+void set_serial_number(void)
+{
+	char serialbuf[13];
+	unsigned char mac[8];
+
+	if (!IS_ENABLED(CONFIG_USB_GADGET))
+		return;
+
+	if (env_get("serial#"))
+		return;
+
+	imx_get_mac_from_fuse(0, mac);
+	if (!is_valid_ethaddr(mac)) {
+		printf("fuse not set, can't set serial\n");
+		return;
+	}
+
+	snprintf(serialbuf, sizeof(serialbuf),
+		 "%02x%02x%02x%02x%02x%02x", mac[0],
+		 mac[1], mac[2], mac[3],
+		 mac[4], mac[5]);
+	printf("serial: %s\n", serialbuf);
+	env_set("serial#", serialbuf);
+}
 
 static int __maybe_unused emmc_get_boot_side(int dev)
 {
