@@ -99,3 +99,15 @@
 		output-low;
 	};
 };
+
+&usb2 {
+	bootph-pre-ram;
+};
+
+&usbmisc {
+	bootph-pre-ram;
+};
+
+&usbphynop {
+	bootph-pre-ram;
+};
