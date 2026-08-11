@@ -14,3 +14,7 @@
 	// as such SD card cannot be reset, thus disabling 1.8V
 	no-1-8-v;
 };
+
+&usbotg1 {
+	status = "okay";
+};
