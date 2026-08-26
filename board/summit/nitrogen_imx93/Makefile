@@ -14,4 +14,7 @@ obj-y += lpddr4_osm_s_1gb_timing.o lpddr4_osm_s_2gb_timing.o
 else
 obj-y += lpddr4_smarc_1gb_timing.o lpddr4_smarc_2gb_timing.o
 endif
+
+else
+obj-$(CONFIG_SUMMIT_AHAB_AUTO_CLOSE) += ../common/ahab-lifecycle.o
 endif

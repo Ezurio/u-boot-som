@@ -3,5 +3,6 @@
 
 void set_bootside(void);
 void set_serial_number(void);
+void summit_ahab_lifecycle_init(void);
 
 #endif /* _BOARD_SUMMIT_COMMON_H */
