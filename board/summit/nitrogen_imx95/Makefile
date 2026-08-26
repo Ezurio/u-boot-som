@@ -8,4 +8,6 @@ obj-y += nitrogen_imx95.o ../common/imx-common.o
 
 ifdef CONFIG_SPL_BUILD
 obj-y += spl.o
+else
+obj-$(CONFIG_SUMMIT_AHAB_AUTO_CLOSE) += ../common/ahab-lifecycle.o
 endif
