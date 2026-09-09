@@ -1,0 +1,113 @@
+// SPDX-License-Identifier: GPL-2.0-or-later OR MIT
+/*
+ * Copyright 2026 Ezurio LLC
+ */
+
+/dts-v1/;
+
+#include <dt-bindings/gpio/gpio.h>
+
+#include "k3-am625.dtsi"
+
+/ {
+	model = "Ezurio Carbon AM62x Rescue";
+	compatible = "summit,carbon-am62x", "ti,am625";
+
+	aliases {
+		serial2 = &main_uart0;
+		mmc0 = &sdhci0;
+		usb0 = &usb0;
+	};
+
+	chosen {
+		stdout-path = "serial2:115200n8";
+	};
+
+	memory@80000000 {
+		device_type = "memory";
+		reg = <0x00000000 0x80000000 0x00000000 0x80000000>;
+	};
+
+	reserved-memory {
+		#address-cells = <2>;
+		#size-cells = <2>;
+		ranges;
+
+		tfa@9e780000 {
+			reg = <0x00 0x9e780000 0x00 0x80000>;
+			alignment = <0x1000>;
+			no-map;
+		};
+
+		optee@9e800000 {
+			reg = <0x00 0x9e800000 0x00 0x01800000>;
+			alignment = <0x1000>;
+			no-map;
+		};
+	};
+
+	mmc0_pwrseq: mmc0-pwrseq {
+		compatible = "mmc-pwrseq-emmc";
+		pinctrl-names = "default";
+		pinctrl-0 = <&main_mmc0_reset_pins_default>;
+		reset-gpios = <&main_gpio0 15 GPIO_ACTIVE_LOW>;
+	};
+};
+
+&main_pmx0 {
+	main_mmc0_reset_pins_default: main-mmc0-reset-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x03c, PIN_INPUT, 7) /* GPMC0_AD0.GPIO0_15 */
+		>;
+	};
+
+	main_mmc0_pins_default: main-mmc0-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x220, PIN_INPUT_PULLUP, 0) /* MMC0_CMD */
+			AM62X_IOPAD(0x218, PIN_OUTPUT, 0) /* MMC0_CLK */
+			AM62X_IOPAD(0x214, PIN_INPUT_PULLUP, 0) /* MMC0_DAT0 */
+			AM62X_IOPAD(0x210, PIN_INPUT_PULLUP, 0) /* MMC0_DAT1 */
+			AM62X_IOPAD(0x20c, PIN_INPUT_PULLUP, 0) /* MMC0_DAT2 */
+			AM62X_IOPAD(0x208, PIN_INPUT_PULLUP, 0) /* MMC0_DAT3 */
+			AM62X_IOPAD(0x204, PIN_INPUT_PULLUP, 0) /* MMC0_DAT4 */
+			AM62X_IOPAD(0x200, PIN_INPUT_PULLUP, 0) /* MMC0_DAT5 */
+			AM62X_IOPAD(0x1fc, PIN_INPUT_PULLUP, 0) /* MMC0_DAT6 */
+			AM62X_IOPAD(0x1f8, PIN_INPUT_PULLUP, 0) /* MMC0_DAT7 */
+			AM62X_IOPAD(0x21c, PIN_INPUT, 0) /* MMC0_CLKLB */
+		>;
+	};
+
+	main_uart0_pins_default: main-uart0-default-pins {
+		pinctrl-single,pins = <
+			AM62X_IOPAD(0x1c8, PIN_INPUT_PULLUP, 0) /* UART0_RXD */
+			AM62X_IOPAD(0x1cc, PIN_OUTPUT, 0) /* UART0_TXD */
+		>;
+	};
+};
+
+&main_uart0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_uart0_pins_default>;
+};
+
+&sdhci0 {
+	status = "okay";
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_mmc0_pins_default>;
+	mmc-pwrseq = <&mmc0_pwrseq>;
+	disable-wp;
+	non-removable;
+	bus-width = <8>;
+	ti,fails-without-test-cd;
+	ti,driver-strength-ohm = <50>;
+};
+
+&usbss0 {
+	status = "okay";
+	ti,vbus-divider;
+};
+
+&usb0 {
+	dr_mode = "peripheral";
+};
