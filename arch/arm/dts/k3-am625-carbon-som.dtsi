@@ -1341,6 +1341,24 @@
 	pinctrl-0 = <&wkup_uart0_pins_default>;
 };
 
+&usbss0 {
+	ti,vbus-divider;
+};
+
+&usbss1 {
+	ti,vbus-divider;
+};
+
+&usb0 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_usb0_en_pins_default>;
+};
+
+&usb1 {
+	pinctrl-names = "default";
+	pinctrl-0 = <&main_usb1_en_pins_default>;
+};
+
 &gpu {
 	status = "disabled";
 };

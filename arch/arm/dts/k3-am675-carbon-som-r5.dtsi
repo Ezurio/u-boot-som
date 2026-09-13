@@ -31,7 +31,7 @@
 		ti,sci = <&dmsc>;
 		ti,sci-proc-id = <32>;
 		ti,sci-host-id = <10>;
-		bootph-pre-ram;
+		bootph-all;
 	};
 
 	dm_tifs: dm-tifs {
@@ -41,7 +41,7 @@
 		mbox-names = "rx", "tx";
 		mboxes= <&secure_proxy_main 28>,
 			<&secure_proxy_main 29>;
-		bootph-pre-ram;
+		bootph-all;
 	};
 };
 
@@ -71,7 +71,7 @@
 		       <&secure_proxy_main 0>,
 		       <&sa3_secproxy 0>;
 		mbox-names = "tx", "rx", "boot_notify";
-		bootph-pre-ram;
+		bootph-all;
 	};
 };
 
@@ -95,4 +95,8 @@
 &main_pktdma {
 	ti,sci = <&dm_tifs>;
 	bootph-all;
+};
+
+&memorycontroller {
+	compatible = "ti,j722s-ddrss", "ti,am62a-ddrss";
 };

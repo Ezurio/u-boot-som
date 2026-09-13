@@ -50,6 +50,10 @@
 };
 #endif
 
+&lpm_memory_region {
+	bootph-all;
+};
+
 &main_mmc1_pins_default {
 	bootph-all;
 };

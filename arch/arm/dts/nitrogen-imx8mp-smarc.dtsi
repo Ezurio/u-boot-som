@@ -145,6 +145,33 @@
 		cpu-dai = <&xcvr>;
 	};
 
+	wifi_wakeup: wifi-wakeup {
+		compatible = "gpio-keys";
+
+		status = "disabled";
+
+		pinctrl-names = "default";
+		pinctrl-0 = <&pinctrl_wifi_wake>, <&pinctrl_bt_wake>;
+
+		wifi-wake {
+			label = "Wi-Fi Wake Up";
+			linux,code = <KEY_WAKEUP>;
+			wakeup-source;
+
+			interrupts-extended = <&gpio3 14 IRQ_TYPE_EDGE_FALLING>;	/* WIFI_SDIO_WAKE */
+			interrupt-names = "irq";
+		};
+
+		bt-wake {
+			label = "BT Wake Up";
+			linux,code = <KEY_WAKEUP>;
+			wakeup-source;
+
+			interrupts-extended = <&gpio3 21 IRQ_TYPE_EDGE_FALLING>;	/* BT_HOST_WAKE */
+			interrupt-names = "irq";
+		};
+	};
+
 	display-subsystem {
 		status = "disabled";
 	};
@@ -227,7 +254,7 @@
 		#size-cells = <0>;
 
 		ethphy1: ethernet-phy@3 {
-			reg = <3>;			
+			reg = <3>;
 			compatible = "ethernet-phy-ieee802.3-c22";
 			interrupts-extended = <&gpio1 7 IRQ_TYPE_LEVEL_LOW>;
 		};
@@ -425,16 +452,16 @@
 	mcp23018: gpio@20 {
 		compatible = "microchip,mcp23018";
 		reg = <0x20>;
-		
+
 		gpio-controller;
 		#gpio-cells = <2>;
-		
+
 		interrupts-extended = <&gpio4 22 IRQ_TYPE_LEVEL_LOW>;
 		interrupt-controller;
 		#interrupt-cells = <2>;
-		
+
 		microchip,irq-mirror;
-		
+
 		pinctrl-names = "default";
 		pinctrl-0 = <&pinctrl_i2c6_mcp23018>, <&mcp_pullups>;
 		reset-gpios = <&gpio4 27 GPIO_ACTIVE_LOW>;
@@ -830,6 +857,18 @@
 			MX8MP_IOMUXC_GPIO1_IO02__WDOG1_WDOG_B	0x140
 		>;
 	};
+
+	pinctrl_wifi_wake: wifi-wake-grp {
+		fsl,pins = <
+			MX8MP_IOMUXC_NAND_DQS__GPIO3_IO14	0x1c0
+		>;
+	};
+
+	pinctrl_bt_wake: bt-wake-grp {
+		fsl,pins = <
+			MX8MP_IOMUXC_SAI5_RXD0__GPIO3_IO21	0x1c0
+		>;
+	};
 };
 
 &pcie {
@@ -952,13 +991,13 @@
 };
 
 &usdhc1 {
-	non-removable;
 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
 	pinctrl-0 = <&pinctrl_usdhc1>;
 	pinctrl-1 = <&pinctrl_usdhc1_100mhz>;
 	pinctrl-2 = <&pinctrl_usdhc1_200mhz>;
 
 	bus-width = <8>;
+	non-removable;
 
 	status = "okay";
 };
