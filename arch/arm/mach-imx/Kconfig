@@ -62,6 +62,13 @@ config IMX_HAB
 	  This option enables the support for secure boot (HAB).
 	  See doc/imx/habv4/* for more details.
 
+config IMX_HAB_CST
+	bool "Use CST for i.MX HAB image signing"
+	depends on IMX_HAB && ARCH_IMX8M
+	help
+	  Select the legacy CST binman entry for i.MX HAB image signing.
+	  When this option is disabled, the SPSDK binman entry is used.
+
 config CSF_SIZE
 	hex "Maximum size for Command Sequence File (CSF) binary"
 	depends on IMX_HAB

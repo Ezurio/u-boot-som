@@ -51,7 +51,11 @@
 		pad-byte = <0x00>;
 
 #ifdef CONFIG_IMX_HAB
+#ifdef CONFIG_IMX_HAB_CST
 		nxp-imx8mcst@0 {
+#else
+		nxp-imx8mspsdk@0 {
+#endif
 			filename = "u-boot-spl-mkimage.signed.bin";
 			nxp,loader-address = <CONFIG_SPL_TEXT_BASE>;
 			nxp,unlock;
@@ -109,7 +113,11 @@
 #ifdef CONFIG_IMX_HAB
 		};
 
+#ifdef CONFIG_IMX_HAB_CST
 		nxp-imx8mcst@1 {
+#else
+		nxp-imx8mspsdk@1 {
+#endif
 			filename = "u-boot-fit.signed.bin";
 			nxp,loader-address = <CONFIG_SPL_LOAD_FIT_ADDRESS>;
 #ifdef CONFIG_FSPI_CONF_HEADER
