@@ -8,5 +8,9 @@ obj-y += nitrogen_imx8mm.o
 obj-y += lpddr4_patches.o 
 obj-y += ../common/imx-common.o
 
+ifdef CONFIG_XPL_BUILD
 obj-$(CONFIG_XPL_BUILD) += spl.o 
 obj-$(CONFIG_XPL_BUILD) += lpddr4_timing.o
+else
+obj-$(CONFIG_SUMMIT_AUTO_CLOSE) += ../common/hab4-lifecycle.o
+endif

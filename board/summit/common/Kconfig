@@ -25,26 +25,23 @@ config CMD_SUMMIT_MAC
 		Enables configuration of MAC and HW ID from the
 		command line
 
-config SUMMIT_AHAB_AUTO_CLOSE
-	bool "Advance the ELE lifecycle to OEM closed on first boot"
-	depends on ARCH_IMX9
-	depends on AHAB_BOOT
+config SUMMIT_AUTO_CLOSE
+	bool "Advance the secure lifecycle to OEM closed on first boot"
+	depends on (ARCH_IMX9 && AHAB_BOOT) || (ARCH_IMX8M && IMX_HAB)
 	help
-		On a device still in the OEM open lifecycle state, ask the ELE
-		to advance to OEM closed during board_late_init and reset so
-		the new state takes effect.
-
-		The ELE only permits this once the SRK hash fuses have been
-		programmed and the running image has been authenticated, so the
-		request is harmless on an unprovisioned device.  This removes
-		the need to close the device by hand from a rescue image, which
-		cannot work because that boot is unauthenticated.
+		On a device still in the OEM open lifecycle state, transition to
+		OEM closed during board_late_init and reset so the new state takes
+		effect.  The AHAB implementation requests the transition through
+		the ELE, while the HAB4 implementation programs the secure-boot
+		fuse directly.
 
 		Moving to OEM closed is irreversible.
 
 config SUMMIT_AHAB_AUTO_LOCK
 	bool "Advance the ELE lifecycle to OEM locked once OEM closed"
-	depends on SUMMIT_AHAB_AUTO_CLOSE
+	depends on SUMMIT_AUTO_CLOSE
+	depends on ARCH_IMX9
+	depends on AHAB_BOOT
 	help
 		Once the device has reached OEM closed, ask the ELE to advance
 		to OEM locked and reset.  This is the boot after the one that

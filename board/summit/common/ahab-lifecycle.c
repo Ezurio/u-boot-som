@@ -86,7 +86,7 @@ static void forward_lifecycle(u16 request, const char *target)
 	do_reset(NULL, 0, 0, NULL);
 }
 
-void summit_ahab_lifecycle_init(void)
+void summit_hab_lifecycle_init(void)
 {
 	u32 lc = read_lifecycle();
 
