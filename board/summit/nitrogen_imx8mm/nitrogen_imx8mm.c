@@ -21,6 +21,8 @@ int board_late_init(void)
 
 	set_serial_number();
 	set_bootside();
+	if (IS_ENABLED(CONFIG_SUMMIT_AUTO_CLOSE))
+		summit_hab_lifecycle_init();
 
 	return 0;
 }

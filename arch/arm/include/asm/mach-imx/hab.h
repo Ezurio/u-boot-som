@@ -147,6 +147,8 @@ typedef enum hab_status hab_rvt_report_event_t(enum hab_status, uint32_t,
 		uint8_t* , size_t*);
 typedef enum hab_status hab_rvt_report_status_t(enum hab_config *,
 		enum hab_state *);
+
+hab_rvt_report_status_t hab_rvt_report_status;
 typedef enum hab_status hab_loader_callback_f_t(void**, size_t*, const void*);
 typedef enum hab_status hab_rvt_entry_t(void);
 typedef enum hab_status hab_rvt_exit_t(void);
