@@ -29,11 +29,14 @@ F:	arch/arm/dts/mt8390-genio-common-u-boot.dtsi
 F:	arch/arm/dts/mtk-genio-*-binman-u-boot.dtsi
 F:	arch/arm/dts/mtk-genio-binman-u-boot.dtsi
 F:	configs/mt8370-genio-da-spl-fastboot.config
+F:	configs/mt8370-genio-da-uboot-fastboot.config
 F:	configs/mt8370-genio-da.config
 F:	configs/mt8188.config
 F:	configs/mt8370_genio_510_evk_da_spl_defconfig
+F:	configs/mt8370_genio_510_evk_da_uboot_defconfig
 F:	configs/mt8370_genio_510_evk_defconfig
 F:	configs/mt8390_genio_700_evk_da_spl_defconfig
+F:	configs/mt8390_genio_700_evk_da_uboot_defconfig
 F:	configs/mt8390_genio_700_evk_defconfig
 F:	doc/board/mediatek/mt8188-genio-evk.rst
 
