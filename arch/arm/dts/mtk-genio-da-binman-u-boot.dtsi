@@ -1,0 +1,17 @@
+// SPDX-License-Identifier: (GPL-2.0-only OR MIT)
+/*
+ * Copyright (c) 2026 BayLibre, SAS.
+ * Author: Carlo Caione <ccaione@baylibre.com>
+ */
+
+&binman {
+	da: da {
+		filename = "da.bin";
+		pad-byte = <0>;
+
+/* DA authentication is handled by the BootROM download tooling. */
+#define MTK_GENIO_SPL_NO_FIT_KEYS
+#include "mtk-genio-loader-spl-binman-u-boot.dtsi"
+#undef MTK_GENIO_SPL_NO_FIT_KEYS
+	};
+};

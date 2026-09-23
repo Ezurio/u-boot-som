@@ -843,7 +843,10 @@ int ssusb_gadget_init(struct ssusb_mtk *ssusb)
 	mtu->mac_base = ssusb->mac_base;
 	mtu->ssusb = ssusb;
 	mtu->max_speed = usb_get_maximum_speed(dev_ofnode(ssusb->dev));
-	mtu->force_vbus = dev_read_bool(ssusb->dev, "mediatek,force-vbus");
+	/* Fixed peripheral mode must not depend on OTG session detection. */
+	mtu->force_vbus =
+		usb_get_dr_mode(dev_ofnode(ssusb->dev)) == USB_DR_MODE_PERIPHERAL ||
+		dev_read_bool(ssusb->dev, "mediatek,force-vbus");
 
 	ret = mtu3_hw_init(mtu);
 	if (ret) {

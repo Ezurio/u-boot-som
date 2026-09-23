@@ -12,7 +12,7 @@ ddr-loader {
 	size = <CONFIG_MTK_GENIO_DDR_LOADER_SIZE>;
 };
 
-#ifdef CONFIG_SPL_FIT_SIGNATURE
+#if defined(CONFIG_SPL_FIT_SIGNATURE) && !defined(MTK_GENIO_SPL_NO_FIT_KEYS)
 u-boot-spl {
 	type = "section";
 	size = <CONFIG_SPL_MAX_SIZE>;
