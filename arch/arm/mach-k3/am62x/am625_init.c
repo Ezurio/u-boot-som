@@ -190,10 +190,19 @@ void board_init_f(ulong dummy)
 	 */
 	store_boot_info_from_rom();
 
-	ctrl_mmr_unlock();
-
 	/* Init DM early */
 	spl_early_init();
+
+	/*
+	 * Require TIFS initialization to finish before unlocking. Otherwise
+	 * TIFS may not remove the firewall before U-Boot unlocks them, breaking
+	 * random things. get_ti_sci_handle() internally fetches the version
+	 * which communicates with TIFS. TIFS should only respond once
+	 * initialized.
+	 */
+	get_ti_sci_handle();
+
+	ctrl_mmr_unlock();
 
 	ret = wkup_ctrl_remove_can_io_isolation_if_set();
 	if (ret)
