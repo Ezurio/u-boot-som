@@ -11,6 +11,7 @@ struct ddr_patch_record {
 struct ddrss_patch {
     const u32 id;
 	const struct ddr_patch_record *ctl_patch;
+	const u32 pll_fhs_cnt;
 	const struct ddr_patch_record *pi_patch;
 	const struct ddr_patch_record *phy_patch;
 };
