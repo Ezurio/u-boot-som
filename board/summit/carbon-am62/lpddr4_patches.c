@@ -53,7 +53,7 @@ const static struct ddrss_patch lpddr4_data[] = {
 		.pi_patch = lpddr4_pi_1gb,
 	},
 	{
-		.id = 2,
+		.id = 12,
 		.pll_fhs_cnt = 5,
 		.ctl_patch = lpddr4_ctl_2gb_2ranks,
 		.pi_patch = lpddr4_pi_2gb_2ranks,
