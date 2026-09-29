@@ -83,7 +83,8 @@ static int ctl_reg_update(u32 *ctl_regs, const struct ddr_patch_record *patch)
 	return 0;
 }
 
-void k3_lpddr4_patch(u32* ctl_regs, u32* pi_regs, u32* phy_regs)
+void k3_lpddr4_patch(u32* ctl_regs, u32* pi_regs, u32* phy_regs,
+		     u32* pll_fhs_cnt)
 {
 	const struct ddrss_patch *patch = get_lpddr_patch_data();
 
@@ -103,6 +104,8 @@ void k3_lpddr4_patch(u32* ctl_regs, u32* pi_regs, u32* phy_regs)
 	ctl_reg_update(ctl_regs, patch->ctl_patch);
 	ctl_reg_update(pi_regs, patch->pi_patch);
 	ctl_reg_update(phy_regs, patch->phy_patch);
+	if (pll_fhs_cnt && patch->pll_fhs_cnt)
+		*pll_fhs_cnt = patch->pll_fhs_cnt;
 }
 
 int dram_init(void)
