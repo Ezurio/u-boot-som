@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * Code generated with DDR Tool v3.9.0_8.7-378c9b3d8.
+ * Code generated with DDR Tool v4.0.0_8.8-.
  * DDR PHY FW2022.01 
- * Part number: Nitrogen i.MX93 1GB MT53D512M16D1DS-046 IT:D
+ * Part number: Ezurio i.MX93 SMARC LPDDR4 1GB
  */
 
 #include <linux/kernel.h>
