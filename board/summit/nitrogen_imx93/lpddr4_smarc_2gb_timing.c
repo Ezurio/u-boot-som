@@ -3,9 +3,9 @@
  *
  * SPDX-License-Identifier: BSD-3-Clause
  *
- * Code generated with DDR Tool v4.1.0_8.8-.
+ * Code generated with DDR Tool v4.0.0_8.8-.
  * DDR PHY FW2022.01
- * Part number: NXP LPDDR4X EVK 11x11 or 14x14 and FRDM 11x11 board's default DDR part
+ * Part number: Ezurio i.MX93 SMARC LPDDR4 2GB
  */
 
 #include <linux/kernel.h>
