@@ -197,6 +197,7 @@
 					};
 #endif
 
+#ifdef CONFIG_OPTEE
 					tee: tee {
 						description = "OP-TEE";
 						type = "tee";
@@ -211,6 +212,7 @@
 							optional;
 						};
 					};
+#endif
 
 					@fdt-SEQ {
 						description = "NAME";
@@ -231,7 +233,11 @@
 						fdt = "fdt-SEQ";
 						firmware = "uboot";
 #ifndef CONFIG_ARMV8_PSCI
+#ifdef CONFIG_OPTEE
 						loadables = "atf", "tee";
+#else
+						loadables = "atf";
+#endif
 #endif
 					};
 				};

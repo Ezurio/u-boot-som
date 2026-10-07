@@ -55,11 +55,11 @@ struct pf9453_plat {
 	.min_sel = (_sel_low), .max_sel = (_sel_hi), \
 }
 
-#define PCA_DATA(_name, enreg, enmask, vreg, vmask, _range) \
+#define PCA_DATA(_name, enreg, enmask, vreg, vmask, _range, _numranges) \
 { \
 	.name = (_name), .enable_reg = (enreg), .enablemask = (enmask), \
 	.volt_reg = (vreg), .volt_mask = (vmask), .ranges = (_range), \
-	.numranges = ARRAY_SIZE(_range) \
+	.numranges = _numranges \
 }
 
 static struct pf9453_vrange pf9453_buck134_vranges[] = {
@@ -79,32 +79,32 @@ static struct pf9453_vrange pf9453_ldo2_vranges[] = {
 };
 
 static struct pf9453_vrange pf9453_ldosnvs_vranges[] = {
-	PCA_RANGE(1200000, 25000, 0x0, 0x58),
+	PCA_RANGE(800000, 25000, 0x0, 0x58),
 };
 
 static struct pf9453_plat pf9453_reg_data[] = {
 	PCA_DATA("BUCK1", PF9453_BUCK1CTRL, PF9453_EN_MODE_MASK,
 		 PF9453_BUCK1OUT, PF9453_BUCK_RUN_MASK,
-		 pf9453_buck134_vranges),
+		 pf9453_buck134_vranges, ARRAY_SIZE(pf9453_buck134_vranges)),
 	PCA_DATA("BUCK2", PF9453_BUCK2CTRL, PF9453_EN_MODE_MASK,
 		 PF9453_BUCK2OUT, PF9453_BUCK_RUN_MASK,
-		 pf9453_buck2_vranges),
+		 pf9453_buck2_vranges, ARRAY_SIZE(pf9453_buck2_vranges)),
 	PCA_DATA("BUCK3", PF9453_BUCK3CTRL, PF9453_EN_MODE_MASK,
 		 PF9453_BUCK3OUT, PF9453_BUCK_RUN_MASK,
-		 pf9453_buck134_vranges),
+		 pf9453_buck134_vranges, ARRAY_SIZE(pf9453_buck134_vranges)),
 	PCA_DATA("BUCK4", PF9453_BUCK4CTRL, PF9453_EN_MODE_MASK,
 		 PF9453_BUCK4OUT, PF9453_BUCK_RUN_MASK,
-		 pf9453_buck134_vranges),
+		 pf9453_buck134_vranges, ARRAY_SIZE(pf9453_buck134_vranges)),
 	/* LDOs */
 	PCA_DATA("LDO1", PF9453_LDO1CFG, PF9453_EN_MODE_MASK,
 		 PF9453_LDO1OUT_H, PF9453_LDO1_MASK,
-		 pf9453_ldo1_vranges),
+		 pf9453_ldo1_vranges, ARRAY_SIZE(pf9453_ldo1_vranges)),
 	PCA_DATA("LDO2", PF9453_LDO2CFG, PF9453_EN_MODE_MASK,
 		 PF9453_LDO2OUT, PF9453_LDO2_MASK,
-		 pf9453_ldo2_vranges),
-	PCA_DATA("LDO_SNVS", PF9453_LDOSNVS_CFG2, PF9453_EN_MODE_MASK,
+		 pf9453_ldo2_vranges, ARRAY_SIZE(pf9453_ldo2_vranges)),
+	PCA_DATA("LDO-SNVS", PF9453_LDOSNVS_CFG2, PF9453_EN_MODE_MASK,
 		 PF9453_LDOSNVS_CFG1, PF9453_LDOSNVS_MASK,
-		 pf9453_ldosnvs_vranges),
+		 pf9453_ldosnvs_vranges, ARRAY_SIZE(pf9453_ldosnvs_vranges)),
 };
 
 static int vrange_find_value(struct pf9453_vrange *r, unsigned int sel,

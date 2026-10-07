@@ -109,7 +109,7 @@ config CMD_IMX_QB
 config CMD_BMODE
 	bool "Support the 'bmode' command"
 	default y
-	depends on ARCH_IMX8M || ARCH_MX7 || ARCH_MX6 || ARCH_MX5
+	depends on IMX95 || ARCH_IMX8M || ARCH_MX7 || ARCH_MX6 || ARCH_MX5
 	help
 	  This enables the 'bmode' (bootmode) command for forcing
 	  a boot from specific media.
@@ -164,7 +164,7 @@ config CMD_PRIBLOB
 	depends on HAS_CAAM && IMX_HAB
 	help
 	  This option enables the priblob command which can be used
-		to set the priblob setting to 0x3.
+	  to set the priblob setting to 0x3.
 
 config CMD_HDMIDETECT
 	bool "Support the 'hdmidet' command"

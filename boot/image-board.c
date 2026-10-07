@@ -119,7 +119,7 @@ phys_addr_t env_get_bootm_low(void)
 #if defined(CFG_SYS_SDRAM_BASE)
 	return CFG_SYS_SDRAM_BASE;
 #elif defined(CONFIG_ARM) || defined(CONFIG_MICROBLAZE) || defined(CONFIG_RISCV)
-	return gd->bd->bi_dram[0].start;
+	return gd->dram[0].start;
 #else
 	return 0;
 #endif
@@ -844,6 +844,12 @@ int boot_get_loadable(struct bootm_headers *images)
 
 			fit_loadable_process(img_type, img_data, img_len);
 		}
+
+		fit_img_result = fit_verity_build_cmdline(buf, conf_noffset,
+							  images);
+		if (fit_img_result < 0)
+			return fit_img_result;
+
 		env_set("mcu_firmware_cores", core_list);
 		break;
 	default:
