@@ -748,7 +748,7 @@ static int dfu_bind(struct usb_configuration *c, struct usb_function *f)
 
 	cdev->req->context = f_dfu;
 
-	s = env_get("serial#");
+	s = CONFIG_IS_ENABLED(ENV_SUPPORT) ? env_get("serial#") : NULL;
 	if (s)
 		g_dnl_set_serialnumber((char *)s);
 

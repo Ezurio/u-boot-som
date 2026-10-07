@@ -27,6 +27,7 @@
 #define MAGIC_WORD_SIZE 4
 #define BOOT_PHASE_STRING_SIZE 63
 
+#if CONFIG_IS_ENABLED(ENV_SUPPORT)
 static int run_dfu(int usb_index, char *interface, char *devstring)
 {
 	int ret;
@@ -42,6 +43,7 @@ exit:
 	dfu_free_entities();
 	return ret;
 }
+#endif
 
 #ifdef CONFIG_SPL_PCI_DFU
 static int dfu_over_pcie(void)
@@ -128,6 +130,7 @@ int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr)
 		return dfu_over_pcie();
 #endif
 
+#if CONFIG_IS_ENABLED(ENV_SUPPORT)
 	/* set default environment */
 	env_set_default(NULL, 0);
 	str_env = env_get(dfu_alt_info);
@@ -144,4 +147,17 @@ int spl_dfu_cmd(int usbctrl, char *dfu_alt_info, char *interface, char *devstr)
 
 	/* invoke dfu command */
 	return run_dfu(usbctrl, interface, devstr);
+#else
+	str_env = strdup(CONFIG_SPL_DFU_ALT_INFO);
+	if (!str_env)
+		return -ENOMEM;
+
+	ret = dfu_config_entities(str_env, interface, devstr);
+	free(str_env);
+	if (!ret)
+		run_usb_dnl_gadget(usbctrl, "usb_dnl_dfu");
+
+	dfu_free_entities();
+	return ret;
+#endif
 }

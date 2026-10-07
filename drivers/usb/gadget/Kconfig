@@ -349,12 +349,20 @@ choice
 config SPL_DFU_RAM
 	bool "RAM device"
 	depends on SPL_DFU && SPL_RAM_SUPPORT
+	select SPL_STRTO
 	help
 	  select RAM/DDR memory device for loading binary images
 	  (u-boot/kernel) to the selected device partition using
 	  DFU and execute the u-boot/kernel from RAM.
 
 endchoice
+
+config SPL_DFU_ALT_INFO
+	string "DFU alternate settings string used by SPL without environment"
+	depends on SPL_DFU && !SPL_ENV_SUPPORT
+	help
+	  dfu_alt_info string, e.g. "u-boot.img ram 0x41000000 0x400000",
+	  used when SPL has no environment to read it from.
 
 config SPL_USB_SDP_SUPPORT
 	bool "Support SDP (Serial Download Protocol) in SPL"

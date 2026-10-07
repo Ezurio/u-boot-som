@@ -222,7 +222,7 @@ unsigned char *dfu_get_buf(struct dfu_entity *dfu)
 	if (dfu_buf != NULL)
 		return dfu_buf;
 
-	s = env_get("dfu_bufsiz");
+	s = CONFIG_IS_ENABLED(ENV_SUPPORT) ? env_get("dfu_bufsiz") : NULL;
 	if (s)
 		dfu_buf_size = (unsigned long)simple_strtol(s, NULL, 0);
 
@@ -245,7 +245,7 @@ static char *dfu_get_hash_algo(void)
 {
 	char *s;
 
-	s = env_get("dfu_hash_algo");
+	s = CONFIG_IS_ENABLED(ENV_SUPPORT) ? env_get("dfu_hash_algo") : NULL;
 	if (!s)
 		return NULL;
 
