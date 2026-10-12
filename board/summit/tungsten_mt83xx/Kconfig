@@ -1,0 +1,33 @@
+config TARGET_SUMMIT_TUNGSTEN_MT83XX
+	bool "Summit Tungsten MT83XX"
+	depends on TARGET_MT8188
+	select BOARD_INIT
+	select BOARD_LATE_INIT
+	select BINMAN
+	help
+	  Select Summit board support for Tungsten MT83XX modules.
+
+if TARGET_SUMMIT_TUNGSTEN_MT83XX
+
+config SUMMIT_TUNGSTEN_MT83XX_OPTEE
+	bool "Include OP-TEE in the Tungsten MT83XX FIP"
+	select OPTEE_LIB if OF_CONTROL
+	select OF_LIBFDT if OF_CONTROL
+	default y
+	help
+	  Include the OP-TEE trusted OS image as the TF-A tos-fw FIP entry, or
+	  as a FIT image in the RAM download agent. Leave disabled to build
+	  only BL31 and U-Boot.
+
+config SUMMIT_TUNGSTEN_MT83XX_UBOOT_RAM_DA
+        bool "Build a Summit Tungsten MT83XX RAM U-Boot download-agent image"
+        select SPL
+        select SPL_BOARD_INIT
+        select MTK_BROM_DOWNLOAD_AGENT
+        help
+          Build a download agent which uses SPL fastboot to receive a FIT into
+          RAM ("fastboot stage"), then loads BL31 and U-Boot from it after
+          "fastboot continue". The agent does not write to eMMC; U-Boot stops
+          at its command prompt.
+
+endif # TARGET_SUMMIT_TUNGSTEN_MT83XX

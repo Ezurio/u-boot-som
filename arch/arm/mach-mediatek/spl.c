@@ -31,19 +31,25 @@ void board_init_f(ulong dummy)
 		hang();
 }
 
+__weak u32 mtk_board_boot_device(u32 boot_dev)
+{
+	return boot_dev;
+}
+
 u32 spl_boot_device(void)
 {
+	u32 boot_dev = BOOT_DEVICE_NONE;
+
 	if (IS_ENABLED(CONFIG_MTK_BROM_DOWNLOAD_AGENT_UBOOT_FASTBOOT))
-		return BOOT_DEVICE_RAM;
+		boot_dev = BOOT_DEVICE_RAM;
+	else if (CONFIG_IS_ENABLED(SPI))
+		boot_dev = BOOT_DEVICE_SPI;
+	else if (CONFIG_IS_ENABLED(MMC))
+		boot_dev = BOOT_DEVICE_MMC1;
+	else if (CONFIG_IS_ENABLED(NAND_SUPPORT))
+		boot_dev = BOOT_DEVICE_NAND;
+	else if (CONFIG_IS_ENABLED(NOR_SUPPORT))
+		boot_dev = BOOT_DEVICE_NOR;
 
-	if (CONFIG_IS_ENABLED(SPI))
-		return BOOT_DEVICE_SPI;
-	if (CONFIG_IS_ENABLED(MMC))
-		return BOOT_DEVICE_MMC1;
-	if (CONFIG_IS_ENABLED(NAND_SUPPORT))
-		return BOOT_DEVICE_NAND;
-	if (CONFIG_IS_ENABLED(NOR_SUPPORT))
-		return BOOT_DEVICE_NOR;
-
-	return BOOT_DEVICE_NONE;
+	return mtk_board_boot_device(boot_dev);
 }

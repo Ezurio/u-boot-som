@@ -1,0 +1,25 @@
+// SPDX-License-Identifier: GPL-2.0+
+
+#include <config.h>
+#include "mt8390-genio-common-u-boot.dtsi"
+#include "tungsten-mt83xx-binman.dtsi"
+
+&pio {
+	wifi-en-hog {
+		gpio-hog;
+		gpios = <20 GPIO_ACTIVE_HIGH>;
+		output-low;
+		line-name = "wifi-en";
+	};
+
+	bt-en-hog {
+		gpio-hog;
+		gpios = <145 GPIO_ACTIVE_HIGH>;
+		output-low;
+		line-name = "bt-en";
+	};
+};
+
+#ifdef CONFIG_SUMMIT_TUNGSTEN_MT83XX_UBOOT_RAM_DA
+#include "tungsten-mt83xx-da-u-boot.dtsi"
+#endif

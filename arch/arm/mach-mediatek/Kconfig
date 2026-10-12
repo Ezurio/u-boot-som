@@ -4,6 +4,7 @@ config SYS_SOC
 	default "mediatek"
 
 config SYS_VENDOR
+	default "summit" if TARGET_SUMMIT_TUNGSTEN_MT83XX
 	default "mediatek"
 
 choice
@@ -148,6 +149,12 @@ config TARGET_MT8518
 
 endchoice
 
+source "board/summit/tungsten_mt83xx/Kconfig"
+
+if TARGET_SUMMIT_TUNGSTEN_MT83XX
+source "board/summit/common/Kconfig"
+endif
+
 if ARM64
 
 config MTK_MEM_MAP_DDR_BASE_PHY
@@ -188,6 +195,7 @@ config SYS_BOARD
 	default "mt8512" if TARGET_MT8512
 	default "mt8516" if TARGET_MT8516
 	default "mt8518" if TARGET_MT8518
+	default "tungsten_mt83xx" if TARGET_SUMMIT_TUNGSTEN_MT83XX
 	default ""
 	help
 	  This option contains information about board name.
@@ -203,6 +211,7 @@ config SYS_CONFIG_NAME
 	default "mt8512" if TARGET_MT8512
 	default "mt8516" if TARGET_MT8516
 	default "mt8518" if TARGET_MT8518
+	default "tungsten_mt83xx" if TARGET_SUMMIT_TUNGSTEN_MT83XX
 
 config MTK_BROM_HEADER_INFO
 	string

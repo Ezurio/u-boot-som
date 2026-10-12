@@ -1,0 +1,183 @@
+// SPDX-License-Identifier: GPL-2.0+
+/* Summit Tungsten Genio eMMC U-Boot and RAM download-agent images. */
+
+#include <config.h>
+
+/* Keep the DT memory node in step with the configured 4-GiB/8-GiB map. */
+&{/memory@40000000} {
+	reg = <0 0x40000000
+	       (CONFIG_MTK_MEM_MAP_DDR_SIZE >> 32)
+	       (CONFIG_MTK_MEM_MAP_DDR_SIZE & 0xffffffff)>;
+};
+
+/ {
+	binman: binman {
+		multiple-images;
+
+		#if !defined(CONFIG_SUMMIT_TUNGSTEN_MT83XX_UBOOT_RAM_DA)
+		/*
+		 * BL2 occupies 400 KiB at 0; the FIP follows at 0x64000. Must match the
+		 * BL2 FIP offset. Secure boot (TBBR) FIPs are built by TF-A, not here.
+		 */
+		u-boot {
+			filename = "u-boot.img";
+			size = <0x264000>;
+			pad-byte = <0xff>;
+			sort-by-offset;
+
+			bl2 {
+				type = "blob-ext";
+				filename = "bl2.img";
+				offset = <0>;
+				size = <0x64000>;
+			};
+
+			fip {
+				type = "atf-fip";
+				offset = <0x64000>;
+				size = <0x200000>;
+				fip-align = <0x1000>;
+
+				bl31 {
+					type = "atf-bl31";
+					fip-type = "soc-fw";
+				};
+
+				#ifdef CONFIG_SUMMIT_TUNGSTEN_MT83XX_OPTEE
+				tee-os {
+					type = "tee-os";
+					fip-type = "tos-fw";
+				};
+				#endif
+
+				nt-fw {
+					filename = "u-boot.bin";
+				};
+			};
+		};
+		#else
+
+		/* BootROM download agent; the host supplies da-fit.bin over fastboot. */
+		da-spl {
+			filename = "da-spl.bin";
+			pad-byte = <0>;
+
+			/* The loader initializes DRAM before handing off to SPL. */
+			ddr-loader {
+				type = "blob-ext";
+				filename = "ddr-loader.bin";
+				size = <CONFIG_MTK_GENIO_DDR_LOADER_SIZE>;
+			};
+
+			#if defined(CONFIG_SPL_FIT_SIGNATURE)
+			u-boot-spl {
+				type = "section";
+				size = <CONFIG_SPL_MAX_SIZE>;
+
+				u-boot-spl-nodtb {
+				};
+
+				u-boot-spl-pubkey-dtb {
+					algo = "sha256,rsa3072";
+					required = "conf";
+					key-name-hint = "dev";
+				};
+			};
+			#else
+			u-boot-spl {
+				size = <CONFIG_SPL_MAX_SIZE>;
+			};
+			#endif
+		};
+
+		/* Host downloads this standalone FIT to SPL over USB fastboot. */
+		da-fit {
+			filename = "da-fit.bin";
+			fit {
+				description = "Summit Tungsten MT83XX DA bootloaders";
+				fit,sign;
+				fit,external-offset = <CONFIG_FIT_EXTERNAL_OFFSET>;
+				fit,align = <512>;
+				offset = <0>;
+				#address-cells = <1>;
+
+				images {
+					uboot {
+						description = "U-Boot fastboot download agent";
+						type = "firmware";
+						os = "u-boot";
+						arch = "arm64";
+						compression = "none";
+						load = <CONFIG_TEXT_BASE>;
+						entry = <CONFIG_TEXT_BASE>;
+
+						u-boot {
+						};
+
+						hash {
+							algo = "sha256";
+						};
+					};
+
+					atf {
+						description = "ARM Trusted Firmware BL31";
+						type = "firmware";
+						os = "arm-trusted-firmware";
+						arch = "arm64";
+						compression = "none";
+						load = <CONFIG_MTK_GENIO_BL31_LOAD_ADDR>;
+						entry = <CONFIG_MTK_GENIO_BL31_LOAD_ADDR>;
+
+						atf-bl31 {
+						};
+
+						hash {
+							algo = "sha256";
+						};
+					};
+
+					#ifdef CONFIG_SUMMIT_TUNGSTEN_MT83XX_OPTEE
+					tee {
+						description = "OP-TEE";
+						type = "firmware";
+						os = "tee";
+						arch = "arm64";
+						compression = "none";
+/* TF-A BL32_BASE; tee-pager_v2.bin has no header, _start is at offset 0. */
+                                                load = <0x43200000>;
+						entry = <0x43200000>;
+
+						tee-os {
+						};
+
+						hash {
+							algo = "sha256";
+						};
+					};
+					#endif
+				};
+
+				configurations {
+					default = "conf";
+
+					conf {
+						description = "Summit Tungsten MT83XX RAM U-Boot download agent";
+						firmware = "atf";
+						#ifdef CONFIG_SUMMIT_TUNGSTEN_MT83XX_OPTEE
+						loadables = "uboot", "tee";
+						#else
+						loadables = "uboot";
+						#endif
+
+						signature {
+							algo = "sha256,rsa3072";
+							key-name-hint = "dev";
+							sign-images = "firmware", "loadables";
+						};
+					};
+				};
+			};
+		};
+		#endif
+	};
+};

@@ -1,0 +1,47 @@
+// SPDX-License-Identifier: GPL-2.0+
+/* RAM download-agent SPL: USB0 fastboot as peripheral, with the Tungsten USB pins. */
+/* Keep /memory in the pruned SPL DTB: spl_fixup_fdt() cannot grow the blob. */
+&{/memory@40000000} {
+        bootph-pre-ram;
+};
+
+&pericfg_ao {
+	bootph-pre-ram;
+};
+
+&ssusb0 {
+	dr_mode = "peripheral";
+	bootph-pre-ram;
+};
+
+&ssusb1 {
+	status = "disabled";
+};
+
+&ssusb2 {
+	status = "disabled";
+};
+
+&u3phy0 {
+	bootph-pre-ram;
+};
+
+&u2port0 {
+	bootph-pre-ram;
+};
+
+&usbotg_pins {
+	bootph-pre-ram;
+
+	pins-iddig {
+		bootph-pre-ram;
+	};
+
+	pins-valid {
+		bootph-pre-ram;
+	};
+
+	pins-vbus {
+		bootph-pre-ram;
+	};
+};
