@@ -167,7 +167,20 @@
 #define MSDC_PAD_TUNE1_DAT7RDDLY	GENMASK(4, 0)
 
 /* EMMC50_CFG0 */
+#define EMMC50_CFG_PADCMD_LATCHCK	BIT(0)
 #define EMMC50_CFG_CFCSTS_SEL		BIT(4)
+#define EMMC50_CFG_CMD_RESP_SEL		BIT(9)
+
+/* EMMC50_CFG1 */
+#define EMMC50_CFG1_DS_CFG		BIT(28)
+
+/* EMMC51_CFG0 */
+#define EMMC51_CFG0_CMDQ_RDAT_CNT	GENMASK(21, 12)
+
+/* CQHCI_SETTING, offset from the MSDC base */
+#define CQHCI_SETTING			0x7fc
+#define CQHCI_RD_CMD_WND_SEL		BIT(14)
+#define CQHCI_WR_CMD_WND_SEL		BIT(15)
 
 /* SDC_FIFO_CFG */
 #define SDC_FIFO_CFG_WRVALIDSEL		BIT(24)
@@ -276,9 +289,11 @@ struct mtk_sd_regs {
 	u32 reserved6[27];
 	u32 pad_ds_tune;
 	u32 pad_cmd_tune;
-	u32 reserved7[30];
+	u32 reserved7[29];
+	u32 emmc51_cfg0;
 	u32 emmc50_cfg0;
-	u32 reserved8[7];
+	u32 emmc50_cfg1;
+	u32 reserved8[6];
 	u32 sdc_fifo_cfg;
 };
 
@@ -954,8 +969,8 @@ static void msdc_set_mclk(struct udevice *dev,
 			     MSDC_CFG_HS400_CK_MODE_EXT);
 
 	if (timing == UHS_DDR50 || timing == MMC_DDR_52 ||
-	    timing == MMC_HS_400) {
-		if (timing == MMC_HS_400)
+	    timing == MMC_HS_400 || timing == MMC_HS_400_ES) {
+		if (timing == MMC_HS_400 || timing == MMC_HS_400_ES)
 			mode = 0x3;
 		else
 			mode = 0x2; /* ddr mode and use divisor */
@@ -970,7 +985,8 @@ static void msdc_set_mclk(struct udevice *dev,
 			div = (div >> 1);
 		}
 
-		if (timing == MMC_HS_400 && hz >= (host->src_clk_freq >> 1)) {
+		if ((timing == MMC_HS_400 || timing == MMC_HS_400_ES) &&
+		    hz >= (host->src_clk_freq >> 1)) {
 			if (host->dev_comp->clk_div_bits == 8)
 				setbits_le32(&host->base->msdc_cfg,
 					     MSDC_CFG_HS400_CK_MODE);
@@ -1041,6 +1057,39 @@ static void msdc_set_mclk(struct udevice *dev,
 	dev_dbg(dev, "sclk: %d, timing: %d\n", host->sclk, timing);
 }
 
+static void msdc_prepare_hs400(struct msdc_host *host)
+{
+	clrbits_le32(&host->base->msdc_iocon, MSDC_IOCON_DSPL | MSDC_IOCON_W_DSPL);
+
+	/* On SoCs with a top register block, the DS tune register lives there */
+	if (host->top_base)
+		writel(host->hs400_ds_delay, &host->top_base->emmc50_pad_ds_tune);
+	else
+		writel(host->hs400_ds_delay, &host->base->pad_ds_tune);
+
+	/* Must be 0 in HS400 mode */
+	clrbits_le32(&host->base->patch_bit2, MSDC_PB2_CFGCRCSTS);
+	host->hs400_mode = true;
+}
+
+#if CONFIG_IS_ENABLED(MMC_HS400_ES_SUPPORT)
+static int msdc_ops_set_enhanced_strobe(struct udevice *dev)
+{
+	struct msdc_host *host = dev_get_priv(dev);
+	void __iomem *cqhci = (void __iomem *)host->base + CQHCI_SETTING;
+
+	msdc_prepare_hs400(host);
+
+	setbits_le32(&host->base->emmc50_cfg0, EMMC50_CFG_PADCMD_LATCHCK);
+	setbits_le32(&host->base->emmc50_cfg0, EMMC50_CFG_CMD_RESP_SEL);
+	setbits_le32(&host->base->emmc50_cfg1, EMMC50_CFG1_DS_CFG);
+	clrbits_le32(cqhci, CQHCI_RD_CMD_WND_SEL | CQHCI_WR_CMD_WND_SEL);
+	clrbits_le32(&host->base->emmc51_cfg0, EMMC51_CFG0_CMDQ_RDAT_CNT);
+
+	return 0;
+}
+#endif
+
 static int msdc_ops_set_ios(struct udevice *dev)
 {
 	struct msdc_plat *plat = dev_get_plat(dev);
@@ -1057,6 +1106,10 @@ static int msdc_ops_set_ios(struct udevice *dev)
 
 	if (host->mclk != clock || host->timing != mmc->selected_mode)
 		msdc_set_mclk(dev, host, mmc->selected_mode, clock);
+
+	if ((mmc->selected_mode == MMC_HS_400 ||
+	     mmc->selected_mode == MMC_HS_400_ES) && clock)
+		msdc_prepare_hs400(host);
 
 	return 0;
 }
@@ -1872,6 +1925,9 @@ static const struct dm_mmc_ops msdc_ops = {
 	.get_wp = msdc_ops_get_wp,
 #if CONFIG_IS_ENABLED(MMC_SUPPORTS_TUNING)
 	.execute_tuning = msdc_execute_tuning,
+#endif
+#if CONFIG_IS_ENABLED(MMC_HS400_ES_SUPPORT)
+	.set_enhanced_strobe = msdc_ops_set_enhanced_strobe,
 #endif
 	.wait_dat0 = msdc_ops_wait_dat0,
 };
