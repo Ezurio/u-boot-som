@@ -25,7 +25,8 @@ typedef mbedtls_sha256_context sha256_context;
 #else
 typedef struct {
 	uint32_t total[2];
-	uint32_t state[8];
+	/* The ARMv8 CE code loads the state as 16-byte vectors. */
+	uint32_t state[8] __aligned(16);
 	uint8_t buffer[64];
 } sha256_context;
 #endif
