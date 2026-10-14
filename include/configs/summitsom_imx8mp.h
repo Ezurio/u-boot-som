@@ -26,4 +26,5 @@
 #define PHYS_SDRAM_SIZE         SZ_2G
 #define PHYS_SDRAM_2            0x100000000
 #define PHYS_SDRAM_2_SIZE       SZ_2G
-S
+
+#endif
