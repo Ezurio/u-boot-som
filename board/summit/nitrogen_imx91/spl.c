@@ -27,6 +27,7 @@
 #include <power/pca9450.h>
 #elif CONFIG_IS_ENABLED(DM_PMIC_PF9453)
 #include <power/pf9453.h>
+#define PF9453_CONFIG1_RESETKEY_TIMER_MASK 0x1c
 #endif
 
 DECLARE_GLOBAL_DATA_PTR;
@@ -201,7 +202,8 @@ int power_init_board(void)
 		return ret;
 
 	/*The timer default is 8sec and too long, so change to 100ms.*/
-	pmic_reg_write(dev, PF9453_CONFIG1, ~PF9453_RESETKEY_TIMER_MASK & ret);
+	pmic_reg_write(dev, PF9453_CONFIG1,
+		       ~PF9453_CONFIG1_RESETKEY_TIMER_MASK & ret);
 
 	/* set WDOG_B_CFG to cold reset */
 	pmic_reg_write(dev, PF9453_RESET_CTRL, 0xA0);

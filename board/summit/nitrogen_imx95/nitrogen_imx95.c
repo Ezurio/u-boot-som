@@ -4,6 +4,7 @@
  */
 
 #include <env.h>
+#include <init.h>
 
 #include "../common/common.h"
 

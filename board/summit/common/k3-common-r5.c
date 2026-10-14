@@ -57,8 +57,8 @@ int do_board_detect(void)
 
 	// DRSS driver retrieve memory info only from fdt, so we need to fixup fdt here
 	for (bank = 0; bank < CONFIG_NR_DRAM_BANKS; bank++) {
-		start[bank] = gd->bd->bi_dram[bank].start;
-		size[bank] = gd->bd->bi_dram[bank].size;
+		start[bank] = gd->dram[bank].start;
+		size[bank] = gd->dram[bank].size;
 	}
 
 	return fdt_fixup_memory_banks((void *)gd->fdt_blob, start, size,
@@ -124,13 +124,12 @@ int dram_init_banksize(void)
 	if (!ram_size)
 		return fdtdec_setup_memory_banksize();
 
-	gd->bd->bi_dram[0].start = (phys_addr_t)CFG_SYS_SDRAM_BASE;
-	gd->bd->bi_dram[0].size = ram_size > SZ_2G ? SZ_2G : ram_size;
+	gd->dram[0].start = (phys_addr_t)CFG_SYS_SDRAM_BASE;
+	gd->dram[0].size = ram_size > SZ_2G ? SZ_2G : ram_size;
 
 #if CONFIG_NR_DRAM_BANKS > 1
-	gd->bd->bi_dram[1].start = (phys_addr_t)0x880000000ULL;
-	gd->bd->bi_dram[1].size =
-		(phys_size_t)ram_size - gd->bd->bi_dram[0].size;
+	gd->dram[1].start = (phys_addr_t)0x880000000ULL;
+	gd->dram[1].size = (phys_size_t)ram_size - gd->dram[0].size;
 #endif
 
 	return 0;
