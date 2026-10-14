@@ -1,3 +1,3 @@
-#include <configs/tungsten_mt83xx_ram_da.config>
+#include <configs/tungsten_mt8370_ram_da_defconfig>
 
 CONFIG_DEFAULT_DEVICE_TREE="tungsten-mt8390-smarc"

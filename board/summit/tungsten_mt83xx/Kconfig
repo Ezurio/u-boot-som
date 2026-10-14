@@ -9,16 +9,6 @@ config TARGET_SUMMIT_TUNGSTEN_MT83XX
 
 if TARGET_SUMMIT_TUNGSTEN_MT83XX
 
-config SUMMIT_TUNGSTEN_MT83XX_OPTEE
-	bool "Include OP-TEE in the Tungsten MT83XX FIP"
-	select OPTEE_LIB if OF_CONTROL
-	select OF_LIBFDT if OF_CONTROL
-	default y
-	help
-	  Include the OP-TEE trusted OS image as the TF-A tos-fw FIP entry, or
-	  as a FIT image in the RAM download agent. Leave disabled to build
-	  only BL31 and U-Boot.
-
 config SUMMIT_TUNGSTEN_MT83XX_UBOOT_RAM_DA
         bool "Build a Summit Tungsten MT83XX RAM U-Boot download-agent image"
         select SPL
