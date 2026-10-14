@@ -29,24 +29,25 @@ struct summit_boot_argument {
 
 int dram_init(void)
 {
-	int ret;
-
-	ret = fdtdec_setup_mem_size_base();
-	if (ret)
-		return ret;
-
 #ifdef CONFIG_TARGET_SUMMIT_TUNGSTEN_MT83XX
 	const volatile struct summit_boot_argument *boot_argument =
 		(const volatile struct summit_boot_argument *)(uintptr_t)
 		SUMMIT_BOOT_ARGUMENT_ADDR;
 
+	/* BL2 reports the trained DRAM size; prefer it over the device tree. */
 	if (crc32(0, (const void *)&boot_argument->dram_size,
 		  sizeof(boot_argument->dram_size)) == boot_argument->crc) {
 		gd->ram_base = CONFIG_MTK_MEM_MAP_DDR_BASE_PHY;
 		gd->ram_size = boot_argument->dram_size;
 		mem_map[0].size = boot_argument->dram_size;
+		return 0;
 	}
 #endif
+
+	if (fdtdec_setup_mem_size_base()) {
+		gd->ram_base = CONFIG_MTK_MEM_MAP_DDR_BASE_PHY;
+		gd->ram_size = CONFIG_MTK_MEM_MAP_DDR_SIZE;
+	}
 
 	return 0;
 }
