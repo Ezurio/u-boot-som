@@ -93,6 +93,7 @@ CONFIG_ENV_OVERWRITE=y
 CONFIG_ENV_IS_IN_NAND=y
 CONFIG_ENV_REDUNDANT=y
 CONFIG_ENV_WRITEABLE_LIST=y
+CONFIG_ENV_FLAGS_LIST_STATIC="ethaddr:sw,eth1addr:sw,bootside:sw,rescueside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw,RegDomain:sw"
 CONFIG_NO_NET=y
 CONFIG_SPL_DM=y
 CONFIG_SPL_DM_SEQ_ALIAS=y

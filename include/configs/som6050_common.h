@@ -40,30 +40,4 @@
 /* our CLE is AD22 */
 #define CFG_SYS_NAND_MASK_CLE           (1 << 22)
 
-#ifdef CONFIG_ENV_WRITEABLE_LIST
-#ifdef CONFIG_BOOTCOUNT_ENV
-#define CFG_ENV_FLAGS_LIST_BOOTCOUNT \
-	"bootcount:dw,bootlimit:dw,upgrade_available:dw,"
-#else
-#define CFG_ENV_FLAGS_LIST_BOOTCOUNT ""
-#endif
-
-#ifdef CONFIG_NET_CMD
-#define CFG_ENV_FLAGS_LIST_NET "ethaddr:mw,eth1addr:mw,"
-#else
-#define CFG_ENV_FLAGS_LIST_NET "ethaddr:sw,eth1addr:sw,"
-#endif
-
-#if CONFIG_SYS_GPIO_SIDE_SELECT > -1
-#define CFG_ENV_FLAGS_LIST_RESCUE "rescueside:sw,"
-#else
-#define CFG_ENV_FLAGS_LIST_RESCUE ""
-#endif
-
-#define CFG_ENV_FLAGS_LIST_STATIC \
-	CFG_ENV_FLAGS_LIST_BOOTCOUNT CFG_ENV_FLAGS_LIST_NET \
-	CFG_ENV_FLAGS_LIST_RESCUE \
-	"bootside:sw,fips:dw,fips_wifi:dw,version:sw,conf:sw,RegDomain:sw"
-#endif
-
 #endif
